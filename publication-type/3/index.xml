@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>3 | HOUSE OF ARTIVIS</title>
+    <link>https://artivis.github.io/publication-type/3/</link>
+      <atom:link href="https://artivis.github.io/publication-type/3/index.xml" rel="self" type="application/rss+xml" />
+    <description>3</description>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>Jérémie Deray © 2020</copyright><lastBuildDate>Sat, 01 Jun 2013 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>https://artivis.github.io/images/icon_hud2d1771ce140e1d1fd4d0e59d51cebc4_11712_512x512_fill_lanczos_center_2.png</url>
+      <title>3</title>
+      <link>https://artivis.github.io/publication-type/3/</link>
+    </image>
+    
+    <item>
+      <title>Hand Gestures Recognition and Tracking</title>
+      <link>https://artivis.github.io/publication/gurung-hal-00903898/</link>
+      <pubDate>Sat, 01 Jun 2013 00:00:00 +0000</pubDate>
+      <guid>https://artivis.github.io/publication/gurung-hal-00903898/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>

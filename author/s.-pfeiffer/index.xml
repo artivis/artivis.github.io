@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>S. Pfeiffer | HOUSE OF ARTIVIS</title>
+    <link>https://artivis.github.io/author/s.-pfeiffer/</link>
+      <atom:link href="https://artivis.github.io/author/s.-pfeiffer/index.xml" rel="self" type="application/rss+xml" />
+    <description>S. Pfeiffer</description>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>Jérémie Deray © 2020</copyright><lastBuildDate>Tue, 01 Oct 2019 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>https://artivis.github.io/images/icon_hud2d1771ce140e1d1fd4d0e59d51cebc4_11712_512x512_fill_lanczos_center_2.png</url>
+      <title>S. Pfeiffer</title>
+      <link>https://artivis.github.io/author/s.-pfeiffer/</link>
+    </image>
+    
+    <item>
+      <title>Timed-Elastic Bands for Manipulation Motion Planning</title>
+      <link>https://artivis.github.io/publication/magyar-ral-19/</link>
+      <pubDate>Tue, 01 Oct 2019 00:00:00 +0000</pubDate>
+      <guid>https://artivis.github.io/publication/magyar-ral-19/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>

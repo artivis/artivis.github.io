@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Projects | HOUSE OF ARTIVIS</title>
+    <link>https://artivis.github.io/project/</link>
+      <atom:link href="https://artivis.github.io/project/index.xml" rel="self" type="application/rss+xml" />
+    <description>Projects</description>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>Jérémie Deray © 2020</copyright><lastBuildDate>Thu, 28 Jun 2018 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>https://artivis.github.io/images/icon_hud2d1771ce140e1d1fd4d0e59d51cebc4_11712_512x512_fill_lanczos_center_2.png</url>
+      <title>Projects</title>
+      <link>https://artivis.github.io/project/</link>
+    </image>
+    
+    <item>
+      <title>MSc Thesis</title>
+      <link>https://artivis.github.io/project/mscv_thesis/</link>
+      <pubDate>Thu, 28 Jun 2018 00:00:00 +0000</pubDate>
+      <guid>https://artivis.github.io/project/mscv_thesis/</guid>
+      <description>&lt;p&gt;We will find in a near future more and more robots in our environment,
+including public places (e.g. malls, museums, hospitals).
+This requires a strong robustness in any task to ensure the safety of both people and robots.
+If nowadays we can find pretty accurate sensors (e.g. laser range finder),
+they however are of little help in crowded places.
+Especially since humanoid robots are still a curiosity for the public and
+as such are often completely surrounded. This is why it is important to
+investigate sensors which provide as much information as possible for the lowest cost possible.
+Omnidirectional cameras are well suited for this task. Indeed as shown in this thesis,
+two fisheye cameras are enough to get a full 360° view of the robot environment.
+This permits in a first place the robot to localize itself and in a second place,
+any usual use of camera can be adapted such as navigation, face detection etc.&lt;/p&gt;
+&lt;h3 id=&#34;youtube-video&#34;&gt;Youtube video&lt;/h3&gt;
+
+&lt;div style=&#34;position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;&#34;&gt;
+  &lt;iframe src=&#34;https://www.youtube.com/embed/_zMrtydacsQ&#34; style=&#34;position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;&#34; allowfullscreen title=&#34;YouTube Video&#34;&gt;&lt;/iframe&gt;
+&lt;/div&gt;
+
+
+&lt;div style=&#34;position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;&#34;&gt;
+  &lt;iframe src=&#34;https://www.youtube.com/embed/Tlo4l3gCdhA&#34; style=&#34;position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;&#34; allowfullscreen title=&#34;YouTube Video&#34;&gt;&lt;/iframe&gt;
+&lt;/div&gt;
+
+&lt;!-- [![pmbb2 omni cam](http://img.youtube.com/vi/_zMrtydacsQ/0.jpg)](https://www.youtube.com/watch?v=_zMrtydacsQ)
+
+[![oculus &amp; 360 omni cam](http://img.youtube.com/vi/Tlo4l3gCdhA/0.jpg)](https://www.youtube.com/watch?v=Tlo4l3gCdhA) --&gt;
+&lt;h3 id=&#34;few-images&#34;&gt;Few Images&lt;/h3&gt;
+&lt;p&gt;&lt;img src=&#34;https://artivis.github.io/img/msc_thesis/1822578_orig.jpg&#34; alt=&#34;alternative text for search engines&#34;&gt;
+&lt;img src=&#34;https://artivis.github.io/img/msc_thesis/315067_orig.jpg&#34; alt=&#34;alternative text for search engines&#34;&gt;
+&lt;img src=&#34;https://artivis.github.io/img/msc_thesis/4735148_orig.jpg&#34; alt=&#34;alternative text for search engines&#34;&gt;
+&lt;img src=&#34;https://artivis.github.io/img/msc_thesis/1424596_orig.jpg&#34; alt=&#34;alternative text for search engines&#34;&gt;
+&lt;img src=&#34;https://artivis.github.io/img/msc_thesis/2339208_orig.jpg&#34; alt=&#34;alternative text for search engines&#34;&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>B. Magyar | HOUSE OF ARTIVIS</title>
+    <link>https://artivis.github.io/author/b.-magyar/</link>
+      <atom:link href="https://artivis.github.io/author/b.-magyar/index.xml" rel="self" type="application/rss+xml" />
+    <description>B. Magyar</description>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>Jérémie Deray © 2020</copyright><lastBuildDate>Fri, 01 Nov 2019 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>https://artivis.github.io/images/icon_hud2d1771ce140e1d1fd4d0e59d51cebc4_11712_512x512_fill_lanczos_center_2.png</url>
+      <title>B. Magyar</title>
+      <link>https://artivis.github.io/author/b.-magyar/</link>
+    </image>
+    
+    <item>
+      <title>Timed-elastic smooth curve optimization for mobile-base motion planning</title>
+      <link>https://artivis.github.io/publication/deray-iros-19/</link>
+      <pubDate>Fri, 01 Nov 2019 00:00:00 +0000</pubDate>
+      <guid>https://artivis.github.io/publication/deray-iros-19/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>Timed-Elastic Bands for Manipulation Motion Planning</title>
+      <link>https://artivis.github.io/publication/magyar-ral-19/</link>
+      <pubDate>Tue, 01 Oct 2019 00:00:00 +0000</pubDate>
+      <guid>https://artivis.github.io/publication/magyar-ral-19/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>

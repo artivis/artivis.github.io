@@ -1,0 +1,1161 @@
+<!DOCTYPE html><html lang="en-us" >
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Source Themes Academic 4.8.0">
+
+  
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="Jérémie Deray">
+
+  
+  
+  
+    
+  
+  <meta name="description" content="Here we are, looking for online visibility. How does one set that up quickly when starting from scratch? Do you Remember those HTML courses?
+Yeah me neither.
+But fortunately for us GitHub made it easier than ever!">
+
+  
+  <link rel="alternate" hreflang="en-us" href="https://artivis.github.io/post/2020/my-website/">
+
+  
+
+
+  
+  
+  
+  <meta name="theme-color" content="hsl(115, 82%, 48%)">
+  
+
+  
+  
+  
+  <script src="/js/mathjax-config.js"></script>
+  
+
+  
+  
+  
+  
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.6/css/academicons.min.css" integrity="sha256-uFVgMKfistnJAfoCUQigIl+JfUaP47GrRKjf6CTPVmw=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-1/css/all.min.css" integrity="sha256-4w9DunooKSr3MFXHXWyFER38WmPdm361bQS/2KUWZbU=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/github.min.css" crossorigin="anonymous" title="hl-light" disabled>
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark">
+        
+      
+    
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.css" integrity="sha256-SHMGCYmST46SoyGgo4YR/9AlK1vf3ff84Aq9yK4hdqM=" crossorigin="anonymous">
+    
+
+    
+
+    
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.1.2/lazysizes.min.js" integrity="sha256-Md1qLToewPeKjfAHU1zyPwOutccPAm5tahnaw7Osw0A=" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" integrity="" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,700%7CRoboto:400,400italic,700%7CRoboto+Mono&display=swap">
+  
+
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/academic.css">
+
+  
+
+
+
+
+  
+
+
+  
+  
+
+  
+
+  <link rel="manifest" href="/index.webmanifest">
+  <link rel="icon" type="image/png" href="/images/icon_hud2d1771ce140e1d1fd4d0e59d51cebc4_11712_32x32_fill_lanczos_center_2.png">
+  <link rel="apple-touch-icon" type="image/png" href="/images/icon_hud2d1771ce140e1d1fd4d0e59d51cebc4_11712_192x192_fill_lanczos_center_2.png">
+
+  <link rel="canonical" href="https://artivis.github.io/post/2020/my-website/">
+
+  
+  
+  
+  
+  
+  
+  
+    
+    
+  
+  
+  <meta property="twitter:card" content="summary">
+  
+  <meta property="og:site_name" content="HOUSE OF ARTIVIS">
+  <meta property="og:url" content="https://artivis.github.io/post/2020/my-website/">
+  <meta property="og:title" content="My website | HOUSE OF ARTIVIS">
+  <meta property="og:description" content="Here we are, looking for online visibility. How does one set that up quickly when starting from scratch? Do you Remember those HTML courses?
+Yeah me neither.
+But fortunately for us GitHub made it easier than ever!"><meta property="og:image" content="https://artivis.github.io/images/icon_hud2d1771ce140e1d1fd4d0e59d51cebc4_11712_512x512_fill_lanczos_center_2.png">
+  <meta property="twitter:image" content="https://artivis.github.io/images/icon_hud2d1771ce140e1d1fd4d0e59d51cebc4_11712_512x512_fill_lanczos_center_2.png"><meta property="og:locale" content="en-us">
+  
+    
+      <meta property="article:published_time" content="2020-05-09T00:00:00&#43;00:00">
+    
+    <meta property="article:modified_time" content="2020-05-09T17:47:52-04:00">
+  
+
+  
+
+
+    
+
+
+
+
+
+
+  
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://artivis.github.io/post/2020/my-website/"
+  },
+  "headline": "My website",
+  
+  "datePublished": "2020-05-09T00:00:00Z",
+  "dateModified": "2020-05-09T17:47:52-04:00",
+  
+  "author": {
+    "@type": "Person",
+    "name": "Jérémie Deray"
+  },
+  
+  "publisher": {
+    "@type": "Organization",
+    "name": "HOUSE OF ARTIVIS",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://artivis.github.io/images/icon_hud2d1771ce140e1d1fd4d0e59d51cebc4_11712_192x192_fill_lanczos_center_2.png"
+    }
+  },
+  "description": "Here we are, looking for online visibility. How does one set that up quickly when starting from scratch? Do you Remember those HTML courses?\nYeah me neither.\nBut fortunately for us GitHub made it easier than ever!"
+}
+</script>
+
+  
+
+  
+
+
+  
+  
+  
+  
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.1.1/cookieconsent.min.js" integrity="sha256-5VhCqFam2Cn+yjw61zbBNrbHVJ6SRydPeKopYlngbiQ=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.1.1/cookieconsent.min.css" integrity="sha256-zQ0LblD/Af8vOppw18+2anxsuaz3pWYyVWi+bTvTH8Q=" crossorigin="anonymous">
+  
+  <script>
+  window.addEventListener("load", function(){
+    window.cookieconsent.initialise({
+      "palette": {
+        "popup": {
+          "background": "hsl(115, 82%, 48%)",
+          "text": "#fff"
+        },
+        "button": {
+          "background": "#fff",
+          "text": "hsl(115, 82%, 48%)"
+        }
+      },
+      "theme": "classic",
+      "content": {
+        "message": "This website uses cookies to ensure you get the best experience on our website.",
+        "dismiss": "Got it!",
+        "link": "Learn more",
+        "href": "https://www.cookiesandyou.com"
+      }
+    })});
+  </script>
+
+
+
+  
+
+
+
+
+
+  <title>My website | HOUSE OF ARTIVIS</title>
+
+</head>
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" class="dark">
+
+  <aside class="search-results" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        <input name="q" id="search-query" placeholder="Search..." autocapitalize="off"
+        autocomplete="off" autocorrect="off" spellcheck="false" type="search">
+        
+      </div>
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+  
+
+
+
+
+
+
+
+<nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="d-none d-lg-inline-flex">
+      <a class="navbar-brand" href="/">HOUSE OF ARTIVIS</a>
+    </div>
+    
+
+    
+    <button type="button" class="navbar-toggler" data-toggle="collapse"
+            data-target="#navbar-content" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+    <span><i class="fas fa-bars"></i></span>
+    </button>
+    
+
+    
+    <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+      <a class="navbar-brand" href="/">HOUSE OF ARTIVIS</a>
+    </div>
+    
+
+    
+    
+    <div class="navbar-collapse main-menu-item collapse justify-content-end" id="navbar-content">
+
+      
+      <ul class="navbar-nav d-md-inline-flex">
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#about"><span>Home</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#posts"><span>Posts</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#projects"><span>Projects</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#publications"><span>Publications</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#contact"><span>Contact</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/cv/Jeremie_Deray_CV_EN.pdf"><span>CV</span></a>
+        </li>
+
+        
+        
+
+      
+
+        
+      </ul>
+    </div>
+
+    <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+      
+      <li class="nav-item">
+        <a class="nav-link js-search" href="#"><i class="fas fa-search" aria-hidden="true"></i></a>
+      </li>
+      
+
+      
+      <li class="nav-item dropdown theme-dropdown">
+        <a href="#" class="nav-link js-theme-selector" data-toggle="dropdown" aria-haspopup="true">
+          <i class="fas fa-palette" aria-hidden="true"></i>
+        </a>
+        <div class="dropdown-menu">
+          <a href="#" class="dropdown-item js-set-theme-light">
+            <span>Light</span>
+          </a>
+          <a href="#" class="dropdown-item js-set-theme-dark">
+            <span>Dark</span>
+          </a>
+          <a href="#" class="dropdown-item js-set-theme-auto">
+            <span>Automatic</span>
+          </a>
+        </div>
+      </li>
+      
+
+      
+
+    </ul>
+
+  </div>
+</nav>
+
+
+  <article class="article">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+  
+  
+<div class="article-container pt-3">
+  <h1>My website</h1>
+
+  
+  <p class="page-subtitle">Or how to get yours</p>
+  
+
+  
+    
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+          Last updated on
+      
+    
+    May 9, 2020
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    5 min read
+  </span>
+  
+
+  
+  
+  
+
+  
+  
+
+</div>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+</div>
+
+
+
+  <div class="article-container">
+
+    <div class="article-style">
+      <p>Here we are, looking for online visibility.
+How does one set that up quickly when starting from scratch?
+Do <strong>you</strong> Remember those HTML courses?<br>
+<strong>Yeah me neither.</strong><br>
+But fortunately for us 
+<a href="https://github.com/" target="_blank" rel="noopener">GitHub</a> made it easier than ever!</p>
+<p>We will discuss in this post how to set up the necessary tools to build and view and website locally and then how to deploy it to <code>GitHub</code>.
+The prerequisites are,</p>
+<ul>
+<li>GitHub</li>
+<li>markdown</li>
+<li>LXD (optional)</li>
+</ul>
+<p>You may find <code>GitHub</code> tutorials 
+<a href="https://guides.github.com/activities/hello-world/" target="_blank" rel="noopener">here</a>
+and 
+<a href="https://opensource.com/article/18/1/step-step-guide-git" target="_blank" rel="noopener">there</a>.
+Pages of our website will be written in 
+<a href="https://en.wikipedia.org/wiki/Markdown" target="_blank" rel="noopener">markdown</a>.
+You can learn more about markdown from those tutorials,
+
+<a href="http://markdowntutorial.com/" target="_blank" rel="noopener">in English</a> and 
+<a href="https://openclassrooms.com/courses/redigez-en-markdown" target="_blank" rel="noopener">in French</a>.
+And if you only need a brief refresh,
+
+<a href="https://sourcethemes.com/academic/docs/writing-markdown-latex/" target="_blank" rel="noopener">here</a> is the syntax supported by our website.
+Finally, you can find a <code>LXD</code> tutorial 
+<a href="https://linuxcontainers.org/lxd/getting-started-cli/" target="_blank" rel="noopener">here</a>.</p>
+<p>Now, let us set up the necessary stuff to get started, shall we?</p>
+<h1 id="picking-a-website-template">Picking a website template</h1>
+<p>To build our website, we will use the framework 
+<a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a>.
+It is very convenient for our use case because it comes with a ton of
+
+<a href="https://themes.gohugo.io/" target="_blank" rel="noopener">predefined website themes</a>
+and it is very simple to use.</p>
+<p>For the purpose of this tutorial we will use the very theme of this website,
+namely, 
+<a href="https://themes.gohugo.io/academic/" target="_blank" rel="noopener">Academic</a>.
+This theme is rather clean, well organized and quite simple too.
+Unlike other themes that require some extra steps,
+<code>Academic</code> is pretty much clone and play.
+Furthermore, it is 
+<a href="https://sourcethemes.com/academic/docs/" target="_blank" rel="noopener">well documented</a>!
+However, at the time of writing, this theme requires <code>Hugo *Extended*</code> version 0.67+.
+This distinction is important because,
+while it is conveniently 
+<a href="https://snapcraft.io/hugo" target="_blank" rel="noopener">packaged as a snap</a>,
+the snap only offers the classic version, not the <em>Extended</em>.
+Therefore we have to fetch its debian package and install it manually.</p>
+<p>First, let us clone the <code>Academic</code> theme on our machine:</p>
+<pre><code class="language-bash">mkdir ~/workspace
+cd ~/workspace
+git clone https://github.com/sourcethemes/academic-kickstart.git my_website
+cd my_website
+git submodule update --init --recursive
+</code></pre>
+<h1 id="prepping-the-tools">Prepping the tools</h1>
+<p>To avoid polluting our system, we will set up a Linux container in which we will
+install <code>Hugo Extended</code>.
+The container is totally optional and you can do the installation directly on your machine.
+If you do not wish to use a container, skip directly to 
+<a href="#installing-hugo">Hugo installation</a></p>
+<h2 id="setting-up-the-lxc">Setting up the LXC</h2>
+<p>Let us start a fresh and pull a new <code>Ubuntu 18.04</code> instance,</p>
+<pre><code class="language-bash">lxc launch ubuntu:18.04 hugo
+</code></pre>
+<p>We will now mount a disk device to share the website source code between our machine and the container:</p>
+<pre><code class="language-bash">lxc config device add hugo workspace disk source=~/workspace/my_website path=/home/ubuntu/my_website
+lxc config set hugo raw.idmap &quot;both $(id -u) $(id -g)&quot;
+lxc restart hugo
+</code></pre>
+<p>The default installation of <code>LXD</code> set up a bridged network so that containers
+live behind a NAT on the host. Therefore, we have to forward the port on which
+our website is served by the <code>Hugo</code> framework.
+To do so, issue the following command:</p>
+<pre><code class="language-bash">lxc config device add hugo proxy1313 proxy connect=tcp:127.0.0.1:1313 listen=tcp:0.0.0.0:1313
+</code></pre>
+<p>The container is all set up. We can log to it with:</p>
+<pre><code class="language-bash">lxc exec hugo -- su --login ubuntu
+</code></pre>
+<h2 id="installing-hugo">Installing Hugo</h2>
+<p>We will download the <code>Hugo</code> extended debian directly from it <code>GitHub</code> repository.
+To do so, enter in the terminal:</p>
+<pre><code class="language-bash">wget https://github.com/gohugoio/hugo/releases/download/v0.70.0/hugo_extended_0.70.0_Linux-64bit.deb
+</code></pre>
+<p>At the time of writing, the latest <code>Hugo Extended</code> release is version 0.70.0.</p>
+<p>We can now install it with:</p>
+<pre><code class="language-bash">sudo dpkg -i hugo_extended_*.deb
+</code></pre>
+<h2 id="first-view-of-our-website">First view of our website</h2>
+<p>Let the show begin. We are now ready to spawn our website and browse it.
+In a terminal, enter:</p>
+<pre><code class="language-bash">cd /home/ubuntu/my_website
+hugo server
+</code></pre>
+<p>Voila!</p>
+<p>The website it up and running! To visualize it,
+open your web browser at the address <code>http://localhost:1313</code>.
+That was easy right?</p>
+<h1 id="making-the-website-your-own">Making the website your own</h1>
+<p>We have a great template up and running, it is now time to make it our own.
+The <code>Academic</code> theme comes with a ton of options and configurations allowing us
+to truly personalize it to our liking and use case.
+And since it online documentation is so great,
+I will let you discovers by yourself all the possibilities the theme offers.
+Head down to the 
+<a href="https://sourcethemes.com/academic/docs/get-started/" target="_blank" rel="noopener">Academic get started documentation</a>
+and have fun!</p>
+<p>Just a quick advice, as you edit your website, let <code>Hugo</code> run.
+It is able to update the website live so that you see your changes take effect
+immediately in your web browser!</p>
+<h1 id="deploying-the-website-to-github">Deploying the website to GitHub</h1>
+<p>Once our website is ready to be made public, all there is to do is to push it to <code>GitHub</code>.
+In your <code>GitHub</code> account, we will create a repository to host your website.
+To do so hit the tiny cross <code>(+)</code> in the top-right of <code>GitHub</code> and select <code>new repository</code>.
+For <code>GitHub</code> to be able to figure out that this particular repository is your personal website
+we need to give it a specific name in the form : <strong><your-github-user-name>.github.io</strong>.</p>
+<p>All we have to do now is to push our website to this repository.</p>
+<p>First we will commit all of our changes,</p>
+<pre><code class="language-bash">cd /home/ubuntu/my_website
+git add .
+git commit 'made the website my own'
+</code></pre>
+<p>and add the <code>GitHub</code> repository we just created as our remote,</p>
+<pre><code class="language-bash">git add remote origin https://github.com/&lt;your-github-user-name&gt;/&lt;your-github-user-name&gt;.github.io.git
+</code></pre>
+<p>Let us push the changes upstream,</p>
+<pre><code class="language-bash">git push origin
+</code></pre>
+<p>Voila!</p>
+<p>Your website is now available at the address</p>
+<p><code>https://&lt;your-github-user-name&gt;.github.io/</code></p>
+<p>Our job here is done.</p>
+<h1 id="bonus-academic-publications">Bonus: Academic publications</h1>
+<p>If you happen to have some academic publications that you would like to showcase
+on your website, we will install a Python tool called <code>academic</code>
+that will help us to automatically generate pages from <code>Bibtex</code>.</p>
+<p>First we will install <code>pip3</code>:</p>
+<pre><code class="language-bash">apt install python3-pip
+</code></pre>
+<p>Then we will install <code>academic</code>:</p>
+<pre><code class="language-bash">pip3 install -U academic
+</code></pre>
+<p>Given that we have a <code>.bib</code> file that contains all of our publications,
+we can generate the pages as follows:</p>
+<pre><code class="language-bash">cd /home/ubuntu/my_website
+academic import --bibtex &lt;path_to_your/publications.bib&gt;
+</code></pre>
+<p>You can find more information in the
+
+<a href="https://sourcethemes.com/academic/docs/managing-content/#create-a-publication" target="_blank" rel="noopener">Academic theme documentation</a>.</p>
+
+    </div>
+
+    
+
+
+
+
+
+<div class="article-tags">
+  
+  <a class="badge badge-light" href="/tag/academic/">academic</a>
+  
+  <a class="badge badge-light" href="/tag/github/">github</a>
+  
+  <a class="badge badge-light" href="/tag/hugo/">hugo</a>
+  
+  <a class="badge badge-light" href="/tag/tutorial/">tutorial</a>
+  
+  <a class="badge badge-light" href="/tag/website/">website</a>
+  
+</div>
+
+
+
+<div class="share-box" aria-hidden="true">
+  <ul class="share">
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://twitter.com/intent/tweet?url=https://artivis.github.io/post/2020/my-website/&amp;text=My%20website" target="_blank" rel="noopener" class="share-btn-twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.facebook.com/sharer.php?u=https://artivis.github.io/post/2020/my-website/&amp;t=My%20website" target="_blank" rel="noopener" class="share-btn-facebook">
+          <i class="fab fa-facebook"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="mailto:?subject=My%20website&amp;body=https://artivis.github.io/post/2020/my-website/" target="_blank" rel="noopener" class="share-btn-email">
+          <i class="fas fa-envelope"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.linkedin.com/shareArticle?url=https://artivis.github.io/post/2020/my-website/&amp;title=My%20website" target="_blank" rel="noopener" class="share-btn-linkedin">
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://web.whatsapp.com/send?text=My%20website%20https://artivis.github.io/post/2020/my-website/" target="_blank" rel="noopener" class="share-btn-whatsapp">
+          <i class="fab fa-whatsapp"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://service.weibo.com/share/share.php?url=https://artivis.github.io/post/2020/my-website/&amp;title=My%20website" target="_blank" rel="noopener" class="share-btn-weibo">
+          <i class="fab fa-weibo"></i>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+  </div>
+</article>
+
+      
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/8.4.8/mermaid.min.js" integrity="sha256-lyWCDMnMeZiXRi7Zl54sZGKYmgQs4izcT7+tKc+KUBk=" crossorigin="anonymous" title="mermaid"></script>
+      
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js" integrity="sha256-eOgo0OtLL4cdq7RdwRUiGKLX9XsIJ7nGhWEKbohmVAQ=" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/r.min.js"></script>
+        
+      
+
+    
+
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.js" integrity="sha256-EErZamuLefUnbMBQbsEqu1USa+btR2oIlCpBJbyD4/g=" crossorigin="anonymous"></script>
+    
+
+    
+    
+    <script>const code_highlighting = true;</script>
+    
+
+    
+    
+    <script>const isSiteThemeDark = true;</script>
+    
+
+    
+    
+    
+    
+    
+    
+    <script>
+      const search_config = {"indexURI":"/index.json","minLength":1,"threshold":0.3};
+      const i18n = {"no_results":"No results found","placeholder":"Search...","results":"results found"};
+      const content_type = {
+        'post': "Posts",
+        'project': "Projects",
+        'publication' : "Publications",
+        'talk' : "Talks"
+        };
+    </script>
+    
+
+    
+    
+
+    
+    
+    <script id="search-hit-fuse-template" type="text/x-template">
+      <div class="search-hit" id="summary-{{key}}">
+      <div class="search-hit-content">
+        <div class="search-hit-name">
+          <a href="{{relpermalink}}">{{title}}</a>
+          <div class="article-metadata search-hit-type">{{type}}</div>
+          <p class="search-hit-description">{{snippet}}</p>
+        </div>
+      </div>
+      </div>
+    </script>
+    
+
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.2.1/fuse.min.js" integrity="sha256-VzgmKYmhsGNNN4Ph1kMW+BjoYJM2jV5i4IlFoeZA9XI=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script>
+    
+
+    
+    
+
+    
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+      
+    
+    
+    
+    
+    <script src="/js/academic.min.37431be2d92d7fb0160054761ab79602.js"></script>
+
+    
+
+
+
+
+
+
+  
+  
+  <div class="container">
+    <footer class="site-footer">
+  
+
+  <p class="powered-by">
+    &middot Jérémie Deray © 2020 &middot; 
+
+
+    
+    <span class="float-right" aria-hidden="true">
+      <a href="#" class="back-to-top">
+        <span class="button_icon">
+          <i class="fas fa-chevron-up fa-2x"></i>
+        </span>
+      </a>
+    </span>
+    
+  </p>
+</footer>
+
+  </div>
+  
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

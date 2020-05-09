@@ -1,0 +1,18 @@
+{
+  "name": "HOUSE OF ARTIVIS",
+  "short_name": "HOUSE OF ARTIVIS",
+  "lang": "en-us",
+  "theme_color": "hsl(115, 82%, 48%)",
+  "background_color": "hsl(115, 82%, 48%)",
+  "icons": [{
+    "src": "/images/icon_hud2d1771ce140e1d1fd4d0e59d51cebc4_11712_192x192_fill_lanczos_center_2.png",
+    "sizes": "192x192",
+    "type": "image/png"
+    }, {
+    "src": "/images/icon_hud2d1771ce140e1d1fd4d0e59d51cebc4_11712_512x512_fill_lanczos_center_2.png",
+    "sizes": "512x512",
+    "type": "image/png"
+     }],
+  "display": "standalone",
+  "start_url": "/?utm_source=web_app_manifest"
+}

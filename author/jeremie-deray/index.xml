@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Jérémie Deray | HOUSE OF ARTIVIS</title>
+    <link>https://artivis.github.io/author/jeremie-deray/</link>
+      <atom:link href="https://artivis.github.io/author/jeremie-deray/index.xml" rel="self" type="application/rss+xml" />
+    <description>Jérémie Deray</description>
+    <generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>Jérémie Deray © 2020</copyright>
+    <image>
+      <url>https://artivis.github.io/author/jeremie-deray/avatar_hu748c1507a473bab57e3169d14bcd0c9a_3014991_270x270_fill_q90_lanczos_center.jpg</url>
+      <title>Jérémie Deray</title>
+      <link>https://artivis.github.io/author/jeremie-deray/</link>
+    </image>
+    
+  </channel>
+</rss>
