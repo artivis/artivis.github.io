@@ -43,17 +43,17 @@ and it is very simple to use.
 
 For the purpose of this tutorial we will use the very theme of this website,
 namely, [Academic](https://themes.gohugo.io/academic/).
-This theme is rather clean, well organized and quite simple too.
-Unlike other themes that require some extra steps,
-`Academic` is pretty much clone and play.
-Furthermore, it is [well documented](https://sourcethemes.com/academic/docs/)!
+This theme is rather clean, well organized and fairly simple and most importantly
+it is [well documented](https://sourcethemes.com/academic/docs/)!
+Furthermore, it can be found pre-bundled in a `Hugo` project so that
+it is pretty much clone and play.
 However, at the time of writing, this theme requires `Hugo *Extended*` version 0.67+.
 This distinction is important because,
 while it is conveniently [packaged as a snap](https://snapcraft.io/hugo),
 the snap only offers the classic version, not the *Extended*.
 Therefore we have to fetch its debian package and install it manually.
 
-First, let us clone the `Academic` theme on our machine:
+First, let us clone the ready-to-go `Academic` bundle on our machine:
 ```bash
 mkdir ~/workspace
 cd ~/workspace
@@ -140,37 +140,127 @@ immediately in your web browser!
 
 # Deploying the website to GitHub
 
-Once our website is ready to be made public, all there is to do is to push it to `GitHub`.
+Once our website is ready to be made public,
+all there is to do is to push it to `GitHub`.
+Well, almost.
+
 In your `GitHub` account, we will create a repository to host your website.
 To do so hit the tiny cross `(+)` in the top-right of `GitHub` and select `new repository`.
 For `GitHub` to be able to figure out that this particular repository is your personal website
 we need to give it a specific name in the form : **<your-github-user-name>.github.io**.
 
-All we have to do now is to push our website to this repository.
+We will now prepare to push our website to this repository.
 
-First we will commit all of our changes,
+First we will add the `GitHub` repository we just created as our remote,
+```bash
+git add remote origin https://github.com/<your-github-user-name>/<your-github-user-name>.github.io.git
+```
+
+and change our branch name to avoid later mess,
+```bash
+git branch -m master builder
+```
+
+Here comes the final step before pushing to `GitHub`.
+We must *build* our website, or rather let `Hugo` do it for us.
+Indeed so far we have edited the template that `Hugo` uses to build the website.
+We have visualized it in our browser but the template cannot be deployed directly
+to `GitHub`, it must be built. To build it locally, nothing easier, simply run:
+```bash
+hugo
+```
+
+You will notice a new folder named `public` in our project.
+It contains our website. It is this content that we must push to our repository.
+Furthermore, it must be pushed specifically to the `master` branch.
+That's a limitation of personal website on `GitHub`.
+
+That might be a lot to take in but don't worry, we will automatize this process.
+We will add a small script so that every times
+we push some new content on the `builder` branch,
+`GitHub` we take care of calling `Hugo` and
+moving the `public` folder directly on the `master` branch.
+
+For that, we will use the `GitHub actions` and more specifically the
+[`actions-hugo`](https://github.com/peaceiris/actions-hugo).
+Sorry buddy but I'll skip the details about `actons` here as this is all new
+to me as well. That could be the topic for a later post tho.
+
+We will simply create a new file `.github/workflows/deploy-website.yml`
+and copy the following:
+
+```yaml
+name: deploy website
+
+# We will run the actions whenever something
+# is pushed to the branch 'builder'
+on:
+  push:
+    branches:
+      - builder
+
+jobs:
+
+  # Our action is called 'deploy' and runs on Ubuntu 18.04
+  deploy:
+    runs-on: ubuntu-18.04
+
+    # The action executes the following steps
+    steps:
+
+      # It fetch our repository and its submodules
+      - uses: actions/checkout@v2
+        with:
+          submodules: true  # Fetch Hugo themes
+          fetch-depth: 0    # Fetch all history for .GitInfo and .Lastmod
+
+      # It then set up Hugo Extended
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v2
+        with:
+          hugo-version: '0.68.3'
+          extended: true
+
+      # It runs Hugo to generate the website
+      - name: Build
+        run: hugo --minify
+
+      # It copies the content of the 'public' folder to the branch 'master'
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
+          publish_branch: master
+```
+
+With our automatic deployment set up, all there remains to do is to push to `GitHub`!
+
+Let us remove the 'public' folder is it exists,
+```bash
+cd /home/ubuntu/my_website
+rm -r public
+```
+
+and commit all of our changes,
 ```bash
 cd /home/ubuntu/my_website
 git add .
 git commit 'made the website my own'
 ```
 
-and add the `GitHub` repository we just created as our remote,
+Finally, we push the changes upstream,
 ```bash
-git add remote origin https://github.com/<your-github-user-name>/<your-github-user-name>.github.io.git
+git push origin builder
 ```
 
-Let us push the changes upstream,
-```bash
-git push origin
-```
 Voila!
 
-Your website is now available at the address  
+After a couple minutes your website is now available at the address:  
 
 `https://<your-github-user-name>.github.io/`
 
-Our job here is done.
+Congrats on your new online visibility, our job here is done.
 
 # Bonus: Academic publications
 
