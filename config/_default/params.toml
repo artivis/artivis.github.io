@@ -5,6 +5,8 @@
 ## Theme
 ############################
 
+nickname= "artivis"
+
 # Choose a theme.
 #   Latest themes (may require updating): https://sourcethemes.com/academic/themes/
 #   Browse built-in themes in `themes/academic/data/themes/`
@@ -276,3 +278,30 @@ plugins_js  = []
 [cms]
   # See https://sourcethemes.com/academic/docs/install/#install-with-web-browser
   netlify_cms = true
+
+[logo]
+  logoText = "$ cd /home/"
+  # logoHomeLink = "/"
+  # Set true to remove the logo cursor entirely.
+  # logoCursorDisabled = false
+  # Set to a valid CSS color to change the cursor in the logo.
+  logoCursorColor    = "#27df16"
+  # Set to a valid CSS time value to change the animation duration, "0s" to disable.
+  logoCursorAnimate  = "2s"
+
+[[social]]
+  name = "email"
+  # url  = "mailto:nobody@example.com"
+  url = '/contact'
+
+[[social]]
+  name = "github"
+  url  = "https://github.com/artivis"
+
+[[social]]
+  name = "linkedin"
+  url  = "https://www.linkedin.com/in/jeremiederay/"
+
+[[social]]
+  name = "googlescholar"
+  url  = "https://scholar.google.fr/citations?user=hGRQ8qYAAAAJ&hl"

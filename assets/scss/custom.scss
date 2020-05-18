@@ -1,0 +1,78 @@
+.dropdown-menu,
+nav#navbar-main li.nav-item {
+  font-size: 18px;
+}
+
+.medium-icon {
+  font-size: 1.5rem;
+}
+
+ul.nav-icons {
+  list-style-type: none;
+  font-size: 18px;
+  padding: 0.5rem 0 0.5rem 0;
+  margin: 0;
+  color: rgba($sta-menu-text, .45);
+}
+
+.myDiv {
+  // border: 3px solid green;
+
+  text-align: center;
+  height: 490px;
+
+  display: flex;
+  justify-content: center;
+  // align-items: center;
+  align-items: flex-end;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  font-weight: bold;
+  font-display: auto;
+  font-family: monospace, monospace;
+  color: rgba($sta-menu-text, .65);
+  &.active,
+  &:hover,
+  &:focus {
+    color: rgba($sta-menu-text, .85);
+  }
+
+  img {
+    height: 44px;
+  }
+
+  &__mark {
+    margin-right: 5px;
+  }
+
+  &__text {
+    font-size: 1rem;
+  }
+
+  &__cursor {
+    display: inline-block;
+    width: 10px;
+    height: 1rem;
+    background: #fe5186;
+    margin-left: 5px;
+    border-radius: 1px;
+    animation: cursor 1s infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &__cursor {
+        animation: none;
+    }
+  }
+
+}
+
+@keyframes cursor {
+  0% { opacity: 0; }
+  50% { opacity: 1; }
+  100% { opacity: 0; }
+}

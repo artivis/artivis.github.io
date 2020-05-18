@@ -80,7 +80,7 @@ user_groups:
 
 Jérémie Deray is a software engineer at
 [Canonical](https://canonical.com/),
-the company publishing [Ubuntu](https://ubuntu.com/).
+the company publishing [Ubuntu&#160;<i class="fab fa-ubuntu"></i>](https://ubuntu.com/).
 As part of the robotics team he is working on both ROS and ROS 2 -
 development, maintenance, dev tools, security, snaps...
 Before that he worked five years at
