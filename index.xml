@@ -217,7 +217,448 @@ we can generate the pages as follows:&lt;/p>
 academic import --bibtex &amp;lt;path_to_your/publications.bib&amp;gt;
 &lt;/code>&lt;/pre>
 &lt;p>You can find more information in the
-&lt;a href="https://sourcethemes.com/academic/docs/managing-content/#create-a-publication" target="_blank" rel="noopener">Academic theme documentation&lt;/a>.&lt;/p></description></item><item><title>Manif: A micro Lie theory library for state estimation in robotics applications</title><link>https://artivis.github.io/publication/deray-joss-20/</link><pubDate>Wed, 01 Jan 2020 00:00:00 +0000</pubDate><guid>https://artivis.github.io/publication/deray-joss-20/</guid><description/></item><item><title>Timed-elastic smooth curve optimization for mobile-base motion planning</title><link>https://artivis.github.io/publication/deray-iros-19/</link><pubDate>Fri, 01 Nov 2019 00:00:00 +0000</pubDate><guid>https://artivis.github.io/publication/deray-iros-19/</guid><description/></item><item><title>Timed-Elastic Bands for Manipulation Motion Planning</title><link>https://artivis.github.io/publication/magyar-ral-19/</link><pubDate>Tue, 01 Oct 2019 00:00:00 +0000</pubDate><guid>https://artivis.github.io/publication/magyar-ral-19/</guid><description/></item><item><title>Joint on-manifold self-calibration of odometry model and sensor extrinsics using pre-integration</title><link>https://artivis.github.io/publication/deray-ecmr-19/</link><pubDate>Sun, 01 Sep 2019 00:00:00 +0000</pubDate><guid>https://artivis.github.io/publication/deray-ecmr-19/</guid><description/></item><item><title>MSc Thesis</title><link>https://artivis.github.io/project/mscv_thesis/</link><pubDate>Thu, 28 Jun 2018 00:00:00 +0000</pubDate><guid>https://artivis.github.io/project/mscv_thesis/</guid><description>&lt;p>We will find in a near future more and more robots in our environment,
+&lt;a href="https://sourcethemes.com/academic/docs/managing-content/#create-a-publication" target="_blank" rel="noopener">Academic theme documentation&lt;/a>.&lt;/p></description></item><item><title>ROS Noetic development workflow in LXC</title><link>https://artivis.github.io/post/2020/lxc/</link><pubDate>Sat, 09 May 2020 00:00:00 +0000</pubDate><guid>https://artivis.github.io/post/2020/lxc/</guid><description>&lt;p>In this post, we will discuss how to setup a
+&lt;a href="https://linuxcontainers.org/" target="_blank" rel="noopener">Linux container&lt;/a>
+- a.k.a
+&lt;a href="https://linuxcontainers.org/" target="_blank" rel="noopener">LXC&lt;/a> - for our
+&lt;a href="http://wiki.ros.org/noetic" target="_blank" rel="noopener">ROS Noetic&lt;/a> development.
+Developing in containers has several
+advantages such as:&lt;/p>
+&lt;ul>
+&lt;li>allowing us to use a different Linux distribution than the one we&amp;rsquo;ve installed on
+our host machine&lt;/li>
+&lt;li>providing a repeatable course of actions&lt;/li>
+&lt;li>messing around, installing a tons of dependencies without polluting our computer&lt;/li>
+&lt;li>burning the container to the ground and starting fresh again easily&lt;/li>
+&lt;/ul>
+&lt;p>There are of course many other upsides but those are the one we are really
+interested in for now.
+We will see first how to get started with LXC and install the latest ROS release Noetic.
+We will then configure our container so that it is able to share a workspace
+with our host machine. We will also enable the use of graphical applications
+from the container (e.g. Rviz, Gazebo).
+We will further personalize our containerized workflow,
+setting up all of our
+application configuration files - a.k.a dotfiles.&lt;/p>
+&lt;p>The main prerequisites for this post are to be familiar with:&lt;/p>
+&lt;ul>
+&lt;li>the command terminal in Linux&lt;/li>
+&lt;li>ROS development&lt;/li>
+&lt;li>LXC&lt;/li>
+&lt;/ul>
+&lt;p>Note that I will be linking resources throughout the text,
+make sure to check them whenever you need further information.&lt;/p>
+&lt;p>Finally, while we will be focusing on the latest ROS Noetic release,
+the setup presented here applies not only to other ROS distributions
+but likely to most projects, be them ROS-based or not.&lt;/p>
+&lt;hr>
+&lt;h1 id="content">Content&lt;/h1>
+&lt;ul>
+&lt;li>
+&lt;a href="#setting-up-the-lxc">Setting up the LXC&lt;/a>
+&lt;ul>
+&lt;li>
+&lt;a href="#lxc-aliases-to-the-rescue">LXC aliases to the rescue&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;a href="#install-ros-noetic">Install ROS Noetic&lt;/a>&lt;/li>
+&lt;li>
+&lt;a href="#mounting-a-local-workspace">Mounting a local workspace&lt;/a>&lt;/li>
+&lt;li>
+&lt;a href="#using-graphical-applications">Using graphical applications&lt;/a>
+&lt;ul>
+&lt;li>
+&lt;a href="#creating-a-lxd-profile">Creating a LXD profile&lt;/a>&lt;/li>
+&lt;li>
+&lt;a href="#dedicated-graphic-card">Dedicated graphic card&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;a href="#profile-all-the-things">Profile all the things!&lt;/a>&lt;/li>
+&lt;li>
+&lt;a href="#setting-up-dotfiles">Setting up dotfiles&lt;/a>&lt;/li>
+&lt;li>
+&lt;a href="#speed-up-new-lxc-set-up">Speed up new LXC set up&lt;/a>&lt;/li>
+&lt;li>
+&lt;a href="#wrapping-up">Wrapping up&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;hr>
+&lt;h1 id="setting-up-the-lxc">Setting up the LXC&lt;/h1>
+&lt;p>We will start by installing LXD, a lightweight container hypervisor which
+extends LXC functionality over the network.
+LXD uses LXC under the covers for some container management tasks and
+provides the &amp;lsquo;lxc&amp;rsquo; command line interface tool we will use throughout this post.
+For more information, you can refer to the
+&lt;a href="https://ubuntu.com/server/docs/containers-lxc" target="_blank" rel="noopener">LXC&lt;/a> and
+&lt;a href="https://ubuntu.com/server/docs/containers-lxd" target="_blank" rel="noopener">LXD&lt;/a> documentation
+on the Ubuntu website.&lt;/p>
+&lt;p>Alright, let us install LXD as a
+&lt;a href="https://snapcraft.io/" target="_blank" rel="noopener">snap&lt;/a> to make sure we always run
+the most up to date stable version:&lt;/p>
+&lt;pre>&lt;code class="language-bash">$ sudo snap install lxd
+&lt;/code>&lt;/pre>
+&lt;p>Before we can create our first container, we must initialize LXD,&lt;/p>
+&lt;pre>&lt;code class="language-bash">$ sudo lxd init
+&lt;/code>&lt;/pre>
+&lt;p>This command will prompt you with a bunch of questions to fine tune LXD use.
+Unless you know what you are doing, you can safely hit the default answers.&lt;/p>
+&lt;p>Finally, we will add our user to the &amp;lsquo;lxd&amp;rsquo; group so that we can run lxd commands
+without sudo,&lt;/p>
+&lt;pre>&lt;code class="language-bash">$ sudo gpasswd -a &amp;quot;${USER}&amp;quot; lxd
+&lt;/code>&lt;/pre>
+&lt;p>You should log out and log in again for this to take effect.&lt;/p>
+&lt;h2 id="creating-the-container">Creating the container&lt;/h2>
+&lt;p>To create a new container, we will use the following command,&lt;/p>
+&lt;pre>&lt;code class="language-bash">$ lxc launch {remote}:{image} {container-name}
+&lt;/code>&lt;/pre>
+&lt;p>Since Noetic runs on Ubuntu 20.04, we will fetch a Ubuntu 20.04 image
+from the official Ubuntu remote,&lt;/p>
+&lt;pre>&lt;code class="language-bash">$ lxc launch ubuntu:20.04 ros-noetic
+&lt;/code>&lt;/pre>
+&lt;p>We can check that the container was properly created and launched,&lt;/p>
+&lt;pre>&lt;code class="language-bash">$ lxc list
++---------------+---------+-----------------------+-----------------------------------------------+-----------+-----------+
+| NAME | STATE | IPV4 | IPV6 | TYPE | SNAPSHOTS |
++---------------+---------+-----------------------+-----------------------------------------------+-----------+-----------+
+| ros-noetic | RUNNING | 10.160.218.172 (eth0) | dd42:5ke1:fr68:2ca4:236:eff3:fe3r:7c21 (eth0) | CONTAINER | 0 |
++---------------+---------+-----------------------+-----------------------------------------------+-----------+-----------+
+&lt;/code>&lt;/pre>
+&lt;p>With our container up and running, we can open a shell in it with a non-root user
+with the following command,&lt;/p>
+&lt;pre>&lt;code class="language-bash">$ lxc exec ros-noetic -- sudo --login --user ubuntu
+&lt;/code>&lt;/pre>
+&lt;p>I know, this command is not very pretty nor easy to remember.
+But worry not, we will create an alias to ease future use.&lt;/p>
+&lt;h2 id="lxc-aliases-to-the-rescue">LXC aliases to the rescue&lt;/h2>
+&lt;p>LXC aliases, just like bash aliases, allow use to create a new CLI
+keywords to which we can associate an action.
+The command to create a new alias is,&lt;/p>
+&lt;pre>&lt;code class="language-bash">$ lxc alias add {alias} '{command}'
+&lt;/code>&lt;/pre>
+&lt;p>As an example, let us create a shorter version of the &lt;code>lxc list&lt;/code> command
+that also prints a more compact result:&lt;/p>
+&lt;pre>&lt;code class="language-bash">$ lxc alias add ls 'list --format csv -c n'
+&lt;/code>&lt;/pre>
+&lt;p>We can check that the alias is correctly created,&lt;/p>
+&lt;pre>&lt;code class="language-bash">$ lxc alias list
++--------+----------------------------------------------------------------------------------+
+| ALIAS | TARGET |
++--------+----------------------------------------------------------------------------------+
+| ls | list --format csv -c n |
++--------+----------------------------------------------------------------------------------+
+&lt;/code>&lt;/pre>
+&lt;p>And we can now simply use it,&lt;/p>
+&lt;pre>&lt;code class="language-bash">$ lxc ls
+ros-noetic
+&lt;/code>&lt;/pre>
+&lt;p>That&amp;rsquo;s pretty neat.&lt;/p>
+&lt;p>But our main goal with aliases was to simplify our shell
+login to the container, so let&amp;rsquo;s just do that.
+Borrowing from the excellent
+&lt;a href="https://blog.simos.info/using-command-aliases-in-lxd-to-exec-a-shell/" target="_blank" rel="noopener">blog post by Simos Xenitellis&lt;/a>
+about LXC aliases, we will create a new alias &amp;lsquo;ubuntu&amp;rsquo; such as,&lt;/p>
+&lt;pre>&lt;code class="language-bash">$ lxc alias add ubuntu 'exec @ARGS@ --mode interactive -- /bin/sh -xac $@ubuntu - exec /bin/login -p -f '
+&lt;/code>&lt;/pre>
+&lt;p>This alias allows us now to simply connect to our container with,&lt;/p>
+&lt;pre>&lt;code class="language-bash">$ lxc ubuntu ros-noetic
+&lt;/code>&lt;/pre>
+&lt;p>That&amp;rsquo;s much better isn&amp;rsquo;t it?&lt;/p>
+&lt;h1 id="install-ros-noetic">Install ROS Noetic&lt;/h1>
+&lt;p>
+&lt;a href="http://wiki.ros.org/noetic" target="_blank" rel="noopener">ROS Noetic&lt;/a> is the latest and final ROS 1 release.
+The ROS project hasn&amp;rsquo;t come to an end, on the contrary, it rather look forward
+and focus its efforts
+toward the second version, namely ROS 2.
+Nevertheless, ROS Noetic is an important release because it targets
+Ubuntu 20.04, has official Python 3 support and will be supported until
+May 2025 (more information on
+&lt;a href="http://wiki.ros.org/noetic" target="_blank" rel="noopener">Noetic wiki page&lt;/a>).
+That leaves us plenty of time to learn and move to ROS 2.&lt;/p>
+&lt;p>To install it, let&amp;rsquo;s first connect to our container using our new LXC alias,&lt;/p>
+&lt;!-- we will simply follow the [official documentation][noetic-install]. -->
+&lt;!-- Let us execute a shell in our container using our new LXC alias, -->
+&lt;pre>&lt;code class="language-bash">$ lxc ubuntu ros-noetic
+&lt;/code>&lt;/pre>
+&lt;p>First, we will add the ROS packages repository to our sources.
+Starting with the key,&lt;/p>
+&lt;pre>&lt;code class="language-bash">$ apt-key adv --fetch-keys https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc
+&lt;/code>&lt;/pre>
+&lt;p>then the repository,&lt;/p>
+&lt;pre>&lt;code class="language-bash">$ apt-add-repository http://packages.ros.org/ros/ubuntu
+&lt;/code>&lt;/pre>
+&lt;p>In case of trouble, you can also refer to the
+&lt;a href="http://wiki.ros.org/noetic/Installation/Ubuntu" target="_blank" rel="noopener">official documentation&lt;/a>.&lt;/p>
+&lt;p>We are all set to install ROS Noetic!&lt;/p>
+&lt;p>Here we can choose either of three installations;
+we can install only the core components,&lt;/p>
+&lt;pre>&lt;code class="language-bash">$ sudo apt install ros-noetic-ros-base
+&lt;/code>&lt;/pre>
+&lt;p>or core + the visualization stack (e.g. Rviz),&lt;/p>
+&lt;pre>&lt;code class="language-bash">$ sudo apt install ros-noetic-desktop
+&lt;/code>&lt;/pre>
+&lt;p>or core + the visualization + simulation stacks (e.g. Gazebo),&lt;/p>
+&lt;pre>&lt;code class="language-bash">$ sudo apt install ros-noetic-desktop-full
+&lt;/code>&lt;/pre>
+&lt;p>You can pick any depending on your needs.
+If you are not sure, I would recommend you install only the core components
+and later install other packages on a per-need basis:&lt;/p>
+&lt;pre>&lt;code class="language-bash">$ sudo apt install ros-noetic-ros-base
+...
+$ sudo apt install ros-noetic-&amp;lt;package-I-need&amp;gt;
+&lt;/code>&lt;/pre>
+&lt;p>Simply to keep the size of the container as small as possible.&lt;/p>
+&lt;p>Finally, we will automatically source Noetic since this container is dedicated
+to it,&lt;/p>
+&lt;pre>&lt;code class="language-bash">$ echo &amp;quot;source /opt/ros/noetic/setup.bash&amp;quot; &amp;gt;&amp;gt; ~/.bashrc
+&lt;/code>&lt;/pre>
+&lt;p>Every times we will log into our container, ROS Noetic will be sourced
+and we will be ready to develop!&lt;/p>
+&lt;h1 id="mounting-a-local-workspace">Mounting a local workspace&lt;/h1>
+&lt;p>What would our development workflow look like without some actual source code to
+work on? Well, let us set up our ROS workspace.&lt;/p>
+&lt;p>Rather than copying/creating our workspace in the container,
+we will keep it on the host machine. By doing so,
+not only the workspace will survive deleting the LXC (persistence)
+but we will also be able to share it across several LXC
+thus across several ROS distros.&lt;/p>
+&lt;p>Hereafter, we will assume our workspace to be simply &lt;code>~/workspace&lt;/code>
+on the host with the classic tree,&lt;/p>
+&lt;pre>&lt;code class="language-bash">$ tree ~/workspace
+/home/user/workspace/
+└── src
+└── my_ros_package
+└...
+&lt;/code>&lt;/pre>
+&lt;p>To share a folder with the container, we have to add a &amp;lsquo;device disk&amp;rsquo; to it.
+The general command to do so is of the form,&lt;/p>
+&lt;pre>&lt;code class="language-bash">$ lxc config device add {container} {device-name} disk source={full-path-to-folder} path={full-path-inside-container}
+&lt;/code>&lt;/pre>
+&lt;p>filling up the placeholders for our use case, it reads,&lt;/p>
+&lt;pre>&lt;code class="language-bash">$ lxc config device add ros-noetic workspace disk source=~/workspace path=/home/ubuntu/workspace
+&lt;/code>&lt;/pre>
+&lt;p>Once the device added, we have to configure the access rights so that we can read and write
+the folder and its content in the container,&lt;/p>
+&lt;pre>&lt;code class="language-bash">$ lxc config set ros-noetic raw.idmap &amp;quot;both $(id -u) $(id -g)&amp;quot;
+&lt;/code>&lt;/pre>
+&lt;p>We now have to restart the container for the changes to take effects,&lt;/p>
+&lt;pre>&lt;code class="language-bash">$ lxc restart ros-noetic
+&lt;/code>&lt;/pre>
+&lt;p>Let us log back into our container,&lt;/p>
+&lt;pre>&lt;code class="language-bash">$ lxc ubuntu ros-noetic
+&lt;/code>&lt;/pre>
+&lt;p>and verify that the folder is properly mounted,&lt;/p>
+&lt;pre>&lt;code class="language-bash">$ ls -l
+drwxr-xr-x 22 ubuntu ubuntu 4096 May 22 21:21 workspace
+&lt;/code>&lt;/pre>
+&lt;p>Looks like we are good!&lt;/p>
+&lt;p>In this section we have configured our container through the &lt;code>lxc config&lt;/code>
+cli tool. Note that container configuration is saved in a yaml file, which you
+can review with,&lt;/p>
+&lt;pre>&lt;code class="language-bash">$ lxc config show {container}
+&lt;/code>&lt;/pre>
+&lt;p>and directly edit with,&lt;/p>
+&lt;pre>&lt;code class="language-bash">$ lxc config edit {container}
+&lt;/code>&lt;/pre>
+&lt;p>More on that later.&lt;/p>
+&lt;h1 id="using-graphical-applications">Using graphical applications&lt;/h1>
+&lt;p>This part is totally &lt;em>optional&lt;/em> and depends on whether you are planning to run
+some graphical applications (e.g. Rviz, Gazebo) in your container or not.
+If you are not interested in running any gui in your container,
+you may still want to have a quick look before jumping at the
+&amp;lsquo;
+&lt;a href="#profile-all-the-things">Profile all the things!&lt;/a>&amp;rsquo; section.
+If you do want to run graphical applications,
+then we have to configure the container to support that.&lt;/p>
+&lt;p>Unlike in the previous section, we are not going to use the &lt;code>lxc config&lt;/code> tool
+to configure our container. Instead, we will introduce &lt;code>lxc profile&lt;/code> as a way
+to create easily reusable configurations.A &lt;em>profile&lt;/em> is a set of parameters
+that can be applied to a container in one go. It can describe a full fledged
+setup or a particular feature as in our case below.
+Furthermore a profile can be use by a single container or many. Reusability!&lt;/p>
+&lt;h2 id="creating-a-lxd-profile">Creating a LXD profile&lt;/h2>
+&lt;p>Let us first create a profile named &lt;code>gui&lt;/code>,&lt;/p>
+&lt;pre>&lt;code class="language-bash">$ lxc profile create gui
+&lt;/code>&lt;/pre>
+&lt;p>we can now edit the profile,&lt;/p>
+&lt;pre>&lt;code class="language-bash">$ lxc profile edit gui
+&lt;/code>&lt;/pre>
+&lt;p>and paste the following,&lt;/p>
+&lt;pre>&lt;code class="language-yaml">config:
+environment.DISPLAY: :0
+raw.idmap: both 1000 1000
+description: Enables graphical apps use.
+devices:
+X0:
+path: /tmp/.X11-unix/X0
+source: /tmp/.X11-unix/X0
+type: disk
+mygpu:
+type: gpu
+name: gui
+used_by: []
+&lt;/code>&lt;/pre>
+&lt;p>Alternatively, you can use the following one liner,&lt;/p>
+&lt;pre>&lt;code class="language-bash">curl https://gist.githubusercontent.com/artivis/37c961e157e99f6fcaff0204a0f59731/raw/ca4abd1a3c6b1d8a74910207903ac7723685dce1/gui.yaml | lxc profile edit gui
+&lt;/code>&lt;/pre>
+&lt;p>In this profile, there might be a couple things for you to tweak depending on
+your machine. For instance your user id and guid,&lt;/p>
+&lt;pre>&lt;code class="language-bash">raw.idmap: both 1000 1000
+&lt;/code>&lt;/pre>
+&lt;p>which you can retrieve respectively with:&lt;/p>
+&lt;pre>&lt;code class="language-bash">$ id -u
+1000
+$ id -g
+1000
+&lt;/code>&lt;/pre>
+&lt;p>You may also have to check your graphic card in use looking at the directory
+&lt;code>/tmp/.X11-unix/&lt;/code>.&lt;/p>
+&lt;p>Now that our profile is set up, we have to add it to our container,&lt;/p>
+&lt;pre>&lt;code class="language-bash">lxc profile add ros-noetic gui
+&lt;/code>&lt;/pre>
+&lt;p>As previously, we have to restart the container for those change to take effect,&lt;/p>
+&lt;pre>&lt;code class="language-bash">lxc restart ros-noetic
+&lt;/code>&lt;/pre>
+&lt;p>Alright, let us try to open Rviz to make sure everything went fine.
+Open two shells to the container, one running the roscore and the second
+running Rviz:&lt;/p>
+&lt;p>Shell 1&lt;/p>
+&lt;pre>&lt;code class="language-bash">$ roscore
+&lt;/code>&lt;/pre>
+&lt;p>Shell 2&lt;/p>
+&lt;pre>&lt;code class="language-bash">$ rosrun rviz rviz
+&lt;/code>&lt;/pre>
+&lt;p>We are getting really close to our regular development experience aren&amp;rsquo;t we?&lt;/p>
+&lt;h2 id="dedicated-graphic-card">Dedicated graphic card&lt;/h2>
+&lt;p>If you have a dedicated graphic card on your host machine,
+you will also have to install the &lt;em>very same driver&lt;/em> in the container
+in order to use graphical applications.
+If you have an Nvidia card, the following should help you.
+To figure out the driver version on the host we&amp;rsquo;ll type,&lt;/p>
+&lt;pre>&lt;code class="language-bash">$ nvidia-smi
+Mon May 12 11:59:59 2020
++-----------------------------------------------------------------------------+
+| NVIDIA-SMI 440.82 Driver Version: 440.82 CUDA Version: 10.2 |
++-------------------------------+----------------------+----------------------+
+&lt;/code>&lt;/pre>
+&lt;p>All we have to do now is to install the same driver in the container,&lt;/p>
+&lt;pre>&lt;code class="language-bash">$ sudo apt install nvidia-440
+&lt;/code>&lt;/pre>
+&lt;h1 id="setting-up-dotfiles">Setting up dotfiles&lt;/h1>
+&lt;p>⚠ 🚧 [Under construction 👷] 🚧 ⚠&lt;/p>
+&lt;blockquote>
+&lt;p>Because there is no place like &lt;code>$HOME&lt;/code>.&lt;/p>
+&lt;/blockquote>
+&lt;pre>&lt;code class="language-bash">$ git clone git://github.com/andsens/homeshick.git $HOME/.homesick/repos/homeshick
+$ source &amp;quot;$HOME/.homesick/repos/homeshick/homeshick.sh&amp;quot;
+$ homeshick --batch clone git@github.com:username/dotfiles
+$ homeshick link
+$ echo &amp;quot;source ~/dotfiles/.bash_mysources&amp;quot; &amp;gt;&amp;gt; ~/.bashrc
+$ source ~/.bashrc
+&lt;/code>&lt;/pre>
+&lt;h1 id="profile-all-the-things">Profile all the things&lt;/h1>
+&lt;p>We have seen in section
+&lt;a href="#creating-a-lxd-profile">&amp;lsquo;Creating a LXD profile&amp;rsquo;&lt;/a> how to
+create a LXC profile to easily support running graphical
+apps in our container(s).
+As we mentioned before, a profile really only is a set of configurations
+for our container.
+So one may ask&lt;/p>
+&lt;blockquote>
+&lt;p>can&amp;rsquo;t we create some other profiles to further group all the configs we&amp;rsquo;ve seen?&lt;/p>
+&lt;/blockquote>
+&lt;p>Well, yes we can! And guess what? Containers can have several profiles!
+So we could totally create another profile to automatically
+add the ROS apt repository, both for ROS 1 and ROS 2 respectively:&lt;/p>
+&lt;pre>&lt;code class="language-bash">$ lxc profile create ros-apt
+$ lxc profile edit ros-apt
+&lt;/code>&lt;/pre>
+&lt;p>and add,&lt;/p>
+&lt;pre>&lt;code class="language-yaml">config:
+user.user-data: |
+#cloud-config
+runcmd:
+- &amp;quot;apt-key adv --fetch-keys https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc&amp;quot;
+- &amp;quot;apt-add-repository http://packages.ros.org/ros/ubuntu&amp;quot;
+- &amp;quot;apt-add-repository http://packages.ros.org/ros2/ubuntu&amp;quot;
+description: &amp;quot;Add ROS apt repository&amp;quot;
+devices: {}
+name: ros
+used_by: {}
+&lt;/code>&lt;/pre>
+&lt;p>Similarly we could create another profile to easily share our ROS workspace
+as well,&lt;/p>
+&lt;pre>&lt;code class="language-bash">$ lxc profile create ros-ws
+$ lxc profile edit ros-ws
+&lt;/code>&lt;/pre>
+&lt;p>and add,&lt;/p>
+&lt;pre>&lt;code class="language-yaml">config:
+raw.idmap: both 1000 1000
+description: &amp;quot;Share the ROS workspace&amp;quot;
+devices:
+workspaces:
+path: /home/ubuntu/workspace
+source: /home/user/workspace
+type: disk
+name: ros-ws
+used_by: {}
+&lt;/code>&lt;/pre>
+&lt;p>And remember to tweak both profiles (user id/guid etc.).&lt;/p>
+&lt;p>Both profiles will greatly help when creating a new container.
+However, before we get all excited, let me tell you that
+we have to be cautious when using them.
+The reason is that both should be added a rather specific times
+of the container creation. Let us see when that is.&lt;/p>
+&lt;p>First, the &amp;lsquo;ros-apt&amp;rsquo; profile makes use of
+&lt;a href="https://cloudinit.readthedocs.io/en/latest/index.html" target="_blank" rel="noopener">cloud-init&lt;/a>
+to preconfigure the container meaning that our &lt;code>apt-key/apt-add-repository&lt;/code>
+command will be run &lt;strong>only once&lt;/strong> when the container is &lt;strong>first created&lt;/strong>
+(see
+&lt;a href="https://blog.simos.info/how-to-preconfigure-lxd-containers-with-cloud-init/" target="_blank" rel="noopener">this other blog post by Simos Xenitellis&lt;/a>
+for more info about cloud-init in LXD).
+To create a container with given profile(s),
+the &lt;code>lxc launch&lt;/code> commands changes to,&lt;/p>
+&lt;pre>&lt;code class="language-bash">$ lxc launch --profile {profile-a} --profile {profile-b} {remote}:{image} {container-name}
+&lt;/code>&lt;/pre>
+&lt;p>which in our case looks like,&lt;/p>
+&lt;pre>&lt;code class="language-bash">$ lxc launch --profile default --profile ros-apt ubuntu:20.04 ros-noetic2
+&lt;/code>&lt;/pre>
+&lt;p>Let me insist again. If you try to &lt;em>add&lt;/em> the &amp;lsquo;ros-apt&amp;rsquo; profile after the container
+was created, &lt;em>nothing will happen&lt;/em>:
+&lt;del>&lt;code>lxd profile add ros-noetic ros-apt&lt;/code>&lt;/del>!&lt;/p>
+&lt;p>Concerning our &amp;lsquo;ros-ws&amp;rsquo; profile, it is a bit of the opposite situation.
+Indeed, when creating the container, a whole bunch of things are ran before
+the &amp;lsquo;ubuntu&amp;rsquo; user is set up. Since we are linking our workspace to &lt;code>/home/ubuntu/&lt;/code>
+we may arrive to early so to speak and it results in messing up the
+proper set up of the user. For this profile, we therefore
+&lt;em>have to add it after the container creation&lt;/em>
+(&lt;del>&lt;code>lxc launch --profile ros-ws {remote}:{image} {container-name}&lt;/code>&lt;/del>).&lt;/p>
+&lt;p>We can add our ros-ws profile to a container with,&lt;/p>
+&lt;pre>&lt;code class="language-bash">$ lxc profile add ros-noetic ros-ws
+&lt;/code>&lt;/pre>
+&lt;p>This whole tempo story sounds annoying.
+Alright let&amp;rsquo;s call it a day and summarize how to set up a new container.&lt;/p>
+&lt;h1 id="wrapping-up">Wrapping up&lt;/h1>
+&lt;p>Well, that was quite a journey in LXD realm.
+But our efforts were not vain for we have learned a lot
+about LXD and set up some great tools.&lt;/p>
+&lt;p>Soon, the
+&lt;a href="https://index.ros.org/doc/ros2/Releases/Release-Foxy-Fitzroy/" target="_blank" rel="noopener">ROS 2 Foxy&lt;/a> distro will be released
+(5th of June).
+How will we then create a Foxy container?
+Well, that&amp;rsquo;s quite simple now:&lt;/p>
+&lt;pre>&lt;code class="language-bash">$ lxc launch --profile default --profile ros-apt --profile gui ubuntu:20.04 ros-foxy
+$ lxc profile add ros-foxy ros-ws
+$ lxc ubuntu ros-foxy
+...
+$ sudo apt install ros-foxy-desktop
+&lt;/code>&lt;/pre>
+&lt;p>Off we go!&lt;/p>
+&lt;!--
+# Speed up new LXC set up
+@todo: snapshots + create container from snapshots + lxc-this script. Maybe for another post?
+-->
+&lt;!-- Links --></description></item><item><title>Manif: A micro Lie theory library for state estimation in robotics applications</title><link>https://artivis.github.io/publication/deray-joss-20/</link><pubDate>Wed, 01 Jan 2020 00:00:00 +0000</pubDate><guid>https://artivis.github.io/publication/deray-joss-20/</guid><description/></item><item><title>Timed-elastic smooth curve optimization for mobile-base motion planning</title><link>https://artivis.github.io/publication/deray-iros-19/</link><pubDate>Fri, 01 Nov 2019 00:00:00 +0000</pubDate><guid>https://artivis.github.io/publication/deray-iros-19/</guid><description/></item><item><title>Timed-Elastic Bands for Manipulation Motion Planning</title><link>https://artivis.github.io/publication/magyar-ral-19/</link><pubDate>Tue, 01 Oct 2019 00:00:00 +0000</pubDate><guid>https://artivis.github.io/publication/magyar-ral-19/</guid><description/></item><item><title>Joint on-manifold self-calibration of odometry model and sensor extrinsics using pre-integration</title><link>https://artivis.github.io/publication/deray-ecmr-19/</link><pubDate>Sun, 01 Sep 2019 00:00:00 +0000</pubDate><guid>https://artivis.github.io/publication/deray-ecmr-19/</guid><description/></item><item><title>MSc Thesis</title><link>https://artivis.github.io/project/mscv_thesis/</link><pubDate>Thu, 28 Jun 2018 00:00:00 +0000</pubDate><guid>https://artivis.github.io/project/mscv_thesis/</guid><description>&lt;p>We will find in a near future more and more robots in our environment,
 including public places (e.g. malls, museums, hospitals).
 This requires a strong robustness in any task to ensure the safety of both people and robots.
 If nowadays we can find pretty accurate sensors (e.g. laser range finder),
