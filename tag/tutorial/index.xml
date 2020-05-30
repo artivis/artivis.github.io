@@ -236,10 +236,7 @@ interested in for now.
 We will see first how to get started with LXC and install the latest ROS release Noetic.
 We will then configure our container so that it is able to share a workspace
 with our host machine. We will also enable the use of graphical applications
-from the container (e.g. Rviz, Gazebo).
-We will further personalize our containerized workflow,
-setting up all of our
-application configuration files - a.k.a dotfiles.&lt;/p>
+from the container (e.g. Rviz, Gazebo).&lt;/p>
 &lt;p>The main prerequisites for this post are to be familiar with:&lt;/p>
 &lt;ul>
 &lt;li>the command terminal in Linux&lt;/li>
@@ -276,8 +273,6 @@ but likely to most projects, be them ROS-based or not.&lt;/p>
 &lt;/li>
 &lt;li>
 &lt;a href="#profile-all-the-things">Profile all the things!&lt;/a>&lt;/li>
-&lt;li>
-&lt;a href="#setting-up-dotfiles">Setting up dotfiles&lt;/a>&lt;/li>
 &lt;li>
 &lt;a href="#speed-up-new-lxc-set-up">Speed up new LXC set up&lt;/a>&lt;/li>
 &lt;li>
@@ -543,18 +538,6 @@ Mon May 12 11:59:59 2020
 &lt;/code>&lt;/pre>
 &lt;p>All we have to do now is to install the same driver in the container,&lt;/p>
 &lt;pre>&lt;code class="language-bash">$ sudo apt install nvidia-440
-&lt;/code>&lt;/pre>
-&lt;h1 id="setting-up-dotfiles">Setting up dotfiles&lt;/h1>
-&lt;p>⚠ 🚧 [Under construction 👷] 🚧 ⚠&lt;/p>
-&lt;blockquote>
-&lt;p>Because there is no place like &lt;code>$HOME&lt;/code>.&lt;/p>
-&lt;/blockquote>
-&lt;pre>&lt;code class="language-bash">$ git clone git://github.com/andsens/homeshick.git $HOME/.homesick/repos/homeshick
-$ source &amp;quot;$HOME/.homesick/repos/homeshick/homeshick.sh&amp;quot;
-$ homeshick --batch clone git@github.com:username/dotfiles
-$ homeshick link
-$ echo &amp;quot;source ~/dotfiles/.bash_mysources&amp;quot; &amp;gt;&amp;gt; ~/.bashrc
-$ source ~/.bashrc
 &lt;/code>&lt;/pre>
 &lt;h1 id="profile-all-the-things">Profile all the things&lt;/h1>
 &lt;p>We have seen in section
