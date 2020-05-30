@@ -50,7 +50,6 @@ but likely to most projects, be them ROS-based or not.
     *   [Creating a LXD profile](#creating-a-lxd-profile)
     *   [Dedicated graphic card](#dedicated-graphic-card)
 *   [Profile all the things!](#profile-all-the-things)
-*   [Speed up new LXC set up](#speed-up-new-lxc-set-up)
 *   [Wrapping up](#wrapping-up)
 ---
 
