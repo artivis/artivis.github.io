@@ -8,7 +8,7 @@ reading_time: true
 share: true
 profile: false
 comments: false
-tags: [tutorial, LXC, LXD, ROS, Ubuntu, dotfiles]
+tags: [tutorial, LXC, LXD, ROS, Noetic, Ubuntu]
 ---
 
 In this post, we will discuss how to setup a [Linux container][LXC]
@@ -27,9 +27,6 @@ We will see first how to get started with LXC and install the latest ROS release
 We will then configure our container so that it is able to share a workspace
 with our host machine. We will also enable the use of graphical applications
 from the container (e.g. Rviz, Gazebo).
-We will further personalize our containerized workflow,
-setting up all of our
-application configuration files \- a.k.a dotfiles.
 
 The main prerequisites for this post are to be familiar with:
 - the command terminal in Linux
@@ -53,7 +50,6 @@ but likely to most projects, be them ROS-based or not.
     *   [Creating a LXD profile](#creating-a-lxd-profile)
     *   [Dedicated graphic card](#dedicated-graphic-card)
 *   [Profile all the things!](#profile-all-the-things)
-*   [Setting up dotfiles](#setting-up-dotfiles)
 *   [Speed up new LXC set up](#speed-up-new-lxc-set-up)
 *   [Wrapping up](#wrapping-up)
 ---
@@ -396,21 +392,6 @@ Mon May 12 11:59:59 2020
 All we have to do now is to install the same driver in the container,
 ```bash
 $ sudo apt install nvidia-440
-```
-
-# Setting up dotfiles
-
-:warning: :construction: [Under construction :construction_worker:] :construction: :warning: 
-
-> Because there is no place like `$HOME`.
-
-```bash
-$ git clone git://github.com/andsens/homeshick.git $HOME/.homesick/repos/homeshick
-$ source "$HOME/.homesick/repos/homeshick/homeshick.sh"
-$ homeshick --batch clone git@github.com:username/dotfiles
-$ homeshick link
-$ echo "source ~/dotfiles/.bash_mysources" >> ~/.bashrc
-$ source ~/.bashrc
 ```
 
 # Profile all the things
