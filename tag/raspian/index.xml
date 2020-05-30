@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Raspian | Home to artivis</title><link>https://artivis.github.io/tag/raspian/</link><atom:link href="https://artivis.github.io/tag/raspian/index.xml" rel="self" type="application/rss+xml"/><description>Raspian</description><generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>Jérémie Deray © 2020</copyright><lastBuildDate>Sat, 09 May 2020 00:00:00 +0000</lastBuildDate><image><url>https://artivis.github.io/images/icon_hud2d1771ce140e1d1fd4d0e59d51cebc4_11712_512x512_fill_lanczos_center_2.png</url><title>Raspian</title><link>https://artivis.github.io/tag/raspian/</link></image><item><title>SSH the Raspberry Pi Zero over USB</title><link>https://artivis.github.io/post/2020/pi-zero/</link><pubDate>Sat, 09 May 2020 00:00:00 +0000</pubDate><guid>https://artivis.github.io/post/2020/pi-zero/</guid><description>&lt;p>In this post, we will see how to SSH a Raspberry Pi Zero
+over USB from a Ubuntu-based host.
+Moreover we will make sure the the Pi Zero has access to internet through the host
+so that we can install/update some software.&lt;/p>
+&lt;h1 id="content">Content&lt;/h1>
+&lt;ul>
+&lt;li>
+&lt;a href="#install-raspbian">Install Raspbian&lt;/a>&lt;/li>
+&lt;li>
+&lt;a href="#ssh-over-usb">SSH over USB&lt;/a>&lt;/li>
+&lt;li>
+&lt;a href="#set-usb-gadget-mode">Set USB Gadget mode&lt;/a>&lt;/li>
+&lt;li>
+&lt;a href="#set-the-connection-to-shared-with-other-computers">Set the connection to &amp;lsquo;Shared with other computers&amp;rsquo;&lt;/a>&lt;/li>
+&lt;li>
+&lt;a href="#set-a-static-mac-address">Set a static MAC address&lt;/a>&lt;/li>
+&lt;li>
+&lt;a href="#set-a-static-ip-address">Set a static IP address&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;h1 id="install-raspbian">Install Raspbian&lt;/h1>
+&lt;p>There exists plenty of tutorials on the topic of installing Raspbian
+(see the the
+&lt;a href="https://www.raspberrypi.org/documentation/installation/installing-images/" target="_blank" rel="noopener">official documentation&lt;/a>)
+therefore I will not detail it here.
+To summarize, you have to,&lt;/p>
+&lt;ol>
+&lt;li>Download
+&lt;a href="https://www.raspberrypi.org/downloads/raspbian/" target="_blank" rel="noopener">&lt;code>Raspian&lt;/code>&lt;/a> (Lite for headless)&lt;/li>
+&lt;li>Burn the image on a micro SD card with
+&lt;a href="https://www.balena.io/etcher/" target="_blank" rel="noopener">&lt;code>Etcher&lt;/code>&lt;/a>&lt;/li>
+&lt;/ol>
+&lt;p>Before unplugging the card we will enable SSH connections.
+To do so, open the &lt;code>boot&lt;/code> partition on the card and simply create
+an empty &lt;code>ssh&lt;/code> file:&lt;/p>
+&lt;pre>&lt;code class="language-bash">$ cd /path/to/root/
+$ touch ssh
+&lt;/code>&lt;/pre>
+&lt;ol start="3">
+&lt;li>Plug the card on the Pi Zero&lt;/li>
+&lt;/ol>
+&lt;h1 id="ssh-over-usb">SSH over USB&lt;/h1>
+&lt;p>With the micro SD card ready we can now plug the USB cable to our host
+and Pi Zero.
+However, note that while the Pi Zero has two micro USB port,
+only one supports USB On-The-Go (OTG). It is this feature that
+will allows us to treat the connection as an Ethernet connection.
+The port in question is the &lt;strong>innermost&lt;/strong> one,
+the one closer to the center of the board, as shown in the image below.&lt;/p>
+&lt;p>&lt;img src="https://artivis.github.io/img/post/pizero-usb-host.png" alt="Raspberry Pi Zero USB OTG port">&lt;/p>
+&lt;h2 id="set-usb-gadget-mode">Set USB Gadget mode&lt;/h2>
+&lt;p>We would like to be able to access the Pi Zero through SSH
+from our machine using a USB cable.
+To do that we will have to edit two files.&lt;/p>
+&lt;p>First, edit the file &lt;code>/boot/config.txt&lt;/code> and append this line at the end:&lt;/p>
+&lt;pre>&lt;code class="language-terminal">dtoverlay=dwc2
+&lt;/code>&lt;/pre>
+&lt;p>Second, we will edit the file &lt;code>/boot/cmdline.txt&lt;/code>.
+After &lt;code>rootwait&lt;/code>, we will add&lt;/p>
+&lt;pre>&lt;code class="language-terminal">modules-load=dwc2,g_ether
+&lt;/code>&lt;/pre>
+&lt;p>⚠ pay attention to leave only one space between &lt;code>rootwait&lt;/code>
+and the new text otherwise it might not be parsed correctly.&lt;br>
+⚠ Note that there might already be some text after &lt;code>rootwait&lt;/code>
+in which case you still must add the following immediately after &lt;code>rootwait&lt;/code>!
+Again, leave a single space after &lt;code>rootwait&lt;/code> but also after &lt;code>g_ether&lt;/code>.&lt;/p>
+&lt;p>The Pi Zero is fully configured, we can now configure our host.&lt;/p>
+&lt;h2 id="set-the-connection-to-shared-with-other-computers">Set the connection to Shared with other computers&lt;/h2>
+&lt;p>On your Linux host, go to the network connections editor.
+In the &amp;lsquo;&lt;em>IPv4 Settings&lt;/em>&amp;rsquo; tab,
+set &amp;lsquo;&lt;em>Method&lt;/em>:&amp;rsquo; to &amp;lsquo;&lt;em>Shared with other computers&lt;/em>'.
+Refresh the connection (dis/connect), after what
+you should be able to SSH to the Pi Zero.&lt;/p>
+&lt;p>To SSH to the Pi Zero, open a terminal on your host and type:&lt;/p>
+&lt;pre>&lt;code class="language-terminal">$ ssh pi@rasberrypi.local
+&lt;/code>&lt;/pre>
+&lt;p>You will be prompted for a password, use the
+&lt;a href="https://www.raspberrypi.org/documentation/linux/usage/users.md" target="_blank" rel="noopener">default one for user &amp;lsquo;pi&amp;rsquo;&lt;/a>.
+And do not forget to change it down the line!&lt;/p>
+&lt;p>We are now connected on our board, let&amp;rsquo;s try internet out.
+Since we are using the method &amp;lsquo;&lt;em>Shared with other computers&lt;/em>&amp;rsquo;
+we should be able to access internet:&lt;/p>
+&lt;pre>&lt;code class="language-terminal">$ ping -c 3 www.google.com
+PING www.google.com (172.217.13.100) 56(84) bytes of data.
+64 bytes from yul02s04-in-f4.1e100.net (172.217.13.100): icmp_seq=1 ttl=57 time=10.7 ms
+64 bytes from yul02s04-in-f4.1e100.net (172.217.13.100): icmp_seq=2 ttl=57 time=9.60 ms
+64 bytes from yul02s04-in-f4.1e100.net (172.217.13.100): icmp_seq=3 ttl=57 time=10.4 ms
+--- www.google.com ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2001ms
+rtt min/avg/max/mdev = 9.609/10.276/10.783/0.499 ms
+&lt;/code>&lt;/pre>
+&lt;p>We are live!&lt;/p>
+&lt;p>&lt;strong>Note&lt;/strong>: On some distro, the &amp;lsquo;&lt;em>Shared with other computers&lt;/em>&amp;rsquo; is
+not available from the default settings.
+In this case fire up &lt;code>nm-connection-editor&lt;/code> from a terminal instead
+of the network connections editor.&lt;/p>
+&lt;h2 id="set-a-static-mac-address">Set a static MAC address&lt;/h2>
+&lt;p>Because we are connecting our Pi Zero as an Ethernet device through
+USB OTG, each time the connection is established the board is issued
+with a new random MAC address. This can be quickly annoying if we rely
+on the MAC address for, e.g. assigning a static IP to our board directly
+in our router configurations.
+This set up it totally &lt;strong>optional&lt;/strong>.&lt;/p>
+&lt;p>In the &lt;code>boot&lt;/code> partition, edit the file &lt;code>cmdline.txt&lt;/code> and append at the end,&lt;/p>
+&lt;pre>&lt;code class="language-terminal">g_ether.host_addr=aa:bb:cc:dd:ee:ff
+&lt;/code>&lt;/pre>
+&lt;p>where &lt;code>aa:bb:cc:dd:ee:ff&lt;/code> will be the static MAC address.
+We can use for instance the last mac address assigned to the board.
+To retrieve it, run &lt;code>ifconfig&lt;/code> on the host machine and look for a
+connection along the lines &lt;code>enp0s29xxxxx&lt;/code>.&lt;/p>
+&lt;h2 id="set-a-static-ip-address">Set a static IP address&lt;/h2>
+&lt;p>We can also choose to assign a static IP address to our board so that we don&amp;rsquo;t
+have to look for it every now and then.
+To set a static IP address, edit the file &lt;code>/etc/dhcpcd.conf&lt;/code> as follows,&lt;/p>
+&lt;pre>&lt;code class="language-terminal">interface usb0
+static ip_address=10.42.0.42
+static routers=10.42.0.1
+&lt;/code>&lt;/pre>
+&lt;p>Where &lt;code>10.42.0.42&lt;/code> is your desired static IP address.&lt;/p>
+&lt;p>Reboot and have fun!&lt;/p></description></item></channel></rss>
