@@ -1,7 +1,7 @@
 ---
 layout: post
 title: SSH the Raspberry Pi Zero over USB
-subtitle: Or how to get yours
+subtitle: Pissh
 date: "2020-05-09T00:00:00Z"
 
 reading_time: true  # Show estimated reading time?
