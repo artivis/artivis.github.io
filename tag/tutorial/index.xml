@@ -1,4 +1,174 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>tutorial | Home to artivis</title><link>https://artivis.github.io/tag/tutorial/</link><atom:link href="https://artivis.github.io/tag/tutorial/index.xml" rel="self" type="application/rss+xml"/><description>tutorial</description><generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>Jérémie Deray © 2020</copyright><lastBuildDate>Sat, 09 May 2020 00:00:00 +0000</lastBuildDate><image><url>https://artivis.github.io/images/icon_hud2d1771ce140e1d1fd4d0e59d51cebc4_11712_512x512_fill_lanczos_center_2.png</url><title>tutorial</title><link>https://artivis.github.io/tag/tutorial/</link></image><item><title>My website</title><link>https://artivis.github.io/post/2020/my-website/</link><pubDate>Sat, 09 May 2020 00:00:00 +0000</pubDate><guid>https://artivis.github.io/post/2020/my-website/</guid><description>&lt;p>Here we are, looking for online visibility.
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>tutorial | Home to artivis</title><link>https://artivis.github.io/tag/tutorial/</link><atom:link href="https://artivis.github.io/tag/tutorial/index.xml" rel="self" type="application/rss+xml"/><description>tutorial</description><generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>Jérémie Deray © 2020</copyright><lastBuildDate>Mon, 01 Jun 2020 00:00:00 +0000</lastBuildDate><image><url>https://artivis.github.io/images/icon_hud2d1771ce140e1d1fd4d0e59d51cebc4_11712_512x512_fill_lanczos_center_2.png</url><title>tutorial</title><link>https://artivis.github.io/tag/tutorial/</link></image><item><title>Managing dotfiles</title><link>https://artivis.github.io/post/2020/dotfiles/</link><pubDate>Mon, 01 Jun 2020 00:00:00 +0000</pubDate><guid>https://artivis.github.io/post/2020/dotfiles/</guid><description>&lt;p>In this post, we will see how we can easily manage our personal
+configuration files - a.k.a. dotfiles.
+Yeah dotfiles, named after there common &lt;code>~/.my_config&lt;/code> form, you know,
+all of those small configuration files lying across our $HOME.&lt;/p>
+&lt;blockquote>
+&lt;p>Because there is no place like $HOME&lt;/p>
+&lt;/blockquote>
+&lt;p>Because we are spending so much time on our machine, be it for work or for fun
+(both at the same time if you are lucky),
+we love to tweak our environment to our taste and needs.
+Change the UX, create some aliases, use some dark theme and what not,
+most if not all of these is saved in some configuration files somewhere.
+And since we spent so much time making a home for ourselves,
+wouldn&amp;rsquo;t it be great if we could quickly set it up again on a different computer?
+Change the house but keep the furniture and decorations?
+This is precisely what we are going to set up here.&lt;/p>
+&lt;h1 id="picking-dotfiles-manager">Picking dotfiles manager&lt;/h1>
+&lt;p>Looking on the web for a dotfiles manager, you my find many of them -
+see a whole
+&lt;a href="https://dotfiles.github.io/utilities/" target="_blank" rel="noopener">list of them here&lt;/a>. Most of them work off
+the same principles, being a small set of utils to help manage our dotfiles.
+Management includes most importantly versioning, often through git and
+the installation of the files to their correct location as they are more than
+often expected to be found at a given path.
+You may want to give a look at aforementioned list of managers
+and pick to one that best answer your needs and expectations.
+Note that many are interchangeable.&lt;/p>
+&lt;p>In this post we settled using
+&lt;a href="https://github.com/andsens/homeshick" target="_blank" rel="noopener">&lt;code>homeshick&lt;/code>&lt;/a>.
+There are two main reasons to this choice.
+Firstly, it is entirely written in bash, making it usable virtually anywhere.
+Secondly, it &amp;lsquo;installs&amp;rsquo; dotfiles on our system using symlinks rather than
+hard copies. The files thus exist in a single place.
+Some other nice features includes, being git-based, being cli-based,
+supporting multi dotfiles repos.
+It has to be noted tho that the project is not in a really active
+development and not very feature rich compared to other solutions.
+It is a thin-layer that does the job.&lt;/p>
+&lt;p>Alright so how do we get started?&lt;/p>
+&lt;h1 id="building-our-castle">Building our castle&lt;/h1>
+&lt;p>&lt;code>homeshick&lt;/code> relies around the concept of &lt;em>castles&lt;/em> which are nothing
+more than git repositories.
+A castle contains all of our dotfiles which are organized with the same
+layout as our home directory.
+But before building our castle, we need to install the appropriate tool.
+To install &lt;code>homeshick&lt;/code>, nothing easier, we simply clone its repository
+in our home:&lt;/p>
+&lt;pre>&lt;code class="language-bash">$ git clone https://github.com/andsens/homeshick.git $HOME/.homesick/repos/homeshick
+&lt;/code>&lt;/pre>
+&lt;p>And we are done. Now to use it, we only have to source it,
+e.g. directly in our &lt;code>.bashrc&lt;/code>,&lt;/p>
+&lt;pre>&lt;code class="language-bash">$ echo &amp;quot;source ~/.homesick/repos/homeshick/homeshick.sh&amp;quot; &amp;gt;&amp;gt; ~/.bashrc
+&lt;/code>&lt;/pre>
+&lt;p>We can also source its tab completion tool to ease our life,&lt;/p>
+&lt;pre>&lt;code class="language-bash">$ echo &amp;quot;source ~/.homesick/repos/homeshick/completions/homeshick-completion.bash&amp;quot; &amp;gt;&amp;gt; ~/.bashrc
+&lt;/code>&lt;/pre>
+&lt;p>Alright, we are done with the installation,
+let us start creating the said castle.&lt;/p>
+&lt;p>First we create a new local git repo through &lt;code>homeshick&lt;/code> cli tool,&lt;/p>
+&lt;pre>&lt;code class="language-bash">$ homeshick generate dotfiles
+&lt;/code>&lt;/pre>
+&lt;p>This creates an empty castle named &amp;lsquo;dotfiles&amp;rsquo; in
+&lt;code>~/.homesick/repos/dotfiles/&lt;/code>.
+To populate our castle with a dotfile, we make use of the &amp;lsquo;track&amp;rsquo; command:&lt;/p>
+&lt;pre>&lt;code class="language-bash">$ homeshick track {castle} {dotfile}
+&lt;/code>&lt;/pre>
+&lt;p>To track our first file, say e.g. &lt;code>.bashrc&lt;/code>, we simply issue,&lt;/p>
+&lt;pre>&lt;code class="language-bash">$ homeshick track dotfiles ~/.bashrc
+&lt;/code>&lt;/pre>
+&lt;p>The command copies the file in our castle at
+&lt;code>~/.homesick/repos/dotfiles/home/.bashrc&lt;/code> and replaces the original file
+with a symlink to the copy.&lt;/p>
+&lt;p>Now all we have to do is to commit our change and save our castle online,&lt;/p>
+&lt;p>To move to our local repository, we enter,&lt;/p>
+&lt;pre>&lt;code class="language-bash">$ homeshick cd dotfiles
+&lt;/code>&lt;/pre>
+&lt;p>and we can now use the usual git commands,&lt;/p>
+&lt;pre>&lt;code class="language-bash">$ git add .
+$ git commit -m 'add .bashrc'
+&lt;/code>&lt;/pre>
+&lt;p>Let us save our castle online, e.g. on GitHub,&lt;/p>
+&lt;pre>&lt;code class="language-bash">$ git remote add origin git@github.com:user/dotfiles.git
+$ git push -u origin master
+&lt;/code>&lt;/pre>
+&lt;p>We may now repeat this operation for each and every configuration file
+we would like to save.
+With our castle safely backed up online, we will now see
+how we can quickly set up our environment on a new machine.&lt;/p>
+&lt;h1 id="quickly-setting-up-a-new-machine">Quickly setting up a new machine&lt;/h1>
+&lt;p>Whether you bought a new computer or nuked your old hardware with a
+fresh new distro, you will now witness the true power of &lt;code>homeshick&lt;/code>.&lt;/p>
+&lt;p>To install our cosy environment on a fresh distro,
+all we have to do is,&lt;/p>
+&lt;ol>
+&lt;li>Install &lt;code>homeshick&lt;/code>
+&lt;pre>&lt;code class="language-bash">$ git clone https://github.com/andsens/homeshick.git $HOME/.homesick/repos/homeshick
+$ source ~/.homesick/repos/homeshick/homeshick.sh
+&lt;/code>&lt;/pre>
+&lt;/li>
+&lt;li>Import our castle
+&lt;pre>&lt;code class="language-bash">$ homeshick clone git@github.com:user/dotfiles.git
+&lt;/code>&lt;/pre>
+&lt;/li>
+&lt;li>Let &lt;code>homeshick&lt;/code> works its magic
+&lt;pre>&lt;code class="language-bash">$ homeshick link dotfiles
+&lt;/code>&lt;/pre>
+&lt;/li>
+&lt;/ol>
+&lt;p>Voila! Home sweet home.&lt;/p>
+&lt;p>Of course this post is only a quick overview of a given dotfiles manager.
+I won&amp;rsquo;t detail here all of its options and features
+and let discover them for yourself in its
+&lt;a href="https://github.com/andsens/homeshick/wiki" target="_blank" rel="noopener">wiki&lt;/a>.
+As mentioned previously many dotfiles managers rely on a git repository and the
+same layout as &lt;code>homeshick&lt;/code> so you can get started with it and later move to
+another one which better fits you needs.&lt;/p>
+&lt;p>At this point you may be wondering if this it really worth it given that you probably
+install a fresh distro every 2 years or so and completely change hardware even less
+frequently.
+Well, fellow developer, aren&amp;rsquo;t you using containers?
+If not, you definitely should consider it and check
+&lt;a href="https://artivis.github.io/post/2020/lxc">this other post&lt;/a>
+were I detail development workflow for
+&lt;a href="https://www.ros.org/" target="_blank" rel="noopener">ROS&lt;/a> in
+&lt;a href="https://linuxcontainers.org/" target="_blank" rel="noopener">LXD&lt;/a>.&lt;/p>
+&lt;h1 id="disposable-tiny-home">Disposable tiny home&lt;/h1>
+&lt;p>If you are like me, trying your best to keep a tidy laptop while
+messing around with plenty of different software toys,
+then you may have had one of this day during which you spawn several containers.
+Containers in which we don&amp;rsquo;t have our sweet bash aliases;
+on our very own machine!
+But thanks to &lt;code>homeshick&lt;/code> we can now start up a fresh
+container and have it mimic &lt;code>$HOME&lt;/code> in a matter of seconds!
+Let me demonstrate it for you with a LXD container,&lt;/p>
+&lt;pre>&lt;code class="language-bash">$ lxc launch ubuntu:20.04 tmp-20-04
+$ lxc profile add castle tmp-20-04
+$ lxc ubuntu tmp-20-04
+&lt;/code>&lt;/pre>
+&lt;p>Ahhh, what a cozy tiny disposable home!&lt;/p>
+&lt;p>That seemed to easy to you? Alright I confess, I used some of my own aliases here.
+But isn&amp;rsquo;t it what this whole post is about?
+Note that the above 3 lines really boils down to,&lt;/p>
+&lt;pre>&lt;code class="language-bash">$ lxc launch ubuntu:20.04 tmp-20-04
+$ lxc exec tmp-20-04 -- sudo --login --user ubuntu
+...
+$ git clone https://github.com/andsens/homeshick.git $HOME/.homesick/repos/homeshick
+$ source ~/.homesick/repos/homeshick/homeshick.sh
+$ homeshick clone git@github.com:user/dotfiles.git
+$ homeshick link dotfiles
+&lt;/code>&lt;/pre>
+&lt;p>With this example,
+I hope that I managed to offer you a glimpse at the power of &lt;code>homeshick&lt;/code>
+(and more generally of dotfiles managers),
+especially when coupled to a containerized workflow.&lt;/p>
+&lt;p>Before closing this post, let me give you one last tip.
+Because we made our containerized workflow rather seamless with our
+host, it can be easy to loose track of which shell is in a container and which
+is not. To differentiate them, add the following to your &lt;code>.bashrc&lt;/code>:&lt;/p>
+&lt;pre>&lt;code class="language-bash">function prompt_lxc_header()
+{
+if [ -e /dev/lxd/sock ]; then
+echo &amp;quot;[LXC] &amp;quot;;
+fi
+}
+PS1='$(prompt_lxc_header)'$PS1
+&lt;/code>&lt;/pre>
+&lt;p>When used in a container,
+a shell prompt in the said container will now look something like:&lt;/p>
+&lt;pre>&lt;code class="language-bash">[LXC] ubuntu@tmp-20-04:~$
+&lt;/code>&lt;/pre>
+&lt;p>No more confusion 👍&lt;/p></description></item><item><title>My website</title><link>https://artivis.github.io/post/2020/my-website/</link><pubDate>Sat, 09 May 2020 00:00:00 +0000</pubDate><guid>https://artivis.github.io/post/2020/my-website/</guid><description>&lt;p>Here we are, looking for online visibility.
 How does one set that up quickly when starting from scratch?
 Do &lt;strong>you&lt;/strong> Remember those HTML courses?&lt;br>
 &lt;strong>Yeah me neither.&lt;/strong>&lt;br>
