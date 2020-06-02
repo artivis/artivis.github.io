@@ -22,7 +22,7 @@ Because we are spending so much time on our machine, be it for work or for fun
 (both at the same time if you are lucky),
 we love to tweak our environment to our taste and needs.
 Change the UX, create some aliases, use some dark theme and what not,
-most if not all of these is saved in some configuration files somewhere.
+most if not all of these are saved in some configuration files somewhere.
 And since we spent so much time making a home for ourselves,
 wouldn't it be great if we could quickly set it up again on a different computer?
 Change the house but keep the furniture and decorations?
@@ -30,18 +30,18 @@ This is precisely what we are going to set up here.
 
 # Picking dotfiles manager
 
-Looking on the web for a dotfiles manager, you my find many of them -
+Looking on the web for a dotfiles manager, you may find many of them -
 see a whole [list of them here][dotfiles-list]. Most of them work off
 the same principles, being a small set of utils to help manage our dotfiles.
 Management includes most importantly versioning, often through git and
 the installation of the files to their correct location as they are more than
 often expected to be found at a given path.
-You may want to give a look at aforementioned list of managers
-and pick to one that best answer your needs and expectations.
+You may want to give a look at the aforementioned list of managers
+and pick one that best answers your needs and expectations.
 Note that many are interchangeable.
 
 In this post we settled using [`homeshick`][homeshick].
-There are two main reasons to this choice.
+There are two main reasons for this choice.
 Firstly, it is entirely written in bash, making it usable virtually anywhere.
 Secondly, it 'installs' dotfiles on our system using symlinks rather than
 hard copies. The files thus exist in a single place.
@@ -143,23 +143,23 @@ Voila! Home sweet home.
 
 Of course this post is only a quick overview of a given dotfiles manager.
 I won't detail here all of its options and features
-and let discover them for yourself in its [wiki][homeshick-wiki].
+and let you discover them for yourself in its [wiki][homeshick-wiki].
 As mentioned previously many dotfiles managers rely on a git repository and the
 same layout as `homeshick` so you can get started with it and later move to
-another one which better fits you needs.
+another one which better fits your needs.
 
-At this point you may be wondering if this it really worth it given that you probably
+At this point you may be wondering if this is really worth it given that you probably
 install a fresh distro every 2 years or so and completely change hardware even less
 frequently.
 Well, fellow developer, aren't you using containers?
 If not, you definitely should consider it and check [this other post][LXD-post]
-were I detail development workflow for [ROS][ROS] in [LXD][LXC].
+where I detail a development workflow for [ROS][ROS] in [LXD][LXC].
 
 # Disposable tiny home
 
 If you are like me, trying your best to keep a tidy laptop while
 messing around with plenty of different software toys,
-then you may have had one of this day during which you spawn several containers.
+then you may have had one of these days during which you spawn several containers.
 Containers in which we don't have our sweet bash aliases;
 on our very own machine!
 But thanks to `homeshick` we can now start up a fresh
@@ -173,7 +173,7 @@ $ lxc ubuntu tmp-20-04
 ```
 Ahhh, what a cozy tiny disposable home!
 
-That seemed to easy to you? Alright I confess, I used some of my own aliases here.
+That seemed too easy to you? Alright I confess, I used some of my own aliases here.
 But isn't it what this whole post is about?
 Note that the above 3 lines really boils down to,
 ```bash
@@ -193,7 +193,7 @@ especially when coupled to a containerized workflow.
 
 Before closing this post, let me give you one last tip.
 Because we made our containerized workflow rather seamless with our
-host, it can be easy to loose track of which shell is in a container and which
+host, it can be easy to lose track of which shell is in a container and which
 is not. To differentiate them, add the following to your `.bashrc`:
 ```bash
 function prompt_lxc_header()
