@@ -9,25 +9,25 @@ all of those small configuration files lying across our $HOME.&lt;/p>
 (both at the same time if you are lucky),
 we love to tweak our environment to our taste and needs.
 Change the UX, create some aliases, use some dark theme and what not,
-most if not all of these is saved in some configuration files somewhere.
+most if not all of these are saved in some configuration files somewhere.
 And since we spent so much time making a home for ourselves,
 wouldn&amp;rsquo;t it be great if we could quickly set it up again on a different computer?
 Change the house but keep the furniture and decorations?
 This is precisely what we are going to set up here.&lt;/p>
 &lt;h1 id="picking-dotfiles-manager">Picking dotfiles manager&lt;/h1>
-&lt;p>Looking on the web for a dotfiles manager, you my find many of them -
+&lt;p>Looking on the web for a dotfiles manager, you may find many of them -
 see a whole
 &lt;a href="https://dotfiles.github.io/utilities/" target="_blank" rel="noopener">list of them here&lt;/a>. Most of them work off
 the same principles, being a small set of utils to help manage our dotfiles.
 Management includes most importantly versioning, often through git and
 the installation of the files to their correct location as they are more than
 often expected to be found at a given path.
-You may want to give a look at aforementioned list of managers
-and pick to one that best answer your needs and expectations.
+You may want to give a look at the aforementioned list of managers
+and pick one that best answers your needs and expectations.
 Note that many are interchangeable.&lt;/p>
 &lt;p>In this post we settled using
 &lt;a href="https://github.com/andsens/homeshick" target="_blank" rel="noopener">&lt;code>homeshick&lt;/code>&lt;/a>.
-There are two main reasons to this choice.
+There are two main reasons for this choice.
 Firstly, it is entirely written in bash, making it usable virtually anywhere.
 Secondly, it &amp;lsquo;installs&amp;rsquo; dotfiles on our system using symlinks rather than
 hard copies. The files thus exist in a single place.
@@ -109,24 +109,24 @@ $ source ~/.homesick/repos/homeshick/homeshick.sh
 &lt;p>Voila! Home sweet home.&lt;/p>
 &lt;p>Of course this post is only a quick overview of a given dotfiles manager.
 I won&amp;rsquo;t detail here all of its options and features
-and let discover them for yourself in its
+and let you discover them for yourself in its
 &lt;a href="https://github.com/andsens/homeshick/wiki" target="_blank" rel="noopener">wiki&lt;/a>.
 As mentioned previously many dotfiles managers rely on a git repository and the
 same layout as &lt;code>homeshick&lt;/code> so you can get started with it and later move to
-another one which better fits you needs.&lt;/p>
-&lt;p>At this point you may be wondering if this it really worth it given that you probably
+another one which better fits your needs.&lt;/p>
+&lt;p>At this point you may be wondering if this is really worth it given that you probably
 install a fresh distro every 2 years or so and completely change hardware even less
 frequently.
 Well, fellow developer, aren&amp;rsquo;t you using containers?
 If not, you definitely should consider it and check
 &lt;a href="https://artivis.github.io/post/2020/lxc">this other post&lt;/a>
-were I detail development workflow for
+where I detail a development workflow for
 &lt;a href="https://www.ros.org/" target="_blank" rel="noopener">ROS&lt;/a> in
 &lt;a href="https://linuxcontainers.org/" target="_blank" rel="noopener">LXD&lt;/a>.&lt;/p>
 &lt;h1 id="disposable-tiny-home">Disposable tiny home&lt;/h1>
 &lt;p>If you are like me, trying your best to keep a tidy laptop while
 messing around with plenty of different software toys,
-then you may have had one of this day during which you spawn several containers.
+then you may have had one of these days during which you spawn several containers.
 Containers in which we don&amp;rsquo;t have our sweet bash aliases;
 on our very own machine!
 But thanks to &lt;code>homeshick&lt;/code> we can now start up a fresh
@@ -137,7 +137,7 @@ $ lxc profile add castle tmp-20-04
 $ lxc ubuntu tmp-20-04
 &lt;/code>&lt;/pre>
 &lt;p>Ahhh, what a cozy tiny disposable home!&lt;/p>
-&lt;p>That seemed to easy to you? Alright I confess, I used some of my own aliases here.
+&lt;p>That seemed too easy to you? Alright I confess, I used some of my own aliases here.
 But isn&amp;rsquo;t it what this whole post is about?
 Note that the above 3 lines really boils down to,&lt;/p>
 &lt;pre>&lt;code class="language-bash">$ lxc launch ubuntu:20.04 tmp-20-04
@@ -154,7 +154,7 @@ I hope that I managed to offer you a glimpse at the power of &lt;code>homeshick&
 especially when coupled to a containerized workflow.&lt;/p>
 &lt;p>Before closing this post, let me give you one last tip.
 Because we made our containerized workflow rather seamless with our
-host, it can be easy to loose track of which shell is in a container and which
+host, it can be easy to lose track of which shell is in a container and which
 is not. To differentiate them, add the following to your &lt;code>.bashrc&lt;/code>:&lt;/p>
 &lt;pre>&lt;code class="language-bash">function prompt_lxc_header()
 {
