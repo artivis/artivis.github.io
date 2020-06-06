@@ -1,4 +1,122 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>tutorial | Home to artivis</title><link>https://artivis.github.io/tag/tutorial/</link><atom:link href="https://artivis.github.io/tag/tutorial/index.xml" rel="self" type="application/rss+xml"/><description>tutorial</description><generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>Jérémie Deray © 2020</copyright><lastBuildDate>Mon, 01 Jun 2020 00:00:00 +0000</lastBuildDate><image><url>https://artivis.github.io/images/icon_hud2d1771ce140e1d1fd4d0e59d51cebc4_11712_512x512_fill_lanczos_center_2.png</url><title>tutorial</title><link>https://artivis.github.io/tag/tutorial/</link></image><item><title>Managing dotfiles</title><link>https://artivis.github.io/post/2020/dotfiles/</link><pubDate>Mon, 01 Jun 2020 00:00:00 +0000</pubDate><guid>https://artivis.github.io/post/2020/dotfiles/</guid><description>&lt;p>In this post, we will see how we can easily manage our personal
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>tutorial | Home to artivis</title><link>https://artivis.github.io/tag/tutorial/</link><atom:link href="https://artivis.github.io/tag/tutorial/index.xml" rel="self" type="application/rss+xml"/><description>tutorial</description><generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>Jérémie Deray © 2020</copyright><lastBuildDate>Sat, 06 Jun 2020 00:00:00 +0000</lastBuildDate><image><url>https://artivis.github.io/images/icon_hud2d1771ce140e1d1fd4d0e59d51cebc4_11712_512x512_fill_lanczos_center_2.png</url><title>tutorial</title><link>https://artivis.github.io/tag/tutorial/</link></image><item><title>Get started with ROS 2 Foxy today with LXD</title><link>https://artivis.github.io/post/2020/ros-foxy-install/</link><pubDate>Sat, 06 Jun 2020 00:00:00 +0000</pubDate><guid>https://artivis.github.io/post/2020/ros-foxy-install/</guid><description>&lt;p>The 5th of June 2020 marks the release of ROS 2 Foxy Fitzroy,
+a 3 years long-term support (LTS) release and
+the first ROS 2 distribution to target
+&lt;a href="https://ubuntu.com/blog/ubuntu-20-04-lts-arrives" target="_blank" rel="noopener">Ubuntu 20.04&lt;/a>.&lt;/p>
+&lt;p>As summarized in the
+&lt;a href="https://discourse.ros.org/t/ros-foxy-fitzroy-released/14495" target="_blank" rel="noopener">ROS Discourse&lt;/a> post,
+Foxy comes loaded with performance improvements, new features,
+and maybe most importantly, with
+&lt;a href="https://index.ros.org/doc/ros2/Tutorials/" target="_blank" rel="noopener">tutorials&lt;/a>!
+Get a full tour of the novelties by heading down to the
+&lt;a href="https://index.ros.org/doc/ros2/Releases/Release-Foxy-Fitzroy/" target="_blank" rel="noopener">Foxy release page&lt;/a>.&lt;/p>
+&lt;p>Now, you may be very excited about ROS 2 Foxy but you,
+just as I, haven&amp;rsquo;t moved to Ubuntu 20.04 just yet.
+But that will not stop us from getting our hands on
+all the goodies this new release offers.&lt;/p>
+&lt;p>Indeed, in this post we will see how to install ROS 2 Foxy Fitzroy
+in a
+&lt;a href="https://linuxcontainers.org/lxd/introduction/" target="_blank" rel="noopener">LXD&lt;/a> container so that we can develop against the latest ROS 2
+release without the need to upgrade our computer just yet.&lt;/p>
+&lt;p>Hereafter we will assume that your are familiar with the command terminal
+and that LXD is already installed on your machine.
+If you are new to LXD or looking to improve your ROS development with it,
+have a look to this post
+&lt;a href="https://artivis.github.io/post/2020/lxc">&amp;lsquo;ROS Noetic development workflow in LXC&amp;rsquo;&lt;/a>.&lt;/p>
+&lt;p>Alright let us get started.&lt;/p>
+&lt;hr>
+&lt;h1 id="content">Content&lt;/h1>
+&lt;ul>
+&lt;li>
+&lt;a href="#spawning-an-ubuntu-2004-lxd-container">Spawning an Ubuntu 20.04 LXD container&lt;/a>&lt;/li>
+&lt;li>
+&lt;a href="#installing-ros-2-foxy-fitzroy">Installing ROS 2 Foxy Fitzroy&lt;/a>&lt;/li>
+&lt;li>
+&lt;a href="#quick-test">Quick test&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;hr>
+&lt;h1 id="spawning-an-ubuntu-2004-lxd-container">Spawning an Ubuntu 20.04 LXD container&lt;/h1>
+&lt;p>So the first thing we have to do is to create a LXD container based on an
+Ubuntu 20.04 image. To do so we issue the following command,&lt;/p>
+&lt;pre>&lt;code class="language-bash">lxc launch ubuntu:20.04 ros2-foxy
+&lt;/code>&lt;/pre>
+&lt;p>It creates and starts a container named &amp;lsquo;ros2-foxy&amp;rsquo; based on an
+Ubuntu 20.04 image. So far so good.&lt;/p>
+&lt;p>Now to start a shell in our fresh container we will type,&lt;/p>
+&lt;pre>&lt;code class="language-bash">lxc exec ros-noetic -- sudo --login --user ubuntu
+&lt;/code>&lt;/pre>
+&lt;p>We are now inside our container, logged as the non-root user &amp;lsquo;ubuntu&amp;rsquo;.
+Note that if the last command looks a bit unfriendly to you,
+you can make it a &amp;lsquo;lxc&amp;rsquo; alias
+(learn more about it in the
+&lt;a href="https://artivis.github.io/post/2020/lxc#lxc-aliases-to-the-rescue">aforementioned LXD post&lt;/a>).&lt;/p>
+&lt;p>Now that our container is up and running, we shall install Foxy.&lt;/p>
+&lt;h1 id="installing-ros-2-foxy-fitzroy">Installing ROS 2 Foxy Fitzroy&lt;/h1>
+&lt;p>Inside our container, we will first add the ROS packages
+repository to our sources. Starting with the key,&lt;/p>
+&lt;pre>&lt;code class="language-bash">$ sudo apt-key adv --fetch-keys https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc
+&lt;/code>&lt;/pre>
+&lt;p>then the repository,&lt;/p>
+&lt;pre>&lt;code class="language-bash">$ sudo apt-add-repository http://packages.ros.org/ros2/ubuntu
+&lt;/code>&lt;/pre>
+&lt;p>In case of trouble, you can also refer to the
+&lt;a href="https://index.ros.org/doc/ros2/Installation/Foxy/" target="_blank" rel="noopener">official installation guide&lt;/a>.&lt;/p>
+&lt;p>We are all set to install Foxy!&lt;/p>
+&lt;p>For the installation, we can choose either of two options;
+we can choose to install only the base components,
+e.g. the communication libraries, message packages, command line tools, etc&amp;hellip;&lt;/p>
+&lt;pre>&lt;code class="language-bash">$ sudo apt install ros-foxy-ros-base
+&lt;/code>&lt;/pre>
+&lt;p>or we can install the base + RViz, demos and tutorials,&lt;/p>
+&lt;pre>&lt;code class="language-bash">$ sudo apt install ros-foxy-desktop
+&lt;/code>&lt;/pre>
+&lt;p>You can pick any depending on your needs.
+If you are not sure which to pick,
+I would recommend you install the desktop version
+in order to have all the tools you may need already installed.
+However, note that if you intend to use some graphical applications
+in your container, you have to take an extra step and set up some parameters
+for your container.
+All of this is detailed in the
+&lt;a href="https://artivis.github.io/post/2020/lxc#using-graphical-applications">aforementioned LXD post&lt;/a>.&lt;/p>
+&lt;p>Since the container was created especially for Foxy,
+we will automatically source it in our &amp;lsquo;.bashrc&amp;rsquo;,&lt;/p>
+&lt;pre>&lt;code class="language-bash">$ echo &amp;quot;source /opt/ros/foxy/setup.bash&amp;quot; &amp;gt;&amp;gt; ~/.bashrc
+&lt;/code>&lt;/pre>
+&lt;p>Every times we will log into our container,
+ROS 2 Foxy will be sourced and we will be ready to develop!&lt;/p>
+&lt;p>At last, we can install the Python package &amp;lsquo;argcomplete&amp;rsquo; to enable
+autocompletion for the ROS 2 command line tools.
+This is totally optional, but also totally recommended:&lt;/p>
+&lt;pre>&lt;code class="language-bash">sudo apt install python3-argcomplete
+&lt;/code>&lt;/pre>
+&lt;p>With Foxy installed, all there is left to do is to take it for a spin.&lt;/p>
+&lt;h1 id="quick-test">Quick test&lt;/h1>
+&lt;p>We will try the simple talker-listener demo,
+mixing cpp and Python to make sure that
+the installation went fine and that we can start developing right away.
+Note that if you installed the &amp;lsquo;base&amp;rsquo; version in the previous section,
+you will need to install the following packages,&lt;/p>
+&lt;pre>&lt;code class="language-bash">sudo apt install ros-foxy-demo-nodes-cpp ros-foxy-demo-nodes-py
+&lt;/code>&lt;/pre>
+&lt;p>For the test, let us start fresh and close our current shell.
+We will then open 2 new ones, one for the publisher and one for the subscriber.&lt;/p>
+&lt;p>To start the publisher in the first shell enter,&lt;/p>
+&lt;pre>&lt;code class="language-bash">$ ros2 run demo_nodes_cpp talker
+[INFO] [1591461939.792327469] [talker]: Publishing: 'Hello World: 1'
+[INFO] [1591461940.792228229] [talker]: Publishing: 'Hello World: 2'
+[INFO] [1591461941.792184798] [talker]: Publishing: 'Hello World: 3'
+...
+&lt;/code>&lt;/pre>
+&lt;p>and we can see that it starts publishing messages right away.&lt;/p>
+&lt;p>To start the listener in the second shell enter,&lt;/p>
+&lt;pre>&lt;code class="language-bash">$ ros2 run demo_nodes_py listener
+[INFO] [1591461964.793113956] [listener]: I heard: [Hello World: 5]
+[INFO] [1591461965.792782570] [listener]: I heard: [Hello World: 6]
+[INFO] [1591461966.792823099] [listener]: I heard: [Hello World: 7]
+...
+&lt;/code>&lt;/pre>
+&lt;p>and we can see that it receives messages right away as well.&lt;/p>
+&lt;p>We are all set!&lt;/p></description></item><item><title>Managing dotfiles</title><link>https://artivis.github.io/post/2020/dotfiles/</link><pubDate>Mon, 01 Jun 2020 00:00:00 +0000</pubDate><guid>https://artivis.github.io/post/2020/dotfiles/</guid><description>&lt;p>In this post, we will see how we can easily manage our personal
 configuration files - a.k.a. dotfiles.
 Yeah dotfiles, named after there common &lt;code>~/.my_config&lt;/code> form, you know,
 all of those small configuration files lying across our $HOME.&lt;/p>
@@ -14,7 +132,20 @@ And since we spent so much time making a home for ourselves,
 wouldn&amp;rsquo;t it be great if we could quickly set it up again on a different computer?
 Change the house but keep the furniture and decorations?
 This is precisely what we are going to set up here.&lt;/p>
-&lt;h1 id="picking-dotfiles-manager">Picking dotfiles manager&lt;/h1>
+&lt;hr>
+&lt;h1 id="content">Content&lt;/h1>
+&lt;ul>
+&lt;li>
+&lt;a href="#picking-a-dotfiles-manager">Picking a dotfiles manager&lt;/a>&lt;/li>
+&lt;li>
+&lt;a href="#building-our-castle">Building our castle&lt;/a>&lt;/li>
+&lt;li>
+&lt;a href="#quickly-setting-up-a-new-machine">Quickly setting up a new machine&lt;/a>&lt;/li>
+&lt;li>
+&lt;a href="#disposable-tiny-home">Disposable tiny home&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;hr>
+&lt;h1 id="picking-a-dotfiles-manager">Picking a dotfiles manager&lt;/h1>
 &lt;p>Looking on the web for a dotfiles manager, you may find many of them -
 see a whole
 &lt;a href="https://dotfiles.github.io/utilities/" target="_blank" rel="noopener">list of them here&lt;/a>. Most of them work off

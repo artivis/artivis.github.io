@@ -14,7 +14,20 @@ And since we spent so much time making a home for ourselves,
 wouldn&amp;rsquo;t it be great if we could quickly set it up again on a different computer?
 Change the house but keep the furniture and decorations?
 This is precisely what we are going to set up here.&lt;/p>
-&lt;h1 id="picking-dotfiles-manager">Picking dotfiles manager&lt;/h1>
+&lt;hr>
+&lt;h1 id="content">Content&lt;/h1>
+&lt;ul>
+&lt;li>
+&lt;a href="#picking-a-dotfiles-manager">Picking a dotfiles manager&lt;/a>&lt;/li>
+&lt;li>
+&lt;a href="#building-our-castle">Building our castle&lt;/a>&lt;/li>
+&lt;li>
+&lt;a href="#quickly-setting-up-a-new-machine">Quickly setting up a new machine&lt;/a>&lt;/li>
+&lt;li>
+&lt;a href="#disposable-tiny-home">Disposable tiny home&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;hr>
+&lt;h1 id="picking-a-dotfiles-manager">Picking a dotfiles manager&lt;/h1>
 &lt;p>Looking on the web for a dotfiles manager, you may find many of them -
 see a whole
 &lt;a href="https://dotfiles.github.io/utilities/" target="_blank" rel="noopener">list of them here&lt;/a>. Most of them work off
