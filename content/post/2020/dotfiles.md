@@ -28,7 +28,16 @@ wouldn't it be great if we could quickly set it up again on a different computer
 Change the house but keep the furniture and decorations?
 This is precisely what we are going to set up here.
 
-# Picking dotfiles manager
+---
+# Content
+*   [Picking a dotfiles manager](#picking-a-dotfiles-manager)
+*   [Building our castle](#building-our-castle)
+*   [Quickly setting up a new machine](#quickly-setting-up-a-new-machine)
+*   [Disposable tiny home](#disposable-tiny-home)
+---
+
+
+# Picking a dotfiles manager
 
 Looking on the web for a dotfiles manager, you may find many of them -
 see a whole [list of them here][dotfiles-list]. Most of them work off
