@@ -42,7 +42,7 @@ Ubuntu 20.04 image. To do so we issue the following command,&lt;/p>
 &lt;p>It creates and starts a container named &amp;lsquo;ros2-foxy&amp;rsquo; based on an
 Ubuntu 20.04 image. So far so good.&lt;/p>
 &lt;p>Now to start a shell in our fresh container we will type,&lt;/p>
-&lt;pre>&lt;code class="language-bash">lxc exec ros-noetic -- sudo --login --user ubuntu
+&lt;pre>&lt;code class="language-bash">lxc exec ros-foxy -- sudo --login --user ubuntu
 &lt;/code>&lt;/pre>
 &lt;p>We are now inside our container, logged as the non-root user &amp;lsquo;ubuntu&amp;rsquo;.
 Note that if the last command looks a bit unfriendly to you,
