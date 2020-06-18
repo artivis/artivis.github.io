@@ -15,6 +15,9 @@ baseurl = "https://artivis.github.io/"
 # To display a copyright symbol, type `&copy;`.
 copyright = "Jérémie Deray &copy; {year}"
 
+# Enable analytics by entering your Google Analytics tracking ID
+googleAnalytics = "UA-169921319-1"
+
 ############################
 ## Advanced options below ##
 ############################
