@@ -8,4 +8,5 @@ abstract: "Motion planning is one of the main problems studied in the field of r
 featured: false
 publication: "*IEEE Robotics and Automation Letters*"
 doi: "10.1109/LRA.2019.2927956"
+url_pdf: https://upcommons.upc.edu/bitstream/handle/2117/182055/2302-Timed-Elastic-Bands-for-Manipulation-Motion-Planning.pdf
 ---

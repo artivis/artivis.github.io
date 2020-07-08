@@ -8,5 +8,5 @@ abstract: "This paper proposes the use of piecewise C^n smooth curve for mobile-
 featured: false
 publication: "*Proceedings IEEE/RSJ International Conference on Intelligent Robots and Systems*"
 doi: "10.1109/IROS40897.2019.8968240"
-url_pdf: https://www.iri.upc.edu/download/scidoc/2209
+url_pdf: https://upcommons.upc.edu/bitstream/handle/2117/183480/2209-Timed-elastic-smooth-curve-optimization-for-mobile-base-planning.pdf
 ---

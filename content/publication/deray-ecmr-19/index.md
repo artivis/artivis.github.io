@@ -9,5 +9,5 @@ featured: false
 publication: "*Proceedings European Conference on Mobile Robots*"
 tags: ["Calibration;Robot sensing systems;Wheels;Kinematics;Jacobian matrices;Mobile robots"]
 doi: "10.1109/ECMR.2019.8870942"
-url_pdf: https://www.iri.upc.edu/download/scidoc/2210
+url_pdf: https://upcommons.upc.edu/bitstream/handle/2117/180773/2210-Joint-on-manifold-self-calibration-of-odometry-model-and-sensor-extrinsics-using-pre-integration.pdf
 ---
