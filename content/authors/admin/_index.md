@@ -32,15 +32,16 @@ interests:
 
 education:
   courses:
-  - course: Industrial PhD in Mobile-base Navigation
-    institution: Universitat Politècnica de Catalunya (IRI-UPC) - Barcelona, Spain
-    #year: 2020
+  - course: PhD in Control, Robotics and Vision
+    institution: "[Institut de Robòtica i Informàtica Industrial](https://www.iri.upc.edu/), [Universitat Politècnica de Catalunya](https://www.upc.edu/ca) - Barcelona, Spain"
+    title: "[\"Robust Navigation for Industrial Service Robots\"](http://hdl.handle.net/10803/669875)"
+    year: 2020
   - course: Master of Science in Computer Vision and Robotics
-    institution: Université de Bourgogne - Le Creusot, France
+    institution: "[Centre Universitaire Condorcet, Université de Bourgogne](https://www.vibot.org/) - Le Creusot, France"
     year: 2014
   - course: BSc in Artificial Vision for Industrial Quality Control
-    institution: Université de Bourgogne - Le Creusot, France
-    year: 2011
+    institution: "[Institut Universitaire de Technologie, Université de Bourgogne](https://iutlecreusot.u-bourgogne.fr/) - Le Creusot, France"
+    year: 2012
 
 # Social/Academic Networking
 # For available icons, see: https://sourcethemes.com/academic/docs/page-builder/#icons
@@ -88,11 +89,11 @@ Before that he worked five years at
 perception and a little bit of control, this for various robots -
 mobile-base, mobile-manipulator, semi-humanoid.
 
-In parallel, Jérémie has been pursuing a PhD on the theme of
+Jérémie is also a PhD in the field of
 Simultaneous Localization and Mapping (SLAM)
-applied to industrial mobile-bases. The research is taking place in a collaborative framework
+applied to industrial mobile-bases. The research has taken place in a collaborative framework
 between the company [PAL Robotics](https://pal-robotics.com/en/home/) and
 the [Universitat Politècnica De Catalunya (IRI-UPC)](https://www.iri.upc.edu/),
 both in the lovely city of Barcelona, Spain.
-The research work is supervised by [Joan Solà](http://www.joansola.eu/) and
+The research work has been supervised by [Joan Solà](http://www.joansola.eu/) and
 [Juan Andrade Cetto](https://www.iri.upc.edu/staff/cetto).
