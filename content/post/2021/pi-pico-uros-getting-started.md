@@ -132,7 +132,7 @@ and add the following,
 ```json
 {
     "cmake.configureEnvironment": {
-        "PICO_SDK_PATH": "/tmp/pico/src/pico-sdk",
+        "PICO_SDK_PATH": "/home/artivis/micro_ros_ws/src/pico-sdk",
     },
 }
 ```
