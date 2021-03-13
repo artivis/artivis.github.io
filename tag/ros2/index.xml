@@ -127,7 +127,7 @@ touch .vscode/settings.json
 &lt;p>and add the following,&lt;/p>
 &lt;pre>&lt;code class="language-json">{
 &amp;quot;cmake.configureEnvironment&amp;quot;: {
-&amp;quot;PICO_SDK_PATH&amp;quot;: &amp;quot;/tmp/pico/src/pico-sdk&amp;quot;,
+&amp;quot;PICO_SDK_PATH&amp;quot;: &amp;quot;/home/artivis/micro_ros_ws/src/pico-sdk&amp;quot;,
 },
 }
 &lt;/code>&lt;/pre>
