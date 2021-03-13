@@ -323,6 +323,7 @@ What about you? Do you have some cool projects already in mind?
 [VSCode]: https://code.visualstudio.com
 [c++-extension]: https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools
 [cmake-tools]: https://marketplace.visualstudio.com/items?itemName=ms-vscode.cmake-tools
+[cmake-tools-doc]: https://vector-of-bool.github.io/docs/vscode-cmake-tools/settings.html?highlight=configureenvironment
 
 [install-snap]: https://snapcraft.io/docs/installing-snap-on-ubuntu
 
