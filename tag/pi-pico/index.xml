@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Pi Pico | Home to artivis</title><link>https://artivis.github.io/tag/pi-pico/</link><atom:link href="https://artivis.github.io/tag/pi-pico/index.xml" rel="self" type="application/rss+xml"/><description>Pi Pico</description><generator>Source Themes Academic (https://sourcethemes.com/academic/)</generator><language>en-us</language><copyright>Jérémie Deray © 2021</copyright><lastBuildDate>Thu, 11 Mar 2021 00:00:00 +0000</lastBuildDate><image><url>https://artivis.github.io/images/icon_hud2d1771ce140e1d1fd4d0e59d51cebc4_11712_512x512_fill_lanczos_center_2.png</url><title>Pi Pico</title><link>https://artivis.github.io/tag/pi-pico/</link></image><item><title>Getting started with micro-ROS on the Pi Pico</title><link>https://artivis.github.io/post/2021/pi-pico-uros-getting-started/</link><pubDate>Thu, 11 Mar 2021 00:00:00 +0000</pubDate><guid>https://artivis.github.io/post/2021/pi-pico-uros-getting-started/</guid><description>&lt;p>In this post we will see how the Pi Pico can natively speak to a ROS2 graph using micro-ROS.
+We will set up a project in VSCode, compile and upload it to the microcontroller.
+We thus assume that you are somewhat familiar with
+&lt;a href="https://docs.ros.org/en/foxy/index.html" target="_blank" rel="noopener">ROS2 development&lt;/a> and
+&lt;a href="https://code.visualstudio.com" target="_blank" rel="noopener">VSCode&lt;/a>.&lt;/p>
+&lt;hr>
+&lt;h2 id="content">Content&lt;/h2>
+&lt;ul>
+&lt;li>
+&lt;a href="#what-is-this-all-about">What is this all about?&lt;/a>
+&lt;ul>
+&lt;li>
+&lt;a href="#the-raspberry-pi-pico">The Raspberry Pi Pico&lt;/a>&lt;/li>
+&lt;li>
+&lt;a href="#micro-ros">micro-ROS&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;a href="#getting-started">Getting started&lt;/a>
+&lt;ul>
+&lt;li>
+&lt;a href="#installing-dependencies">Installing dependencies&lt;/a>&lt;/li>
+&lt;li>
+&lt;a href="#fetching-the-sources">Fetching the sources&lt;/a>&lt;/li>
+&lt;li>
+&lt;a href="#setting-up-vscode">Setting up VSCode&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;a href="#running-the-example">Running the example&lt;/a>
+&lt;ul>
+&lt;li>
+&lt;a href="#wait-a-minute-what-does-it-do">Wait a minute. What does it do?&lt;/a>&lt;/li>
+&lt;li>
+&lt;a href="#uploading-to-the-pi-pico">Uploading to the Pi Pico&lt;/a>&lt;/li>
+&lt;li>
+&lt;a href="#installing-the-micro-ros-agent">Installing the micro-ros-agent&lt;/a>&lt;/li>
+&lt;li>
+&lt;a href="#actually-running-the-example">Actually running the example&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;a href="#whats-next">What&amp;rsquo;s next?&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;hr>
+&lt;h2 id="what-is-this-all-about">What is this all about?&lt;/h2>
+&lt;h3 id="the-raspberry-pi-pico">The Raspberry Pi Pico&lt;/h3>
+&lt;p>The Raspberry Pi Pico,
+&lt;a href="https://www.raspberrypi.org/blog/raspberry-pi-silicon-pico-now-on-sale/" target="_blank" rel="noopener">announced in late January 2021&lt;/a>,
+is the newest release of the Raspberry Pi Foundation which received a ton of attention (a quick search on Google and/or Youtube will convince you).
+And that&amp;rsquo;s for a good reason.
+Compared to its well known predecessors,
+this new board differs in two major ways:
+it is an &lt;em>in-house&lt;/em> designed open-hardware &lt;em>microcontroller&lt;/em>!
+Yes, the chip itself is designed by the Pi&amp;rsquo;s engineers and it is fully open-hardware.
+And as usually with the Pi foundation,
+it is incredibly affordable at just 4$.&lt;/p>
+&lt;p>The details concerning the board itself,
+the differences between microprocessor and microcontroller,
+the 101 getting started or what can the Pi Pico do;
+all of that is beyond the scope of this post.
+But I strongly encourage you having a look for yourself,
+whether you are familiar with microcontrollers or not.&lt;/p>
+&lt;h3 id="micro-ros">micro-ROS&lt;/h3>
+&lt;p>In the ROS (1) realm, microcontrollers have always been sort of second class citizens.
+They can&amp;rsquo;t interact directly with the ROS graph and developers have to rely on libraries such as
+&lt;a href="http://wiki.ros.org/rosserial" target="_blank" rel="noopener">rosserial&lt;/a>.
+But ROS2 is a whole new world and things are changing.&lt;/p>
+&lt;blockquote>
+&lt;p>micro-ROS puts ROS 2 onto microcontrollers, making them first class participants of the ROS 2 environment.&lt;/p>
+&lt;/blockquote>
+&lt;p>The
+&lt;a href="https://micro-ros.github.io/" target="_blank" rel="noopener">micro-ROS&lt;/a> project is an effort led by
+&lt;a href="https://micro.ros.org/docs/overview/users_and_clients/" target="_blank" rel="noopener">big industrial names&lt;/a> such as Bosch,
+eProsima, Fiware Foundation, notably through the
+&lt;a href="http://www.ofera.eu/" target="_blank" rel="noopener">OFERA&lt;/a> H2020 project,
+and a myriad of partners and collaborators including e.g. Amazon and Canonical.&lt;/p>
+&lt;p>So what is it? It is essentially a thin wrapper (see its
+&lt;a href="https://micro-ros.github.io/docs/concepts/client_library/decision_paper/" target="_blank" rel="noopener">design document&lt;/a>) on top of &amp;lsquo;DDS for eXtremely Resource Constrained Environments&amp;rsquo; (
+&lt;a href="https://www.omg.org/spec/DDS-XRCE/" target="_blank" rel="noopener">DDS-XRCE&lt;/a>),
+running on a real-time OS, allowing microcontrollers to &amp;lsquo;speak&amp;rsquo; to a ROS2 graph (the usual talker/listener) using an optimized subset of the DDS protocol.
+It relies on a &amp;lsquo;bridged&amp;rsquo; communication architecture with a &amp;lsquo;broker&amp;rsquo; named the
+&lt;a href="https://github.com/micro-ROS/micro-ROS-Agent" target="_blank" rel="noopener">&amp;lsquo;micro-ros-agent&amp;rsquo;&lt;/a>.
+The agent is in charge of the interfacing between the ROS2 graph and one or several micro-ROS devices.&lt;/p>
+&lt;p>More details can be found on the
+&lt;a href="https://micro-ros.github.io/" target="_blank" rel="noopener">micro-ROS website&lt;/a> including how it compares/differs from rosserial (see
+&lt;a href="https://micro-ros.github.io/docs/overview/comparison/" target="_blank" rel="noopener">here&lt;/a> and
+&lt;a href="https://micro.ros.org/docs/concepts/middleware/rosserial/" target="_blank" rel="noopener">here&lt;/a>).&lt;/p>
+&lt;h2 id="getting-started">Getting started&lt;/h2>
+&lt;p>Alright, so now that we have clarified a couple terms,
+let us get started, step by step,
+with micro-ROS on Pi Pico with the
+&lt;a href="https://github.com/micro-ROS/micro_ros_raspberrypi_pico_sdk" target="_blank" rel="noopener">official example available on github&lt;/a>.
+Note that for this tutorial I am running Ubuntu 20.04 with the
+&lt;a href="https://snapcraft.io/code" target="_blank" rel="noopener">VSCode snap&lt;/a>.&lt;/p>
+&lt;p>If you are not running Ubuntu 20.04 yet, you could consider using a LXD container.
+You can refer to my previous post
+&lt;a href="https://artivis.github.io/post/2020/lxc/" target="_blank" rel="noopener">&amp;lsquo;ROS Noetic development workflow in LXC&amp;rsquo;&lt;/a> to help you get started setting up the container.&lt;/p>
+&lt;h3 id="installing-dependencies">Installing dependencies&lt;/h3>
+&lt;p>Let&amp;rsquo;s start simple by installing the couple necessary dependencies,&lt;/p>
+&lt;pre>&lt;code class="language-bash">sudo apt install build-essential cmake gcc-arm-none-eabi libnewlib-arm-none-eabi doxygen git python3
+&lt;/code>&lt;/pre>
+&lt;h3 id="fetching-the-sources">Fetching the sources&lt;/h3>
+&lt;p>We will now create a workspace and fetch all the sources,&lt;/p>
+&lt;pre>&lt;code class="language-bash">mkdir -p ~/micro_ros_ws/src
+cd ~/micro_ros_ws/src
+git clone --recurse-submodules https://github.com/raspberrypi/pico-sdk.git
+git clone https://github.com/micro-ROS/micro_ros_raspberrypi_pico_sdk.git
+&lt;/code>&lt;/pre>
+&lt;p>The first repository is the Pi Pico SDK provided by the Pi foundation.
+The second contains a precompiled micro-ROS stack together with a hello-world-like example.&lt;/p>
+&lt;h3 id="setting-up-vscode">Setting up VSCode&lt;/h3>
+&lt;p>Let us now open the example in VSCode and set it up.
+To follow along, you will need two VSCode extensions that are rather common for C++ development.
+These extensions are the
+&lt;a href="https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools" target="_blank" rel="noopener">C++ extension&lt;/a> and
+&lt;a href="https://marketplace.visualstudio.com/items?itemName=ms-vscode.cmake-tools" target="_blank" rel="noopener">CMake tools&lt;/a> for VSCode.
+After installing them, we will create a configuration file for CMake tools and set a variable so that our project knows where to find the Pi Pico SDK.
+To do so, simply type,&lt;/p>
+&lt;pre>&lt;code class="language-bash">cd ~/micro_ros_ws/src/micro_ros_raspberrypi_pico_sdk
+mkdir .vscode
+touch .vscode/settings.json
+&lt;/code>&lt;/pre>
+&lt;p>Open the newly created file with your favorite editor,&lt;/p>
+&lt;pre>&lt;code class="language-bash">vi .vscode/settings.json
+&lt;/code>&lt;/pre>
+&lt;p>and add the following,&lt;/p>
+&lt;pre>&lt;code class="language-json">{
+&amp;quot;cmake.configureEnvironment&amp;quot;: {
+&amp;quot;PICO_SDK_PATH&amp;quot;: &amp;quot;/tmp/pico/src/pico-sdk&amp;quot;,
+},
+}
+&lt;/code>&lt;/pre>
+&lt;p>This variable is an environment variable that is only passed to CMake at configuration time.
+See the [CMake-Tools documentation][cmake-tools-doc] for more info.&lt;/p>
+&lt;p>Let us now open it,&lt;/p>
+&lt;pre>&lt;code class="language-bash">code .
+&lt;/code>&lt;/pre>
+&lt;p>Before running the CMake configuration and build it,
+we must select the appropriate &amp;lsquo;kit&amp;rsquo; (maybe VSCode has already asked you to do so).
+Open the palette (ctrl+shift+p) and search for &lt;code>'CMake: Scan for Kits'&lt;/code> and then &lt;code>'CMake: Select a Kit'&lt;/code> and make sure to select the compiler we&amp;rsquo;ve installed above, that is &lt;code>'GCC for arm-non-eabi'&lt;/code>.&lt;/p>
+&lt;p>We&amp;rsquo;re all set, let us build the example!
+Open the palette again and hit &lt;code>'CMake: Build'&lt;/code>.&lt;/p>
+&lt;h2 id="running-the-example">Running the example&lt;/h2>
+&lt;h3 id="wait-a-minute-what-does-it-do">Wait a minute. What does it do?&lt;/h3>
+&lt;p>Right, let&amp;rsquo;s break down very briefly what the example does.
+It sets up a node called &lt;code>'pico_node'&lt;/code>,
+then a publisher publishing a &lt;code>'std_msgs/msg/int32.h'&lt;/code> message on topic &lt;code>'pico_publisher'&lt;/code>,
+a recurring timer and an executor to orchestrate everything.
+Every 0.1 second, the executor spins.
+But only every second, the timer will have the publisher publish a message and increase the message data by 1.
+Simple. So let&amp;rsquo;s try it out.&lt;/p>
+&lt;h3 id="uploading-to-the-pi-pico">Uploading to the Pi Pico&lt;/h3>
+&lt;p>If everything went fine during compilation,
+you should see a new &lt;code>'build'&lt;/code> folder in your project view.
+In this folder, you will find the file that we should now upload to the Pi Pico,
+it is named here &lt;code>'pico_micro_ros_example.uf2'&lt;/code>.
+To upload it, simply connect the board with a USB cable &lt;strong>while pressing&lt;/strong> the tiny white button labelled &lt;code>'BOOTSEL'&lt;/code>.
+Doing so, the Pi Pico will mount similarly to a flash drive allowing us to very easily copy/paste the &amp;lsquo;&lt;code>.uf2&lt;/code>&amp;rsquo; file.&lt;/p>
+&lt;p>Head to a terminal and type,&lt;/p>
+&lt;pre>&lt;code class="language-bash">cd build
+cp pico_micro_ros_example.uf2 /media/$USER/RPI-RP2
+&lt;/code>&lt;/pre>
+&lt;p>Once the file is copied,
+the board will automatically reboot and start executing the example.&lt;/p>
+&lt;p>Easy-peasy.&lt;/p>
+&lt;h3 id="installing-the-micro-ros-agent">Installing the micro-ros-agent&lt;/h3>
+&lt;p>We have seen in the introduction that micro-ROS has a bridged communication architecture.
+We thus have to build that bridge.
+Well, fortunately the development team has built it already and distributes it both as a
+&lt;a href="https://snapcraft.io/micro-ros-agent" target="_blank" rel="noopener">Snap&lt;/a> or a
+&lt;a href="https://hub.docker.com/r/microros/micro-ros-agent" target="_blank" rel="noopener">Docker image&lt;/a>.
+Here we&amp;rsquo;ll make use of the former.
+If you are using Ubuntu 16.04 or later, snap is already pre-installed and ready to go.
+If you are running another OS, you can either
+&lt;a href="https://snapcraft.io/docs/installing-snap-on-ubuntu" target="_blank" rel="noopener">install snap&lt;/a> or make use of the Docker image.&lt;/p>
+&lt;p>To install the micro-ros-agent snap, type,&lt;/p>
+&lt;pre>&lt;code class="language-bash">sudo snap install micro-ros-agent
+&lt;/code>&lt;/pre>
+&lt;p>After installing it, and because we are using a serial connection,
+we need to configure a couple things.
+First we need to enable the &lt;code>'hotplug'&lt;/code> feature,&lt;/p>
+&lt;pre>&lt;code class="language-bash">sudo snap set core experimental.hotplug=true
+&lt;/code>&lt;/pre>
+&lt;p>and restart the snap demon so that it takes effect,&lt;/p>
+&lt;pre>&lt;code class="language-bash">sudo systemctl restart snapd
+&lt;/code>&lt;/pre>
+&lt;p>After making sure the Pi Pico is plugged, execute,&lt;/p>
+&lt;pre>&lt;code class="language-bash">$ snap interface serial-port
+name: serial-port
+summary: allows accessing a specific serial port
+plugs:
+- micro-ros-agent
+slots:
+- snapd:pico (allows accessing a specific serial port)
+&lt;/code>&lt;/pre>
+&lt;p>What we see here is that the micro-ros-agent snap has a serial &amp;lsquo;&lt;code>plug&lt;/code>&amp;rsquo; while a &amp;lsquo;&lt;code>pico&lt;/code>&amp;rsquo; &lt;code>'slot'&lt;/code> magically appeared.
+As per the semantic, we probably should connect them together. To do so run,&lt;/p>
+&lt;pre>&lt;code class="language-bash">snap connect micro-ros-agent:serial-port snapd:pico
+&lt;/code>&lt;/pre>
+&lt;p>We are now all set to finally run our example.&lt;/p>
+&lt;h3 id="actually-running-the-example">Actually running the example&lt;/h3>
+&lt;p>With the Pi Pico plugged through USB,
+we will start the micro-ros-agent as follows,&lt;/p>
+&lt;pre>&lt;code class="language-bash">micro-ros-agent serial --dev /dev/ttyACM0 baudrate=115200
+&lt;/code>&lt;/pre>
+&lt;p>and wait a couple seconds for the Pi Pico&amp;rsquo;s LED to light up indicating that the main loop is running.
+In case it does not light up after a few long seconds (count up to 10 mississippi),
+you may want to unplug/replug the board in order to reboot it.
+The initialization procedure of the example lacks a few error checking.
+Hey, could fixing that be &lt;strong>your&lt;/strong> first project?&lt;/p>
+&lt;p>So now the LED should shine a bright green.
+That&amp;rsquo;s cool.
+Do you know what&amp;rsquo;s cooler?
+Running on your host machine,&lt;/p>
+&lt;pre>&lt;code class="language-bash">$ source /opt/ros/dashing/setup.bash
+$ ros2 topic echo /pico_publisher
+data: 41
+---
+data: 42
+---
+&lt;/code>&lt;/pre>
+&lt;p>Awesome!&lt;/p>
+&lt;p>And hitting a&lt;/p>
+&lt;pre>&lt;code class="language-bash">$ ros2 node list
+/pico_node
+&lt;/code>&lt;/pre>
+&lt;p>proves that the micro-ROS node running on the Pi Pico is visible to ROS2 on the host machine.&lt;/p>
+&lt;p>Yatta!&lt;/p>
+&lt;h2 id="whats-next">What&amp;rsquo;s next?&lt;/h2>
+&lt;p>For a long time it wasn&amp;rsquo;t convenient to mix microcontrollers and ROS.
+But this is about to seriously change as we&amp;rsquo;ve just seen.
+No doubt that both micro-ROS and the Pi Pico will bolster great robotics applications (and more!).&lt;/p>
+&lt;p>In this tutorial we&amp;rsquo;ve reached a great starting point with a ROS2-based project ready to spin on the suppa-cool suppa-affordable Pi Pico.&lt;/p>
+&lt;p>Of course this wouldn&amp;rsquo;t have been possible without the micro-ROS dev team and Cyberbotics engineer Darko Lukić (
+&lt;a href="https://github.com/lukicdarkoo" target="_blank" rel="noopener">@lukicdarkoo&lt;/a>) who has put together the initial example we&amp;rsquo;ve just used.
+As often, there are super smart people out there making complicated stuff very accessible,
+shout out to them.&lt;/p>
+&lt;p>I&amp;rsquo;m personally going to keep playing with micro-ROS on Pi Pico,
+first because it is fun and second because I have a couple ideas up my sleeves.
+Be sure that if they become reality you&amp;rsquo;ll hear about them on this blog.&lt;/p>
+&lt;p>What about you? Do you have some cool projects already in mind?&lt;/p>
+&lt;!-- uROS main links --></description></item></channel></rss>

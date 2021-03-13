@@ -1,0 +1,156 @@
+<!doctype html><html lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=generator content="Source Themes Academic 4.8.0"><meta name=author content="Jérémie Deray"><meta name=description content="In this post we will see how the Pi Pico can natively speak to a ROS2 graph using micro-ROS. We will set up a project in VSCode, compile and upload it to the microcontroller."><link rel=alternate hreflang=en-us href=https://artivis.github.io/post/2021/pi-pico-uros-getting-started/><meta name=theme-color content="hsl(115, 82%, 48%)"><script src=/js/mathjax-config.js></script><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.6/css/academicons.min.css integrity="sha256-uFVgMKfistnJAfoCUQigIl+JfUaP47GrRKjf6CTPVmw=" crossorigin=anonymous><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-1/css/all.min.css integrity="sha256-4w9DunooKSr3MFXHXWyFER38WmPdm361bQS/2KUWZbU=" crossorigin=anonymous><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin=anonymous><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/github.min.css crossorigin=anonymous title=hl-light disabled><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/dracula.min.css crossorigin=anonymous title=hl-dark><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.css integrity="sha256-SHMGCYmST46SoyGgo4YR/9AlK1vf3ff84Aq9yK4hdqM=" crossorigin=anonymous><script src=https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.1.2/lazysizes.min.js integrity="sha256-Md1qLToewPeKjfAHU1zyPwOutccPAm5tahnaw7Osw0A=" crossorigin=anonymous async></script><script src=https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js integrity crossorigin=anonymous async></script><link rel=stylesheet href="https://fonts.googleapis.com/css?family=Montserrat:400,700%7CRoboto:400,400italic,700%7CRoboto+Mono&display=swap"><link rel=stylesheet href=/css/academic.css><script async src="https://www.googletagmanager.com/gtag/js?id=UA-169921319-1"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+function trackOutboundLink(url,target){gtag('event','click',{'event_category':'outbound','event_label':url,'transport_type':'beacon','event_callback':function(){if(target!=='_blank'){document.location=url;}}});console.debug("Outbound link clicked: "+url);}
+function onClickCallback(event){if((event.target.tagName!=='A')||(event.target.host===window.location.host)){return;}
+trackOutboundLink(event.target,event.target.getAttribute('target'));}
+gtag('js',new Date());gtag('config','UA-169921319-1',{'anonymize_ip':true});document.addEventListener('click',onClickCallback,false);</script><link rel=manifest href=/index.webmanifest><link rel=icon type=image/png href=/images/icon_hud2d1771ce140e1d1fd4d0e59d51cebc4_11712_32x32_fill_lanczos_center_2.png><link rel=apple-touch-icon type=image/png href=/images/icon_hud2d1771ce140e1d1fd4d0e59d51cebc4_11712_192x192_fill_lanczos_center_2.png><link rel=canonical href=https://artivis.github.io/post/2021/pi-pico-uros-getting-started/><meta property="twitter:card" content="summary"><meta property="og:site_name" content="Home to artivis"><meta property="og:url" content="https://artivis.github.io/post/2021/pi-pico-uros-getting-started/"><meta property="og:title" content="Getting started with micro-ROS on the Pi Pico | Home to artivis"><meta property="og:description" content="In this post we will see how the Pi Pico can natively speak to a ROS2 graph using micro-ROS. We will set up a project in VSCode, compile and upload it to the microcontroller."><meta property="og:image" content="https://artivis.github.io/images/icon_hud2d1771ce140e1d1fd4d0e59d51cebc4_11712_512x512_fill_lanczos_center_2.png"><meta property="twitter:image" content="https://artivis.github.io/images/icon_hud2d1771ce140e1d1fd4d0e59d51cebc4_11712_512x512_fill_lanczos_center_2.png"><meta property="og:locale" content="en-us"><meta property="article:published_time" content="2021-03-11T00:00:00+00:00"><meta property="article:modified_time" content="2021-03-12T20:13:48-05:00"><script type=application/ld+json>{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://artivis.github.io/post/2021/pi-pico-uros-getting-started/"},"headline":"Getting started with micro-ROS on the Pi Pico","datePublished":"2021-03-11T00:00:00Z","dateModified":"2021-03-12T20:13:48-05:00","author":{"@type":"Person","name":"Jérémie Deray"},"publisher":{"@type":"Organization","name":"Home to artivis","logo":{"@type":"ImageObject","url":"https://artivis.github.io/images/icon_hud2d1771ce140e1d1fd4d0e59d51cebc4_11712_192x192_fill_lanczos_center_2.png"}},"description":"In this post we will see how the Pi Pico can natively speak to a ROS2 graph using micro-ROS. We will set up a project in VSCode, compile and upload it to the microcontroller."}</script><script src=https://cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.1.1/cookieconsent.min.js integrity="sha256-5VhCqFam2Cn+yjw61zbBNrbHVJ6SRydPeKopYlngbiQ=" crossorigin=anonymous></script><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/cookieconsent2/3.1.1/cookieconsent.min.css integrity="sha256-zQ0LblD/Af8vOppw18+2anxsuaz3pWYyVWi+bTvTH8Q=" crossorigin=anonymous><script>window.addEventListener("load",function(){window.cookieconsent.initialise({"palette":{"popup":{"background":"hsl(115, 82%, 48%)","text":"#292a2d"},"button":{"background":"#292a2d","text":"hsl(115, 82%, 48%)"}},"theme":"classic","content":{"message":"This website uses cookies to ensure you get the best experience on our website.","dismiss":"Got it!","link":"Learn more","href":"https://www.cookiesandyou.com"}})});</script><title>Getting started with micro-ROS on the Pi Pico | Home to artivis</title></head><body id=top data-spy=scroll data-offset=70 data-target=#TableOfContents class=dark><aside class=search-results id=search><div class=container><section class=search-header><div class="row no-gutters justify-content-between mb-3"><div class=col-6><h1>Search</h1></div><div class="col-6 col-search-close"><a class=js-search href=#><i class="fas fa-times-circle text-muted" aria-hidden=true></i></a></div></div><div id=search-box><input name=q id=search-query placeholder=Search... autocapitalize=off autocomplete=off autocorrect=off spellcheck=false type=search></div></section><section class=section-search-results><div id=search-hits></div></section></div></aside><nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id=navbar-main><div class=container><div class="d-none d-lg-inline-flex"><a class=navbar-brand href=/><a href=https://artivis.github.io/ style=text-decoration:none><div class=logo><span class=logo__mark>></span>
+<span class=logo__text>$ cd /home/</span>
+<span class=logo__cursor style=background-color:#27df16;animation-duration:2s></span></div></a></a></div><button type=button class=navbar-toggler data-toggle=collapse data-target=#navbar-content aria-controls=navbar aria-expanded=false aria-label="Toggle navigation">
+<span><i class="fas fa-bars"></i></span></button><div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none"><a class=navbar-brand href=/>Home to artivis</a></div><div class="navbar-collapse main-menu-item collapse justify-content-end" id=navbar-content><ul class="navbar-nav d-md-inline-flex"><li class=nav-item><a class="nav-link active" href=/post><span>Posts</span></a></li><li class=nav-item><a class=nav-link href=/project><span>Projects</span></a></li><li class=nav-item><a class=nav-link href=/publication><span>Publications</span></a></li><li class=nav-item><a class=nav-link href=/about><span>About</span></a></li><li class=nav-item><a class=nav-link href=/contact><span>Contact</span></a></li></ul></div><ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2"><li class=nav-item>|</li><li class=nav-item><a class="nav-link js-search" href=#><i class="fas fa-search" aria-hidden=true></i></a></li></ul></div></nav><article class=article><div class="article-container pt-3"><h1>Getting started with micro-ROS on the Pi Pico</h1><p class=page-subtitle>On running ROS2 on microcontrollers</p><div class=article-metadata><span class=article-date>Last updated on
+Mar 12, 2021</span>
+<span class=middot-divider></span><span class=article-reading-time>8 min read</span></div></div><div class=article-container><div class=article-style><p>In this post we will see how the Pi Pico can natively speak to a ROS2 graph using micro-ROS.
+We will set up a project in VSCode, compile and upload it to the microcontroller.
+We thus assume that you are somewhat familiar with
+<a href=https://docs.ros.org/en/foxy/index.html target=_blank rel=noopener>ROS2 development</a> and
+<a href=https://code.visualstudio.com target=_blank rel=noopener>VSCode</a>.</p><hr><h2 id=content>Content</h2><ul><li><a href=#what-is-this-all-about>What is this all about?</a><ul><li><a href=#the-raspberry-pi-pico>The Raspberry Pi Pico</a></li><li><a href=#micro-ros>micro-ROS</a></li></ul></li><li><a href=#getting-started>Getting started</a><ul><li><a href=#installing-dependencies>Installing dependencies</a></li><li><a href=#fetching-the-sources>Fetching the sources</a></li><li><a href=#setting-up-vscode>Setting up VSCode</a></li></ul></li><li><a href=#running-the-example>Running the example</a><ul><li><a href=#wait-a-minute-what-does-it-do>Wait a minute. What does it do?</a></li><li><a href=#uploading-to-the-pi-pico>Uploading to the Pi Pico</a></li><li><a href=#installing-the-micro-ros-agent>Installing the micro-ros-agent</a></li><li><a href=#actually-running-the-example>Actually running the example</a></li></ul></li><li><a href=#whats-next>What&rsquo;s next?</a></li></ul><hr><h2 id=what-is-this-all-about>What is this all about?</h2><h3 id=the-raspberry-pi-pico>The Raspberry Pi Pico</h3><p>The Raspberry Pi Pico,
+<a href=https://www.raspberrypi.org/blog/raspberry-pi-silicon-pico-now-on-sale/ target=_blank rel=noopener>announced in late January 2021</a>,
+is the newest release of the Raspberry Pi Foundation which received a ton of attention (a quick search on Google and/or Youtube will convince you).
+And that&rsquo;s for a good reason.
+Compared to its well known predecessors,
+this new board differs in two major ways:
+it is an <em>in-house</em> designed open-hardware <em>microcontroller</em>!
+Yes, the chip itself is designed by the Pi&rsquo;s engineers and it is fully open-hardware.
+And as usually with the Pi foundation,
+it is incredibly affordable at just 4$.</p><p>The details concerning the board itself,
+the differences between microprocessor and microcontroller,
+the 101 getting started or what can the Pi Pico do;
+all of that is beyond the scope of this post.
+But I strongly encourage you having a look for yourself,
+whether you are familiar with microcontrollers or not.</p><h3 id=micro-ros>micro-ROS</h3><p>In the ROS (1) realm, microcontrollers have always been sort of second class citizens.
+They can&rsquo;t interact directly with the ROS graph and developers have to rely on libraries such as
+<a href=http://wiki.ros.org/rosserial target=_blank rel=noopener>rosserial</a>.
+But ROS2 is a whole new world and things are changing.</p><blockquote><p>micro-ROS puts ROS 2 onto microcontrollers, making them first class participants of the ROS 2 environment.</p></blockquote><p>The
+<a href=https://micro-ros.github.io/ target=_blank rel=noopener>micro-ROS</a> project is an effort led by
+<a href=https://micro.ros.org/docs/overview/users_and_clients/ target=_blank rel=noopener>big industrial names</a> such as Bosch,
+eProsima, Fiware Foundation, notably through the
+<a href=http://www.ofera.eu/ target=_blank rel=noopener>OFERA</a> H2020 project,
+and a myriad of partners and collaborators including e.g. Amazon and Canonical.</p><p>So what is it? It is essentially a thin wrapper (see its
+<a href=https://micro-ros.github.io/docs/concepts/client_library/decision_paper/ target=_blank rel=noopener>design document</a>) on top of &lsquo;DDS for eXtremely Resource Constrained Environments&rsquo; (
+<a href=https://www.omg.org/spec/DDS-XRCE/ target=_blank rel=noopener>DDS-XRCE</a>),
+running on a real-time OS, allowing microcontrollers to &lsquo;speak&rsquo; to a ROS2 graph (the usual talker/listener) using an optimized subset of the DDS protocol.
+It relies on a &lsquo;bridged&rsquo; communication architecture with a &lsquo;broker&rsquo; named the
+<a href=https://github.com/micro-ROS/micro-ROS-Agent target=_blank rel=noopener>&lsquo;micro-ros-agent&rsquo;</a>.
+The agent is in charge of the interfacing between the ROS2 graph and one or several micro-ROS devices.</p><p>More details can be found on the
+<a href=https://micro-ros.github.io/ target=_blank rel=noopener>micro-ROS website</a> including how it compares/differs from rosserial (see
+<a href=https://micro-ros.github.io/docs/overview/comparison/ target=_blank rel=noopener>here</a> and
+<a href=https://micro.ros.org/docs/concepts/middleware/rosserial/ target=_blank rel=noopener>here</a>).</p><h2 id=getting-started>Getting started</h2><p>Alright, so now that we have clarified a couple terms,
+let us get started, step by step,
+with micro-ROS on Pi Pico with the
+<a href=https://github.com/micro-ROS/micro_ros_raspberrypi_pico_sdk target=_blank rel=noopener>official example available on github</a>.
+Note that for this tutorial I am running Ubuntu 20.04 with the
+<a href=https://snapcraft.io/code target=_blank rel=noopener>VSCode snap</a>.</p><p>If you are not running Ubuntu 20.04 yet, you could consider using a LXD container.
+You can refer to my previous post
+<a href=https://artivis.github.io/post/2020/lxc/ target=_blank rel=noopener>&lsquo;ROS Noetic development workflow in LXC&rsquo;</a> to help you get started setting up the container.</p><h3 id=installing-dependencies>Installing dependencies</h3><p>Let&rsquo;s start simple by installing the couple necessary dependencies,</p><pre><code class=language-bash>sudo apt install build-essential cmake gcc-arm-none-eabi libnewlib-arm-none-eabi doxygen git python3
+</code></pre><h3 id=fetching-the-sources>Fetching the sources</h3><p>We will now create a workspace and fetch all the sources,</p><pre><code class=language-bash>mkdir -p ~/micro_ros_ws/src
+cd ~/micro_ros_ws/src
+git clone --recurse-submodules https://github.com/raspberrypi/pico-sdk.git
+git clone https://github.com/micro-ROS/micro_ros_raspberrypi_pico_sdk.git
+</code></pre><p>The first repository is the Pi Pico SDK provided by the Pi foundation.
+The second contains a precompiled micro-ROS stack together with a hello-world-like example.</p><h3 id=setting-up-vscode>Setting up VSCode</h3><p>Let us now open the example in VSCode and set it up.
+To follow along, you will need two VSCode extensions that are rather common for C++ development.
+These extensions are the
+<a href="https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools" target=_blank rel=noopener>C++ extension</a> and
+<a href="https://marketplace.visualstudio.com/items?itemName=ms-vscode.cmake-tools" target=_blank rel=noopener>CMake tools</a> for VSCode.
+After installing them, we will create a configuration file for CMake tools and set a variable so that our project knows where to find the Pi Pico SDK.
+To do so, simply type,</p><pre><code class=language-bash>cd ~/micro_ros_ws/src/micro_ros_raspberrypi_pico_sdk
+mkdir .vscode
+touch .vscode/settings.json
+</code></pre><p>Open the newly created file with your favorite editor,</p><pre><code class=language-bash>vi .vscode/settings.json
+</code></pre><p>and add the following,</p><pre><code class=language-json>{
+    &quot;cmake.configureEnvironment&quot;: {
+        &quot;PICO_SDK_PATH&quot;: &quot;/tmp/pico/src/pico-sdk&quot;,
+    },
+}
+</code></pre><p>This variable is an environment variable that is only passed to CMake at configuration time.
+See the [CMake-Tools documentation][cmake-tools-doc] for more info.</p><p>Let us now open it,</p><pre><code class=language-bash>code .
+</code></pre><p>Before running the CMake configuration and build it,
+we must select the appropriate &lsquo;kit&rsquo; (maybe VSCode has already asked you to do so).
+Open the palette (ctrl+shift+p) and search for <code>'CMake: Scan for Kits'</code> and then <code>'CMake: Select a Kit'</code> and make sure to select the compiler we&rsquo;ve installed above, that is <code>'GCC for arm-non-eabi'</code>.</p><p>We&rsquo;re all set, let us build the example!
+Open the palette again and hit <code>'CMake: Build'</code>.</p><h2 id=running-the-example>Running the example</h2><h3 id=wait-a-minute-what-does-it-do>Wait a minute. What does it do?</h3><p>Right, let&rsquo;s break down very briefly what the example does.
+It sets up a node called <code>'pico_node'</code>,
+then a publisher publishing a <code>'std_msgs/msg/int32.h'</code> message on topic <code>'pico_publisher'</code>,
+a recurring timer and an executor to orchestrate everything.
+Every 0.1 second, the executor spins.
+But only every second, the timer will have the publisher publish a message and increase the message data by 1.
+Simple. So let&rsquo;s try it out.</p><h3 id=uploading-to-the-pi-pico>Uploading to the Pi Pico</h3><p>If everything went fine during compilation,
+you should see a new <code>'build'</code> folder in your project view.
+In this folder, you will find the file that we should now upload to the Pi Pico,
+it is named here <code>'pico_micro_ros_example.uf2'</code>.
+To upload it, simply connect the board with a USB cable <strong>while pressing</strong> the tiny white button labelled <code>'BOOTSEL'</code>.
+Doing so, the Pi Pico will mount similarly to a flash drive allowing us to very easily copy/paste the &lsquo;<code>.uf2</code>&rsquo; file.</p><p>Head to a terminal and type,</p><pre><code class=language-bash>cd build
+cp pico_micro_ros_example.uf2 /media/$USER/RPI-RP2
+</code></pre><p>Once the file is copied,
+the board will automatically reboot and start executing the example.</p><p>Easy-peasy.</p><h3 id=installing-the-micro-ros-agent>Installing the micro-ros-agent</h3><p>We have seen in the introduction that micro-ROS has a bridged communication architecture.
+We thus have to build that bridge.
+Well, fortunately the development team has built it already and distributes it both as a
+<a href=https://snapcraft.io/micro-ros-agent target=_blank rel=noopener>Snap</a> or a
+<a href=https://hub.docker.com/r/microros/micro-ros-agent target=_blank rel=noopener>Docker image</a>.
+Here we&rsquo;ll make use of the former.
+If you are using Ubuntu 16.04 or later, snap is already pre-installed and ready to go.
+If you are running another OS, you can either
+<a href=https://snapcraft.io/docs/installing-snap-on-ubuntu target=_blank rel=noopener>install snap</a> or make use of the Docker image.</p><p>To install the micro-ros-agent snap, type,</p><pre><code class=language-bash>sudo snap install micro-ros-agent
+</code></pre><p>After installing it, and because we are using a serial connection,
+we need to configure a couple things.
+First we need to enable the <code>'hotplug'</code> feature,</p><pre><code class=language-bash>sudo snap set core experimental.hotplug=true
+</code></pre><p>and restart the snap demon so that it takes effect,</p><pre><code class=language-bash>sudo systemctl restart snapd
+</code></pre><p>After making sure the Pi Pico is plugged, execute,</p><pre><code class=language-bash>$ snap interface serial-port
+name:    serial-port
+summary: allows accessing a specific serial port
+plugs:
+  - micro-ros-agent
+slots:
+  - snapd:pico (allows accessing a specific serial port)
+</code></pre><p>What we see here is that the micro-ros-agent snap has a serial &lsquo;<code>plug</code>&rsquo; while a &lsquo;<code>pico</code>&rsquo; <code>'slot'</code> magically appeared.
+As per the semantic, we probably should connect them together. To do so run,</p><pre><code class=language-bash>snap connect micro-ros-agent:serial-port snapd:pico
+</code></pre><p>We are now all set to finally run our example.</p><h3 id=actually-running-the-example>Actually running the example</h3><p>With the Pi Pico plugged through USB,
+we will start the micro-ros-agent as follows,</p><pre><code class=language-bash>micro-ros-agent serial --dev /dev/ttyACM0 baudrate=115200
+</code></pre><p>and wait a couple seconds for the Pi Pico&rsquo;s LED to light up indicating that the main loop is running.
+In case it does not light up after a few long seconds (count up to 10 mississippi),
+you may want to unplug/replug the board in order to reboot it.
+The initialization procedure of the example lacks a few error checking.
+Hey, could fixing that be <strong>your</strong> first project?</p><p>So now the LED should shine a bright green.
+That&rsquo;s cool.
+Do you know what&rsquo;s cooler?
+Running on your host machine,</p><pre><code class=language-bash>$ source /opt/ros/dashing/setup.bash
+$ ros2 topic echo /pico_publisher
+data: 41
+---
+data: 42
+---
+</code></pre><p>Awesome!</p><p>And hitting a</p><pre><code class=language-bash>$ ros2 node list
+/pico_node
+</code></pre><p>proves that the micro-ROS node running on the Pi Pico is visible to ROS2 on the host machine.</p><p>Yatta!</p><h2 id=whats-next>What&rsquo;s next?</h2><p>For a long time it wasn&rsquo;t convenient to mix microcontrollers and ROS.
+But this is about to seriously change as we&rsquo;ve just seen.
+No doubt that both micro-ROS and the Pi Pico will bolster great robotics applications (and more!).</p><p>In this tutorial we&rsquo;ve reached a great starting point with a ROS2-based project ready to spin on the suppa-cool suppa-affordable Pi Pico.</p><p>Of course this wouldn&rsquo;t have been possible without the micro-ROS dev team and Cyberbotics engineer Darko Lukić (
+<a href=https://github.com/lukicdarkoo target=_blank rel=noopener>@lukicdarkoo</a>) who has put together the initial example we&rsquo;ve just used.
+As often, there are super smart people out there making complicated stuff very accessible,
+shout out to them.</p><p>I&rsquo;m personally going to keep playing with micro-ROS on Pi Pico,
+first because it is fun and second because I have a couple ideas up my sleeves.
+Be sure that if they become reality you&rsquo;ll hear about them on this blog.</p><p>What about you? Do you have some cool projects already in mind?</p></div><div class=article-tags><a class="badge badge-light" href=/tag/micro-ros/>micro-ROS</a>
+<a class="badge badge-light" href=/tag/pi-pico/>Pi Pico</a>
+<a class="badge badge-light" href=/tag/raspberry-pi/>Raspberry Pi</a>
+<a class="badge badge-light" href=/tag/ros2/>ROS2</a>
+<a class="badge badge-light" href=/tag/tutorial/>tutorial</a>
+<a class="badge badge-light" href=/tag/vscode/>VSCode</a></div><div class=share-box aria-hidden=true><ul class=share><li><a href="https://twitter.com/intent/tweet?url=https://artivis.github.io/post/2021/pi-pico-uros-getting-started/&text=Getting%20started%20with%20micro-ROS%20on%20the%20Pi%20Pico" target=_blank rel=noopener class=share-btn-twitter><i class="fab fa-twitter"></i></a></li><li><a href="https://www.facebook.com/sharer.php?u=https://artivis.github.io/post/2021/pi-pico-uros-getting-started/&t=Getting%20started%20with%20micro-ROS%20on%20the%20Pi%20Pico" target=_blank rel=noopener class=share-btn-facebook><i class="fab fa-facebook"></i></a></li><li><a href="mailto:?subject=Getting%20started%20with%20micro-ROS%20on%20the%20Pi%20Pico&body=https://artivis.github.io/post/2021/pi-pico-uros-getting-started/" target=_blank rel=noopener class=share-btn-email><i class="fas fa-envelope"></i></a></li><li><a href="https://www.linkedin.com/shareArticle?url=https://artivis.github.io/post/2021/pi-pico-uros-getting-started/&title=Getting%20started%20with%20micro-ROS%20on%20the%20Pi%20Pico" target=_blank rel=noopener class=share-btn-linkedin><i class="fab fa-linkedin-in"></i></a></li><li><a href="https://web.whatsapp.com/send?text=Getting%20started%20with%20micro-ROS%20on%20the%20Pi%20Pico%20https://artivis.github.io/post/2021/pi-pico-uros-getting-started/" target=_blank rel=noopener class=share-btn-whatsapp><i class="fab fa-whatsapp"></i></a></li><li><a href="https://service.weibo.com/share/share.php?url=https://artivis.github.io/post/2021/pi-pico-uros-getting-started/&title=Getting%20started%20with%20micro-ROS%20on%20the%20Pi%20Pico" target=_blank rel=noopener class=share-btn-weibo><i class="fab fa-weibo"></i></a></li></ul></div><div class="article-widget content-widget-hr"><h3>Related</h3><ul><li><a href=/post/2020/rpipress/>Downloading Raspberry Pi Press issues</a></li><li><a href=/post/2020/pi-zero/>SSH the Raspberry Pi Zero over USB</a></li><li><a href=/post/2020/ros-foxy-install/>Get started with ROS 2 Foxy today with LXD</a></li><li><a href=/post/2020/dotfiles/>Managing dotfiles</a></li><li><a href=/post/2020/my-website/>My website</a></li></ul></div></div></article><script src=https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin=anonymous></script><script src=https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin=anonymous></script><script src=https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin=anonymous></script><script src=https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin=anonymous></script><script src=https://cdnjs.cloudflare.com/ajax/libs/mermaid/8.4.8/mermaid.min.js integrity="sha256-lyWCDMnMeZiXRi7Zl54sZGKYmgQs4izcT7+tKc+KUBk=" crossorigin=anonymous title=mermaid></script><script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js integrity="sha256-eOgo0OtLL4cdq7RdwRUiGKLX9XsIJ7nGhWEKbohmVAQ=" crossorigin=anonymous></script><script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/r.min.js></script><script src=https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.js integrity="sha256-EErZamuLefUnbMBQbsEqu1USa+btR2oIlCpBJbyD4/g=" crossorigin=anonymous></script><script>const code_highlighting=true;</script><script>const isSiteThemeDark=true;</script><script>const search_config={"indexURI":"/index.json","minLength":1,"threshold":0.3};const i18n={"no_results":"No results found","placeholder":"Search...","results":"results found"};const content_type={'post':"Posts",'project':"Projects",'publication':"Publications",'talk':"Talks"};</script><script id=search-hit-fuse-template type=text/x-template>
+      <div class="search-hit" id="summary-{{key}}">
+      <div class="search-hit-content">
+        <div class="search-hit-name">
+          <a href="{{relpermalink}}">{{title}}</a>
+          <div class="article-metadata search-hit-type">{{type}}</div>
+          <p class="search-hit-description">{{snippet}}</p>
+        </div>
+      </div>
+      </div>
+    </script><script src=https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.2.1/fuse.min.js integrity="sha256-VzgmKYmhsGNNN4Ph1kMW+BjoYJM2jV5i4IlFoeZA9XI=" crossorigin=anonymous></script><script src=https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin=anonymous></script><script src=/js/academic.min.37431be2d92d7fb0160054761ab79602.js></script><div class=container><footer class=site-footer><p class=powered-by>Jérémie Deray © 2021
+<span class=float-right aria-hidden=true><a href=# class=back-to-top><span class=button_icon><i class="fas fa-chevron-up fa-2x"></i></span></a></span></p></footer></div><div id=modal class="modal fade" role=dialog><div class=modal-dialog><div class=modal-content><div class=modal-header><h5 class=modal-title>Cite</h5><button type=button class=close data-dismiss=modal aria-label=Close>
+<span aria-hidden=true>&#215;</span></button></div><div class=modal-body><pre><code class="tex hljs"></code></pre></div><div class=modal-footer><a class="btn btn-outline-primary my-1 js-copy-cite" href=# target=_blank><i class="fas fa-copy"></i>Copy</a>
+<a class="btn btn-outline-primary my-1 js-download-cite" href=# target=_blank><i class="fas fa-download"></i>Download</a><div id=modal-error></div></div></div></div></div></body></html>
