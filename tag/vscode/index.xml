@@ -132,7 +132,8 @@ touch .vscode/settings.json
 }
 &lt;/code>&lt;/pre>
 &lt;p>This variable is an environment variable that is only passed to CMake at configuration time.
-See the [CMake-Tools documentation][cmake-tools-doc] for more info.&lt;/p>
+See the
+&lt;a href="https://vector-of-bool.github.io/docs/vscode-cmake-tools/settings.html?highlight=configureenvironment" target="_blank" rel="noopener">CMake-Tools documentation&lt;/a> for more info.&lt;/p>
 &lt;p>Let us now open it,&lt;/p>
 &lt;pre>&lt;code class="language-bash">code .
 &lt;/code>&lt;/pre>
