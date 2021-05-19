@@ -93,7 +93,7 @@ the wiring is straight forward:
 
 This setup is depicted in the figure below.
 
-![Wiring the HC-SR04P to the Pico](../../../static/img/post/2021/uros_pico_sonar.png)
+![Wiring the HC-SR04P to the Pico](/img/post/2021/uros_pico_sonar.png)
 
 As far as the hardware goes, we're done.
 Let us move to the software.
