@@ -241,4 +241,208 @@ shout out to them.&lt;/p>
 first because it is fun and second because I have a couple ideas up my sleeves.
 Be sure that if they become reality you&amp;rsquo;ll hear about them on this blog.&lt;/p>
 &lt;p>What about you? Do you have some cool projects already in mind?&lt;/p>
-&lt;!-- uROS main links --></description></item></channel></rss>
+&lt;!-- uROS main links --></description></item><item><title>Publishing sonar readings with micro-ROS on the Raspberry Pi Pico</title><link>https://artivis.github.io/post/2021/pi-pico-uros-sonar/</link><pubDate>Thu, 11 Mar 2021 00:00:00 +0000</pubDate><guid>https://artivis.github.io/post/2021/pi-pico-uros-sonar/</guid><description>&lt;p>In this post we will see how to wire up an HC-SR04 range sensor to the Raspberry Pi Pico and publish its readings to the ROS 2 graph using micro-ROS.
+This builds upon the previous post
+&lt;a href="pi-pico-uros-getting-started.md">&amp;lsquo;Getting started with micro-ROS on the Pi Pico&amp;rsquo;&lt;/a>,
+as such I&amp;rsquo;d encourage you to read it first if you are not already familiar with the topic.&lt;/p>
+&lt;hr>
+&lt;h2 id="content">Content&lt;/h2>
+&lt;ul>
+&lt;li>
+&lt;a href="#a-sensor-you-said">A sensor you said?&lt;/a>
+&lt;ul>
+&lt;li>
+&lt;a href="#im-batsensor">&amp;ldquo;I&amp;rsquo;m Bat(sensor)&amp;quot;&lt;/a>&lt;/li>
+&lt;li>
+&lt;a href="#which-sonar-model-to-pick">Which sonar model to pick?&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;a href="#wiring-up-the-sonar-to-the-pi-pico">Wiring up the sonar to the Pi Pico&lt;/a>
+&lt;ul>
+&lt;li>
+&lt;a href="#micro-code-for-micro-ros">Micro code for micro-ROS&lt;/a>&lt;/li>
+&lt;li>
+&lt;a href="#bip-bip-bip">Bip bip bip&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;a href="#whats-next">What&amp;rsquo;s next?&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;hr>
+&lt;h2 id="a-sensor-you-said">A sensor you said?&lt;/h2>
+&lt;p>In this tutorial, we will make use of one of the most common sensors in robotics, a sonar.
+These sensors are cheap, fairly simple to use and surprisingly precise under favorable circumstances.
+Sonars are used to measure distances and can therefore be used to detect and locate obstacles so that one can make sure its robot does not run into nearby things.
+It is no mystery why they are so incredibly popular.&lt;/p>
+&lt;p>So, what&amp;rsquo;s a sonar, how does it work, which one should I pick?&lt;/p>
+&lt;h3 id="im-batsensor">&amp;ldquo;I&amp;rsquo;m Bat(sensor)&amp;rdquo;&lt;/h3>
+&lt;p>A sonar is an echolocation sensor which allows for measuring distances.
+To keep things simple to digest,
+sonars work the same way as bats do.
+Nah they don&amp;rsquo;t fly, hunting bugs at dawn;
+nor do they fight crime.
+I obviously meant the same way as bats perceive the world.
+A sonar is composed of an emitter and a receiver.
+The former emits an ultrasound signal,
+which will bounce off of facing obstacles,
+back at the receiver.
+Measuring the time difference between the signal emission and reception,
+one can easily calculate the distance travelled by the sound wave and thus the distance to the obstacle that reverberated the sound.&lt;/p>
+&lt;p>This technology can suffer from all kind of issues if, for example,
+the sound wave is reverberated away from the sensor,
+or if it is reverberated back to the sensor by two obstacles at different distances,
+or if it is absorbed by some sound dampening material.&lt;/p>
+&lt;p>If this is still unclear or you want to know more about it,
+I&amp;rsquo;ll redirect you to your favorite web search engine as it is a little out of the scope of this post.&lt;/p>
+&lt;h3 id="which-sonar-model-to-pick">Which sonar model to pick?&lt;/h3>
+&lt;p>There exists plenty different models of sonars,
+fortunately most of them works the same way.
+Furthermore they can be found for a few bucks per unit on the internet.
+Head on over to your favorite electronics supplier and you&amp;rsquo;re sure to find them for sale.&lt;/p>
+&lt;p>I&amp;rsquo;d recommend you use the &amp;lsquo;HC-SR04P&amp;rsquo; model which is the 3.3V variant of the immensely popular &amp;lsquo;HC-SR04&amp;rsquo; (5V).
+It is this model (the &amp;lsquo;HC-SR04P&amp;rsquo;) I will be using in this post.
+Given its very small power consumption, it can be powered up directly from the Pi Pico and thus the whole setup can simply be powered from the USB cable.
+In case you are using a 5V package, make sure to adapt the wiring described below or else you are risking damages to your Pi Pico!
+For reference, I ordered a lot of 5 units for less than 10$ including shipping.
+Including the Pi Pico price,
+that&amp;rsquo;s a lot of sensing for the price!&lt;/p>
+&lt;h2 id="wiring-up-the-sonar-to-the-pi-pico">Wiring up the sonar to the Pi Pico&lt;/h2>
+&lt;p>The &amp;lsquo;HC-SR04P&amp;rsquo; board comes with four pins labelled
+&amp;lsquo;Vcc&amp;rsquo;, &amp;lsquo;Gnd&amp;rsquo;, &amp;lsquo;Trig&amp;rsquo; and &amp;lsquo;Echo&amp;rsquo;.
+As you&amp;rsquo;ve already guessed, the Vcc and Gnd pins are for the 3.3V line and the ground respectively,
+while &amp;lsquo;Trig&amp;rsquo; is used to trigger the sensor and &amp;lsquo;Echo&amp;rsquo; reports the reception of the echo (the reception of the sound wave that bounced off of an obstacle).&lt;/p>
+&lt;p>From there, and referring to the
+&lt;a href="https://datasheets.raspberrypi.org/pico/Pico-R3-A4-Pinout.pdf" target="_blank" rel="noopener">Pi Pico pinout&lt;/a>,
+the wiring is straight forward:&lt;/p>
+&lt;ul>
+&lt;li>connect Pico&amp;rsquo;s pin 36 (3V3 OUT) to the sonar&amp;rsquo;s &amp;lsquo;Vcc&amp;rsquo;&lt;/li>
+&lt;li>connect Pico&amp;rsquo;s pin 38 (GND) to the sonar&amp;rsquo;s &amp;lsquo;Gnd&amp;rsquo;&lt;/li>
+&lt;li>connect Pico&amp;rsquo;s pin 9 (GPIO 6) to the sonar&amp;rsquo;s &amp;lsquo;Echo&amp;rsquo;&lt;/li>
+&lt;li>connect Pico&amp;rsquo;s pin 10 (GPIO 7) to the sonar&amp;rsquo;s &amp;lsquo;Trig&amp;rsquo;&lt;/li>
+&lt;/ul>
+&lt;p>This setup is depicted in the figure below.&lt;/p>
+&lt;p>&lt;img src="../../../static/img/post/2021/uros_pico_sonar.png" alt="Wiring the HC-SR04P to the Pico">&lt;/p>
+&lt;p>As far as the hardware goes, we&amp;rsquo;re done.
+Let us move to the software.&lt;/p>
+&lt;h3 id="micro-code-for-micro-ros">Micro code for micro-ROS&lt;/h3>
+&lt;p>We&amp;rsquo;ve seen in the
+&lt;a href="pi-pico-uros-getting-started.md">&amp;lsquo;previous post&amp;rsquo;&lt;/a> how to set up VSCode for programming micro-ros, and how to compile and flash a program on the Pi Pico.
+We&amp;rsquo;ll thus refer to the aforementioned post on how to do all that and skip it here.
+Similarly, we&amp;rsquo;ll skip all the boilerplate code and only show the bits specific to our application.
+However, know that this example (and more) is fully available on github at
+&lt;a href="https://github.com/artivis/mico_ros" target="_blank" rel="noopener">artivis/mico_ros&lt;/a>.&lt;/p>
+&lt;p>Alright, let&amp;rsquo;s dive a little.
+Our application is essentially composed of two functions,
+one that triggers and reads the sensor,
+and a second, the timer callback, which calls the first,
+fill up a ROS message and publishes it:&lt;/p>
+&lt;pre>&lt;code class="language-cpp">...
+// The GPIO pins to which the sonar is wired
+#define GPIO_ECHO 6
+#define GPIO_TRIGGER 7
+/**
+* @brief Get the range value in meter.
+*/
+float read_range() {
+// Send an impulse trigger of 10us
+gpio_put(GPIO_TRIGGER, 1);
+sleep_us(10);
+gpio_put(GPIO_TRIGGER, 0);
+// Read how long is the echo
+uint32_t signaloff, signalon;
+do {
+signaloff = time_us_32();
+} while (gpio_get(GPIO_ECHO) == 0);
+do {
+signalon = time_us_32();
+} while (gpio_get(GPIO_ECHO) == 1);
+// Actual echo duration in us
+const float dt = signalon - signaloff;
+// distance in meter:
+// echo duration (us) x speed of sound (m/us) / 2 (round trip)
+return dt * 0.000343 / 2.0;
+}
+...
+/**
+* @brief Read the range from the sensor,
+* fill up the ROS message and publish it.
+*/
+void timer_callback(rcl_timer_t *timer, int64_t /*last_call_time*/) {
+if (timer) {
+range_msg.range = read_range();
+fill_msg_stamp(range_msg.header.stamp);
+rcl_publish(&amp;amp;publisher, &amp;amp;range_msg, NULL);
+} else {
+printf(&amp;quot;Failed to publish range. Continuing.\n&amp;quot;);
+}
+}
+...
+&lt;/code>&lt;/pre>
+&lt;p>That&amp;rsquo;s pretty much it.
+The rest of the code is mostly boilerplate,
+initializing the GPIO,
+setting up the micro-ROS node, publisher, timer and executor,
+and having it all spin.&lt;/p>
+&lt;p>Note that we are using the standard &lt;code>sensor_msgs/msgs/Range&lt;/code> message.
+You can find its definition and a breakdown of its field online in the
+&lt;a href="https://docs.ros2.org/latest/api/sensor_msgs/msg/Range.html" target="_blank" rel="noopener">ROS2 API documentation&lt;/a>.&lt;/p>
+&lt;p>All there is to do now is to compile the code,
+flash the resulting &amp;lsquo;.uf2&amp;rsquo; file and start the micro-ROS agent.&lt;/p>
+&lt;h3 id="bip-bip-bip">Bip bip bip&lt;/h3>
+&lt;p>Assuming compiling and flashing went all fine,
+all we have to do is to plug the board to our computer and launch the micro-ROS agent.
+We do so with the following command:&lt;/p>
+&lt;pre>&lt;code class="language-bash">docker run -it --rm -v /dev:/dev --privileged --net=host microros/micro-ros-agent:foxy serial --dev /dev/ttyACM0 -b 115200
+&lt;/code>&lt;/pre>
+&lt;p>Let&amp;rsquo;s see if we get anything,&lt;/p>
+&lt;pre>&lt;code class="language-bash">$ ros2 topic list
+/parameter_events
+/pico/range
+/rosout
+&lt;/code>&lt;/pre>
+&lt;p>the topic &lt;code>/pico/range&lt;/code> is advertised, that&amp;rsquo;s a good start.
+Let see what it contains,&lt;/p>
+&lt;pre>&lt;code class="language-bash">$ ros2 topic echo /pico/range
+header:
+stamp:
+sec: 145
+nanosec: 837599000
+frame_id: pico_sonar_0_link
+radiation_type: 0
+field_of_view: 30.0
+min_range: 0.019999999552965164
+max_range: 4.0
+range: 12.138598442077637
+---
+header:
+stamp:
+sec: 145
+nanosec: 915356000
+frame_id: pico_sonar_0_link
+radiation_type: 0
+field_of_view: 30.0
+min_range: 0.019999999552965164
+max_range: 4.0
+range: 12.138941764831543
+---
+...
+&lt;/code>&lt;/pre>
+&lt;p>That looks great!&lt;/p>
+&lt;p>You could now play with your new sensor,
+moving an obstacle back and forth in front of it.
+Take a measuring tape and compare the reported distance to the measured one,
+you may be surprised by its accuracy, I know I was.&lt;/p>
+&lt;h2 id="whats-next">What&amp;rsquo;s next?&lt;/h2>
+&lt;p>This is a neat little project to approach micro-ROS and the possibilities it opens.
+Indeed it is really rewarding to see the actual distance between the sensor and an obstacle being readily available on our ROS 2 graph.
+But taking a step back we can start seeing an slightly larger picture;
+a picture in which one will be able to easily, effortlessly,
+add plug&amp;rsquo;n&amp;rsquo;play ROS2-ready hardware modules to existing robots.
+Plug a camera and its feed magically appears on the graph,
+an IMU module could provide a reliable odometry source,
+a motor ready to spin in a snap (pun intended).&lt;/p>
+&lt;p>We&amp;rsquo;re not there yet, but I&amp;rsquo;m definitely going to follow this line of thought for my own Turtlebot 3.
+Can you believe that it doesn&amp;rsquo;t have any sonar?!&lt;/p>
+&lt;p>Fortunately now I can easily add a pair of them and have my robot stop bumping into my lazy cat lying down on the floor,
+unwitting ninja, invisible to the laser scanner 😅.&lt;/p></description></item></channel></rss>
