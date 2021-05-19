@@ -79,7 +79,7 @@ the wiring is straight forward:&lt;/p>
 &lt;li>connect Pico&amp;rsquo;s pin 10 (GPIO 7) to the sonar&amp;rsquo;s &amp;lsquo;Trig&amp;rsquo;&lt;/li>
 &lt;/ul>
 &lt;p>This setup is depicted in the figure below.&lt;/p>
-&lt;p>&lt;img src="../../../static/img/post/2021/uros_pico_sonar.png" alt="Wiring the HC-SR04P to the Pico">&lt;/p>
+&lt;p>&lt;img src="https://artivis.github.io/img/post/2021/uros_pico_sonar.png" alt="Wiring the HC-SR04P to the Pico">&lt;/p>
 &lt;p>As far as the hardware goes, we&amp;rsquo;re done.
 Let us move to the software.&lt;/p>
 &lt;h3 id="micro-code-for-micro-ros">Micro code for micro-ROS&lt;/h3>
