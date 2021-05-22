@@ -27,7 +27,7 @@ and that LXD is already installed on your machine.
 If you are new to LXD or looking to improve your ROS development with it,
 have a look to this post
 <a href=/post/2020/lxc>&lsquo;ROS Noetic development workflow in LXC&rsquo;</a>.</p><p>Alright let us get started.</p><hr><h1 id=content>Content</h1><ul><li><a href=#spawning-an-ubuntu-2004-lxd-container>Spawning an Ubuntu 20.04 LXD container</a></li><li><a href=#installing-ros-2-foxy-fitzroy>Installing ROS 2 Foxy Fitzroy</a></li><li><a href=#quick-test>Quick test</a></li></ul><hr><h1 id=spawning-an-ubuntu-2004-lxd-container>Spawning an Ubuntu 20.04 LXD container</h1><p>So the first thing we have to do is to create a LXD container based on an
-Ubuntu 20.04 image. To do so we issue the following command,</p><pre><code class=language-bash>lxc launch ubuntu:20.04 ros2-foxy
+Ubuntu 20.04 image. To do so we issue the following command,</p><pre><code class=language-bash>lxc launch ubuntu:20.04 ros-foxy
 </code></pre><p>It creates and starts a container named &lsquo;ros2-foxy&rsquo; based on an
 Ubuntu 20.04 image. So far so good.</p><p>Now to start a shell in our fresh container we will type,</p><pre><code class=language-bash>lxc exec ros-foxy -- sudo --login --user ubuntu
 </code></pre><p>We are now inside our container, logged as the non-root user &lsquo;ubuntu&rsquo;.
