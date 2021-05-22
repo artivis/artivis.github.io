@@ -56,7 +56,7 @@ Ubuntu 20.04 image. So far so good.
 
 Now to start a shell in our fresh container we will type,
 ```bash
-lxc exec ros-foxy -- sudo --login --user ubuntu
+lxc exec ros2-foxy -- sudo --login --user ubuntu
 ```
 We are now inside our container, logged as the non-root user 'ubuntu'.
 Note that if the last command looks a bit unfriendly to you,
