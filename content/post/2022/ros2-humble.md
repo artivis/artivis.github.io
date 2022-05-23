@@ -114,16 +114,16 @@ lxc profile create ros2-humble
 We will then edit it to add the bits we need.
 But rather than editing the profile itself,
 we will work on a good-old yaml file, located on our machine.
-The reason is that it is more comfortable and most importantly,
+The reason is that it is more convenient and most importantly,
 we will be able to carry that yaml file and re-use it on other machines.
-Let's create that file,
+Let's create that profile,
 
 ```bash
 mkdir -p ~/lxc_dotfiles/profile/
 touch ~/lxc_dotfiles/profile/ros2-humble.yml
 ```
 
-Let us then populate it as follows,
+which we populate as follows,
 
 ```yaml
 config:
@@ -133,7 +133,7 @@ config:
     apt:
       sources:
         ros2:
-          source: "deb [arch=amd64] http://repo.ros2.org/ubuntu/testing jammy main"
+          source: "deb [arch=amd64] http://repo.ros2.org/ubuntu/main jammy main"
           keyid: C1CF 6E31 E6BA DE88 68B1 72B4 F42E D6FB AB17 C654
     package_upgrade: true
     packages:
@@ -193,8 +193,8 @@ used_by: []
 ```
 
 We will not go into the details of this profile,
-note simply that it takes advantage of [LXD support of cloud-init][lxd-cloud-init] to set up the ppa, install packages, fetch ROS 2 Humble source code.
-Alright, let us carry on and launch our container.
+note simply that it takes advantage of [LXD support of cloud-init][lxd-cloud-init] to set up the ppa, install packages and fetch the ROS 2 Humble source code.
+Alright, let us carry on and launch our Humble container.
 But let's not forget to edit our LXD profile from the yaml file we have just created,
 
 ```bash
@@ -274,7 +274,7 @@ use e.g.,
 lxc wait-for another-ros2-humble
 ```
 
-And one for open a shell as the ubuntu user,
+And one to open a shell as the ubuntu user,
 
 ```bash
 lxc alias add ubuntu 'exec @ARGS@ --mode interactive -- /bin/sh -xac $@ubuntu - exec /bin/login -p -f'
@@ -336,7 +336,7 @@ PS- you'll excuse me for abusing a little the one-liner claim :D
 ## Develop like a pro
 
 That was a nice ride and all but now what?
-Well first we could enable an easy SSH access to our container.
+Well, we could enable an easy SSH access to our container.
 To do so we will push our SSH key to the container,
 
 ```bash
@@ -350,7 +350,7 @@ and we can then access our container through SSH,
 ssh ubuntu@<container-ip>
 ```
 
-We should really add this step to our profile really.
+We should really add this step to our profile instead.
 And to do so we will simply add the following lines,
 
 ```yaml
@@ -369,8 +369,9 @@ config:
 which will fetch our SSH public key from our GitHub user and set them up for the default user in the container.
 If you prefer to retrieve the key from Launchpad instead,
 replace `- gh:myuser` with `- lp:myuser`.
+Also, make sure to replace `myuser` with your actual user; just saying :D.
 
-Let's make sure we update our profile,
+Let's make sure we update our profile again,
 
 ```bash
 lxc profile edit ros2-humble < ~/lxc_dotfiles/profile/ros2-humble.yml
