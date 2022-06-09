@@ -1,0 +1,1760 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Home to artivis</title><link>https://artivis.github.io/</link><atom:link href="https://artivis.github.io/index.xml" rel="self" type="application/rss+xml"/><description>Home to artivis</description><generator>Wowchemy (https://wowchemy.com)</generator><language>en-us</language><lastBuildDate>Mon, 23 May 2022 00:00:00 +0000</lastBuildDate><image><url>https://artivis.github.io/media/icon_hud2d1771ce140e1d1fd4d0e59d51cebc4_11712_512x512_fill_lanczos_center_3.png</url><title>Home to artivis</title><link>https://artivis.github.io/</link></image><item><title>Setting up ROS 2 Humble with LXD</title><link>https://artivis.github.io/post/2022/ros2-humble/</link><pubDate>Mon, 23 May 2022 00:00:00 +0000</pubDate><guid>https://artivis.github.io/post/2022/ros2-humble/</guid><description>&lt;p>&lt;a href="https://discourse.ros.org/t/ros-2-humble-hawksbill-released" target="_blank" rel="noopener">ROS 2 Humble Hawksbill is out!&lt;/a>&lt;/p>
+&lt;p>
+&lt;figure >
+&lt;div class="d-flex justify-content-center">
+&lt;div class="w-100" >&lt;img src="https://aws1.discourse-cdn.com/business7/uploads/ros/original/2X/e/e2b80a2e45b12a397dbfebddb3abe92a1b4ce921.png" alt="ROS 2 Humble Hawksbill logo" loading="lazy" data-zoomable />&lt;/div>
+&lt;/div>&lt;/figure>
+&lt;/p>
+&lt;p>Congratulations to &lt;a href="https://www.openrobotics.org/" target="_blank" rel="noopener">Open Robotics&lt;/a> and through them to the entire ROS 2 community.
+This is really quite an event as it marks an important milestone: it is the first 5 year LTS release for ROS 2.
+The release of maturity as people say.&lt;/p>
+&lt;p>ROS 2 Humble officially supports Ubuntu 22.04, but chance is,
+you haven&amp;rsquo;t made that jump yet.
+So in this post we will see how to set it up in an &lt;a href="https://linuxcontainers.org/lxd/introduction/" target="_blank" rel="noopener">LXD&lt;/a> container so that we can start &lt;del>playing&lt;/del> working on our good old machine.&lt;/p>
+&lt;p>We&amp;rsquo;ve covered how to get started with LXD in numerous previous posts;
+so here we will only go over the commands to get started as quickly and conveniently as possible.&lt;/p>
+&lt;hr>
+&lt;h2 id="content">Content&lt;/h2>
+&lt;ul>
+&lt;li>&lt;a href="#content">Content&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#setting-up-lxd">Setting up LXD&lt;/a>
+&lt;ul>
+&lt;li>&lt;a href="#launching-a-first-container">Launching a first container&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;a href="#an-humble-profile">An Humble profile&lt;/a>
+&lt;ul>
+&lt;li>&lt;a href="#launching-a-ros-2-humble-container">Launching a ROS 2 Humble container&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#one-liniiiiing">One-liniiiiing&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;a href="#develop-like-a-pro">Develop like a pro&lt;/a>
+&lt;ul>
+&lt;li>&lt;a href="#using-vs-code-with-lxd">Using VS Code with LXD&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;a href="#conclusion">Conclusion&lt;/a>
+&lt;ul>
+&lt;li>&lt;a href="#bonus">Bonus&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;hr>
+&lt;h2 id="setting-up-lxd">Setting up LXD&lt;/h2>
+&lt;p>&lt;a href="https://linuxcontainers.org/lxd/introduction/" target="_blank" rel="noopener">LXD&lt;/a> is a manager for &lt;a href="https://linuxcontainers.org/lxc/introduction/" target="_blank" rel="noopener">LXC&lt;/a>.&lt;/p>
+&lt;p>With this out of the way,
+the simplest way to install it is to use the snap package:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">sudo snap install lxd --channel&lt;span class="o">=&lt;/span>5.0/stable
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Note that we are specifying the use of the recently released 5.0 LTS version.&lt;/p>
+&lt;p>Let us now configure LXD,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">sudo lxd init --minimal
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>The minimal setup will configure LXD with default options.
+You may find more information about this in the &lt;a href="https://linuxcontainers.org/lxd/getting-started-cli/#initial-configuration" target="_blank" rel="noopener">online documentation&lt;/a>.&lt;/p>
+&lt;h3 id="launching-a-first-container">Launching a first container&lt;/h3>
+&lt;p>To make sure that everything works fine,
+let us try to launch a first container rocking Ubuntu 22.04,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">lxc launch ubuntu:22.04 first-container
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Is it running?&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ lxc list
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">+---------------------+---------+----------------------+-----------------------------------------------+-----------+-----------+
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">|&lt;/span> NAME &lt;span class="p">|&lt;/span> STATE &lt;span class="p">|&lt;/span> IPV4 &lt;span class="p">|&lt;/span> IPV6 &lt;span class="p">|&lt;/span> TYPE &lt;span class="p">|&lt;/span> SNAPSHOTS &lt;span class="p">|&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">+---------------------+---------+----------------------+-----------------------------------------------+-----------+-----------+
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">|&lt;/span> first-container &lt;span class="p">|&lt;/span> RUNNING &lt;span class="p">|&lt;/span> 10.190.86.230 &lt;span class="o">(&lt;/span>eth0&lt;span class="o">)&lt;/span> &lt;span class="p">|&lt;/span> fd42:1726:4b4d:8cd3:216:3eff:fed8:7a69 &lt;span class="o">(&lt;/span>eth0&lt;span class="o">)&lt;/span> &lt;span class="p">|&lt;/span> CONTAINER &lt;span class="p">|&lt;/span> &lt;span class="m">0&lt;/span> &lt;span class="p">|&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">+---------------------+---------+----------------------+-----------------------------------------------+-----------+-----------+
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>It seems so; then let&amp;rsquo;s try to get a shell inside the container,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ lxc shell first-container
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">root@ros2-humble:~ lsb_release -a
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">No LSB modules are available.
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Distributor ID: Ubuntu
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Description: Ubuntu 22.04 LTS
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Release: 22.04
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Codename: jammy
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>We&amp;rsquo;re in, running 22.04.
+Everything looks good!&lt;/p>
+&lt;p>From there we could simply follow the &lt;a href="https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debians.html" target="_blank" rel="noopener">installation instructions from the ROS 2 Humble documentation&lt;/a>.
+But where is the fun in that?
+Instead we will create a &lt;a href="https://linuxcontainers.org/lxd/docs/master/profiles/" target="_blank" rel="noopener">LXD profile&lt;/a> that will do all the lifting for us every time we will create a new container.&lt;/p>
+&lt;h2 id="an-humble-profile">An Humble profile&lt;/h2>
+&lt;p>First we need to create a profile,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">lxc profile create ros2-humble
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>We will then edit it to add the bits we need.
+But rather than editing the profile itself,
+we will work on a good-old yaml file, located on our machine.
+The reason is that it is more convenient and most importantly,
+we will be able to carry that yaml file and re-use it on other machines.
+Let&amp;rsquo;s create that profile,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">mkdir -p ~/lxc_dotfiles/profile/
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">touch ~/lxc_dotfiles/profile/ros2-humble.yml
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>which we populate as follows,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-yaml" data-lang="yaml">&lt;span class="line">&lt;span class="cl">&lt;span class="nt">config&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">user.user-data&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">|&lt;/span>&lt;span class="sd">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> #cloud-config
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> # Add the ROS 2 sources
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> apt:
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> sources:
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> ros2:
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> source: &amp;#34;deb [arch=amd64] http://repo.ros2.org/ubuntu/main jammy main&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> keyid: C1CF 6E31 E6BA DE88 68B1 72B4 F42E D6FB AB17 C654
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> package_upgrade: true
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> packages:
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> # dev
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - vim
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - silversearcher-ag
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> # ROS 2 dev
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - locales
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - curl
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - gnupg
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - lsb-release
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - build-essential
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - cmake
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - git
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - python3-argcomplete
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - python3-colcon-common-extensions
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - python3-flake8
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - python3-flake8-blind-except
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - python3-flake8-builtins
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - python3-flake8-class-newline
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - python3-flake8-comprehensions
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - python3-flake8-deprecated
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - python3-flake8-docstrings
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - python3-flake8-import-order
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - python3-flake8-quotes
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - python3-pip
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - python3-pytest
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - python3-pytest-cov
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - python3-pytest-repeat
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - python3-pytest-rerunfailures
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - python3-rosdep
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - python3-setuptools
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - python3-vcstool
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - wget
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> # ROS 2 packages
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - ros-humble-ros-core
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> runcmd:
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> # System setup
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - &amp;#34;locale-gen en_US en_US.UTF-8&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - &amp;#34;update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - &amp;#34;export LANG=en_US.UTF-8&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> #
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> # Fetch ROS 2 sources
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - [su, ubuntu, -c, &amp;#34;mkdir -p /home/ubuntu/ros2_ws/src&amp;#34;]
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - [su, ubuntu, -c, &amp;#34;wget https://raw.githubusercontent.com/ros2/ros2/master/ros2.repos -O /home/ubuntu/ros2_ws/ros2.repos&amp;#34;]
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - [su, ubuntu, -c, &amp;#34;vcs import /home/ubuntu/ros2_ws/src &amp;lt; /home/ubuntu/ros2_ws/ros2.repos&amp;#34;]
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> #
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> # Install deps
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - [su, ubuntu, -c, &amp;#34;sudo rosdep init&amp;#34;]
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - [su, ubuntu, -c, &amp;#34;rosdep update&amp;#34;]
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - [su, ubuntu, -c, &amp;#34;rosdep install --from-paths /home/ubuntu/ros2_ws/src --ignore-src -y --skip-keys &amp;#39;fastcdr rti-connext-dds-6.0.1 urdfdom_headers gazebo_ros_pkgs&amp;#39; --rosdistro humble&amp;#34;]
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> final_message: &amp;#34;ROS 2 Humble Hawksbill dev container ready!&amp;#34;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">description&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s2">&amp;#34;A profile to automatically a ROS 2 Humble dev container.&amp;#34;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">devices&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>{}&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">name&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">ros2-humble&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">used_by&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">[]&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>We will not go into the details of this profile,
+note simply that it takes advantage of &lt;a href="https://linuxcontainers.org/lxd/docs/master/cloud-init/" target="_blank" rel="noopener">LXD support of cloud-init&lt;/a> to set up the ppa, install packages and fetch the ROS 2 Humble source code.
+Alright, let us carry on and launch our Humble container.
+But let&amp;rsquo;s not forget to edit our LXD profile from the yaml file we have just created,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">lxc profile edit ros2-humble &amp;lt; ~/lxc_dotfiles/profile/ros2-humble.yml
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="launching-a-ros-2-humble-container">Launching a ROS 2 Humble container&lt;/h3>
+&lt;p>With our profile ready,
+all we have to do is to launch a new container with that profile,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ lxc launch ubuntu:22.04 -p default -p ros2-humble ros2-humble
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Creating ros2-humble
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Starting ros2-humble
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Note that we are also adding the &lt;code>default&lt;/code> profile which sets up the root filesystem and the network of our container.&lt;/p>
+&lt;p>At this point the container is up and running.
+However it isn&amp;rsquo;t quite ready yet.
+Indeed, it is crunching the specified commands to get our ROS 2 environment ready.&lt;/p>
+&lt;p>To monitor this process (the cloud-init initialization),
+we can issue the following command,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ lxc &lt;span class="nb">exec&lt;/span> ros2-humble -- cloud-init status --wait
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">...............................................................................
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">status: &lt;span class="k">done&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>which will print dots on the terminal as the initialization goes on,
+and will do so until it is done.
+When the command returns, the container is fully ready.&lt;/p>
+&lt;p>We can now open a shell into the container as the default &lt;code>ubuntu&lt;/code> user,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ lxc &lt;span class="nb">exec&lt;/span> ros2-humble -- sudo --login --user ubuntu
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">ubuntu@ros2-humble:~$ ls
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">ros2_ws
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">ubuntu@ros2-humble:~$ ls /opt/ros/humble
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">bin cmake include lib &lt;span class="nb">local&lt;/span> local_setup.bash local_setup.sh _local_setup_util.py local_setup.zsh setup.bash setup.sh setup.zsh share src tools
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>The source workspace is there and the packages are installed.
+Looks like we are ready to develop.&lt;/p>
+&lt;h3 id="one-liniiiiing">One-liniiiiing&lt;/h3>
+&lt;p>Phew; that was quite a few commands.
+Some we will definitely not remember.
+Let&amp;rsquo;s make our life easier and create some &lt;a href="https://linuxcontainers.org/lxd/advanced-guide/#command-aliases" target="_blank" rel="noopener">LXD aliases&lt;/a>.&lt;/p>
+&lt;p>First, an alias to create a new ROS 2 Humble container given a name,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">lxc &lt;span class="nb">alias&lt;/span> add launch-ros2-humble &lt;span class="s1">&amp;#39;launch ubuntu:22.04 -p default -p ros2-humble @ARGS@&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>use e.g.,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">lxc launch-ros2-humble another-ros2-humble
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Then an alias to wait for a container to be ready,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">lxc &lt;span class="nb">alias&lt;/span> add wait-for &lt;span class="s1">&amp;#39;exec @ARGS@ -- cloud-init status --wait&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>use e.g.,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">lxc wait-for another-ros2-humble
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>And one to open a shell as the ubuntu user,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">lxc &lt;span class="nb">alias&lt;/span> add ubuntu &lt;span class="s1">&amp;#39;exec @ARGS@ --mode interactive -- /bin/sh -xac $@ubuntu - exec /bin/login -p -f&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>use e.g.,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">lxc ubuntu another-ros2-humble
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Alright, we can now launch a branch new container,
+wait for it to be ready and open a shell,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ lxc launch-ros2-humble ros2-humble &lt;span class="o">&amp;amp;&amp;amp;&lt;/span> lxc wait-for ros2-humble &lt;span class="o">&amp;amp;&amp;amp;&lt;/span> lxc ubuntu ros2-humble
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Creating ros2-humble
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Starting ros2-humble
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">..................................................................................................................................................................................................................................................................................
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">status: &lt;span class="k">done&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">+ &lt;span class="nb">exec&lt;/span> /bin/login -p -f ubuntu
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Welcome to Ubuntu 22.04 LTS &lt;span class="o">(&lt;/span>GNU/Linux 5.4.0-110-generic x86_64&lt;span class="o">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> * Documentation: https://help.ubuntu.com
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> * Management: https://landscape.canonical.com
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> * Support: https://ubuntu.com/advantage
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> System information as of Sun May &lt;span class="m">22&lt;/span> 10:06:39 PM UTC &lt;span class="m">2022&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> System load: 1.06347656253
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> Usage of /home: unknown
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> Memory usage: 45%
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> Swap usage: 68%
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> Temperature: 59.0 C
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> Processes: &lt;span class="m">30&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> Users logged in: &lt;span class="m">0&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> IPv4 address &lt;span class="k">for&lt;/span> eth0: 10.190.86.215
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> IPv6 address &lt;span class="k">for&lt;/span> eth0: fd42:1726:4b4d:8cd3:216:3eff:fefb:fc68
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="m">0&lt;/span> updates can be applied immediately.
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">The programs included with the Ubuntu system are free software&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">the exact distribution terms &lt;span class="k">for&lt;/span> each program are described in the
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">individual files in /usr/share/doc/*/copyright.
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Ubuntu comes with ABSOLUTELY NO WARRANTY, to the extent permitted by
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">applicable law.
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">ubuntu@ros2-humble:~$
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>That was easy&amp;hellip;&lt;/p>
+&lt;p>PS- you&amp;rsquo;ll excuse me for abusing a little the one-liner claim :D
+(altho we could hide that in a bash alias&amp;hellip;).&lt;/p>
+&lt;h2 id="develop-like-a-pro">Develop like a pro&lt;/h2>
+&lt;p>That was a nice ride and all but now what?
+Well, we could enable an easy SSH access to our container.
+To do so we will push our SSH key to the container,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">cp ~/.ssh/id_rsa.pub /tmp/authorized_keys
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">lxc file push /tmp/authorized_keys ros2-humble/home/ubuntu/.ssh/authorized_keys -p
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>and we can then access our container through SSH,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">ssh ubuntu@&amp;lt;container-ip&amp;gt;
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>We should really add this step to our profile instead.
+And to do so we will simply add the following lines,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-yaml" data-lang="yaml">&lt;span class="line">&lt;span class="cl">&lt;span class="nt">config&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">user.user-data&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">|&lt;/span>&lt;span class="sd">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> #cloud-config
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> # Retrieve SSH key to give the default user SSH access to the container
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> # The key here is retrieved from GitHub user &amp;#39;myuser&amp;#39;
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> ssh_import_id:
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - gh:myuser
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> # Add the ROS 2 sources
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> apt:
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> ...&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>which will fetch our SSH public key from our GitHub user and set them up for the default user in the container.
+If you prefer to retrieve the key from Launchpad instead,
+replace &lt;code>- gh:myuser&lt;/code> with &lt;code>- lp:myuser&lt;/code>.
+Also, make sure to replace &lt;code>myuser&lt;/code> with your actual user; just saying :D.&lt;/p>
+&lt;p>Let&amp;rsquo;s make sure we update our profile again,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">lxc profile edit ros2-humble &amp;lt; ~/lxc_dotfiles/profile/ros2-humble.yml
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Note that because cloud-init only runs during the first boot,
+we would need to recreate our container for this to take effect,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">lxc stop ros2-humble &lt;span class="o">&amp;amp;&amp;amp;&lt;/span> lxc delete ros2-humble
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">lxc launch-ros2-humble ros2-humble &lt;span class="o">&amp;amp;&amp;amp;&lt;/span> lxc wait-for ros2-humble
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Again, once ready, we can SSH into our container,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">ssh ubuntu@&amp;lt;container-ip&amp;gt;
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="using-vs-code-with-lxd">Using VS Code with LXD&lt;/h3>
+&lt;p>Since we can SSH,
+we can also make use of the &lt;a href="https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-ssh" target="_blank" rel="noopener">VS Code Remote - SSH extension&lt;/a>.
+This neat little feature allows us to open any file or folder in a container,
+a VM, or a remote machine.&lt;/p>
+&lt;p>To install the extension,
+head to Code and search for &amp;ldquo;remote ssh&amp;rdquo; in the Extensions panel or type in your terminal,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">code --install-extension ms-vscode-remote.remote-ssh
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Then, open Code&amp;rsquo;s Command Palette (&lt;code>Ctrl+Shift+P&lt;/code>),
+search for &lt;code>Remote-SSH: Connect to Host... &lt;/code> and enter your SSH connection details:
+&lt;code>ubuntu@&amp;lt;container_ip&amp;gt;&lt;/code>.
+From there you are able to browse and work on your fresh ROS 2 Humble workspace
+using &lt;strong>File &amp;gt; Open&amp;hellip;&lt;/strong> or &lt;strong>File &amp;gt; Open Workspace&amp;hellip;&lt;/strong> just as you would locally!&lt;/p>
+&lt;h2 id="conclusion">Conclusion&lt;/h2>
+&lt;p>ROS 2 Humble Hawksbill is an exciting new release and I can&amp;rsquo;t wait to get started with it.
+Fortunately, as we&amp;rsquo;ve seen in this post,
+we don&amp;rsquo;t have to wait to upgrade our machine to Ubuntu 22.04 to do so.&lt;/p>
+&lt;p>If you want to know more about all the new shiny thingies that Humble brings,
+have a look at this &lt;a href="https://docs.ros.org/en/foxy/Releases/Release-Humble-Hawksbill.html" target="_blank" rel="noopener">release page&lt;/a> and/or jump directly into the &lt;a href="https://docs.ros.org/en/humble/" target="_blank" rel="noopener">documentation&lt;/a>.&lt;/p>
+&lt;p>Let us have fun!&lt;/p>
+&lt;h3 id="bonus">Bonus&lt;/h3>
+&lt;p>I&amp;rsquo;d strongly encourage you to revisit some older posts,
+especially the following two that cover some interesting aspects of day-to-day development with LXD:&lt;/p>
+&lt;ul>
+&lt;li>&lt;a href="https://artivis.github.io/post/2020/dotfiles">&amp;ldquo;Managing dotfiles&amp;rdquo;&lt;/a> - details how to manage our dotfiles and how that streamlines development in containers.&lt;/li>
+&lt;li>&lt;a href="https://artivis.github.io/post/2020/lxc">&amp;ldquo;ROS Noetic development workflow in LXC&amp;rdquo;&lt;/a> - is a previous iteration over this very post and also covers how to enable graphical applications in LXD.
+Something you may be interested in if you&amp;rsquo;d like to run things like Rviz!&lt;/li>
+&lt;/ul></description></item><item><title>WOLF: A modular estimation framework for robotics based on factor graphs</title><link>https://artivis.github.io/publication/sola-22/</link><pubDate>Mon, 14 Feb 2022 00:00:00 +0000</pubDate><guid>https://artivis.github.io/publication/sola-22/</guid><description/></item><item><title>Getting started with micro-ROS on the Pi Pico</title><link>https://artivis.github.io/post/2021/pi-pico-uros-getting-started/</link><pubDate>Wed, 19 May 2021 00:00:00 +0000</pubDate><guid>https://artivis.github.io/post/2021/pi-pico-uros-getting-started/</guid><description>&lt;p>In this post we will see how the Pi Pico can natively speak to a ROS2 graph using micro-ROS.
+We will set up a project in VSCode, compile and upload it to the microcontroller.
+We thus assume that you are somewhat familiar with &lt;a href="https://docs.ros.org/en/foxy/index.html" target="_blank" rel="noopener">ROS2 development&lt;/a> and &lt;a href="https://code.visualstudio.com" target="_blank" rel="noopener">VSCode&lt;/a>.&lt;/p>
+&lt;hr>
+&lt;h2 id="content">Content&lt;/h2>
+&lt;ul>
+&lt;li>&lt;a href="#content">Content&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#what-is-this-all-about">What is this all about?&lt;/a>
+&lt;ul>
+&lt;li>&lt;a href="#the-raspberry-pi-pico">The Raspberry Pi Pico&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#micro-ros">micro-ROS&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;a href="#getting-started">Getting started&lt;/a>
+&lt;ul>
+&lt;li>&lt;a href="#installing-dependencies">Installing dependencies&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#fetching-the-sources">Fetching the sources&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#setting-up-vscode">Setting up VSCode&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;a href="#running-the-example">Running the example&lt;/a>
+&lt;ul>
+&lt;li>&lt;a href="#wait-a-minute-what-does-it-do">Wait a minute. What does it do?&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#uploading-to-the-pi-pico">Uploading to the Pi Pico&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#installing-the-micro-ros-agent">Installing the micro-ros-agent&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#actually-running-the-example">Actually running the example&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;a href="#whats-next">What&amp;rsquo;s next?&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;hr>
+&lt;h2 id="what-is-this-all-about">What is this all about?&lt;/h2>
+&lt;h3 id="the-raspberry-pi-pico">The Raspberry Pi Pico&lt;/h3>
+&lt;p>The Raspberry Pi Pico, &lt;a href="https://www.raspberrypi.org/blog/raspberry-pi-silicon-pico-now-on-sale/" target="_blank" rel="noopener">announced in late January 2021&lt;/a>,
+is the newest release of the Raspberry Pi Foundation which received a ton of attention (a quick search on Google and/or Youtube will convince you).
+And that&amp;rsquo;s for a good reason.
+Compared to its well known predecessors,
+this new board differs in two major ways:
+it is an &lt;em>in-house&lt;/em> designed open-hardware &lt;em>microcontroller&lt;/em>!
+Yes, the chip itself is designed by the Pi&amp;rsquo;s engineers and it is fully open-hardware.
+And as usually with the Pi foundation,
+it is incredibly affordable at just 4$.&lt;/p>
+&lt;p>The details concerning the board itself,
+the differences between microprocessor and microcontroller,
+the 101 getting started or what can the Pi Pico do;
+all of that is beyond the scope of this post.
+But I strongly encourage you having a look for yourself,
+whether you are familiar with microcontrollers or not.&lt;/p>
+&lt;h3 id="micro-ros">micro-ROS&lt;/h3>
+&lt;p>In the ROS (1) realm, microcontrollers have always been sort of second class citizens.
+They can&amp;rsquo;t interact directly with the ROS graph and developers have to rely on libraries such as &lt;a href="http://wiki.ros.org/rosserial" target="_blank" rel="noopener">rosserial&lt;/a>.
+But ROS2 is a whole new world and things are changing.&lt;/p>
+&lt;blockquote>
+&lt;p>micro-ROS puts ROS 2 onto microcontrollers, making them first class participants of the ROS 2 environment.&lt;/p>
+&lt;/blockquote>
+&lt;p>The &lt;a href="https://micro-ros.github.io/" target="_blank" rel="noopener">micro-ROS&lt;/a> project is an effort led by &lt;a href="https://micro.ros.org/docs/overview/users_and_clients/" target="_blank" rel="noopener">big industrial names&lt;/a> such as Bosch,
+eProsima, Fiware Foundation, notably through the &lt;a href="http://www.ofera.eu/" target="_blank" rel="noopener">OFERA&lt;/a> H2020 project,
+and a myriad of partners and collaborators including e.g. Amazon and Canonical.&lt;/p>
+&lt;p>So what is it? It is essentially a thin wrapper (see its &lt;a href="https://micro-ros.github.io/docs/concepts/client_library/decision_paper/" target="_blank" rel="noopener">design document&lt;/a>) on top of &amp;lsquo;DDS for eXtremely Resource Constrained Environments&amp;rsquo; (&lt;a href="https://www.omg.org/spec/DDS-XRCE/" target="_blank" rel="noopener">DDS-XRCE&lt;/a>),
+running on a real-time OS, allowing microcontrollers to &amp;lsquo;speak&amp;rsquo; to a ROS2 graph (the usual talker/listener) using an optimized subset of the DDS protocol.
+It relies on a &amp;lsquo;bridged&amp;rsquo; communication architecture with a &amp;lsquo;broker&amp;rsquo; named the &lt;a href="https://github.com/micro-ROS/micro-ROS-Agent" target="_blank" rel="noopener">&amp;lsquo;micro-ros-agent&amp;rsquo;&lt;/a>.
+The agent is in charge of the interfacing between the ROS2 graph and one or several micro-ROS devices.&lt;/p>
+&lt;p>More details can be found on the &lt;a href="https://micro-ros.github.io/" target="_blank" rel="noopener">micro-ROS website&lt;/a> including how it compares/differs from rosserial (see &lt;a href="https://micro-ros.github.io/docs/overview/comparison/" target="_blank" rel="noopener">here&lt;/a> and &lt;a href="https://micro.ros.org/docs/concepts/middleware/rosserial/" target="_blank" rel="noopener">here&lt;/a>).&lt;/p>
+&lt;h2 id="getting-started">Getting started&lt;/h2>
+&lt;p>Alright, so now that we have clarified a couple terms,
+let us get started, step by step,
+with micro-ROS on Pi Pico with the &lt;a href="https://github.com/micro-ROS/micro_ros_raspberrypi_pico_sdk" target="_blank" rel="noopener">official example available on github&lt;/a>.
+Note that for this tutorial I am running Ubuntu 20.04 with the &lt;a href="https://snapcraft.io/code" target="_blank" rel="noopener">VSCode snap&lt;/a>.&lt;/p>
+&lt;p>If you are not running Ubuntu 20.04 yet, you could consider using a LXD container.
+You can refer to my previous post &lt;a href="https://artivis.github.io/post/2020/lxc/" target="_blank" rel="noopener">&amp;lsquo;ROS Noetic development workflow in LXC&amp;rsquo;&lt;/a> to help you get started setting up the container.&lt;/p>
+&lt;h3 id="installing-dependencies">Installing dependencies&lt;/h3>
+&lt;p>Let&amp;rsquo;s start simple by installing the couple necessary dependencies,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">sudo apt install build-essential cmake gcc-arm-none-eabi libnewlib-arm-none-eabi doxygen git python3
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="fetching-the-sources">Fetching the sources&lt;/h3>
+&lt;p>We will now create a workspace and fetch all the sources,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">mkdir -p ~/micro_ros_ws/src
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nb">cd&lt;/span> ~/micro_ros_ws/src
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">git clone --recurse-submodules https://github.com/raspberrypi/pico-sdk.git
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">git clone https://github.com/micro-ROS/micro_ros_raspberrypi_pico_sdk.git
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>The first repository is the Pi Pico SDK provided by the Pi foundation.
+The second contains a precompiled micro-ROS stack together with a hello-world-like example.&lt;/p>
+&lt;h3 id="setting-up-vscode">Setting up VSCode&lt;/h3>
+&lt;p>Let us now open the example in VSCode and set it up.
+To follow along, you will need two VSCode extensions that are rather common for C++ development.
+These extensions are the &lt;a href="https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools" target="_blank" rel="noopener">C++ extension&lt;/a> and &lt;a href="https://marketplace.visualstudio.com/items?itemName=ms-vscode.cmake-tools" target="_blank" rel="noopener">CMake tools&lt;/a> for VSCode.
+After installing them, we will create a configuration file for CMake tools and set a variable so that our project knows where to find the Pi Pico SDK.
+To do so, simply type,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">&lt;span class="nb">cd&lt;/span> ~/micro_ros_ws/src/micro_ros_raspberrypi_pico_sdk
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">mkdir .vscode
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">touch .vscode/settings.json
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Open the newly created file with your favorite editor,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">vi .vscode/settings.json
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>and add the following,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-json" data-lang="json">&lt;span class="line">&lt;span class="cl">&lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nt">&amp;#34;cmake.configureEnvironment&amp;#34;&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nt">&amp;#34;PICO_SDK_PATH&amp;#34;&lt;/span>&lt;span class="p">:&lt;/span> &lt;span class="s2">&amp;#34;/home/artivis/micro_ros_ws/src/pico-sdk&amp;#34;&lt;/span>&lt;span class="p">,&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">},&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>This variable is an environment variable that is only passed to CMake at configuration time.
+See the &lt;a href="https://vector-of-bool.github.io/docs/vscode-cmake-tools/settings.html?highlight=configureenvironment" target="_blank" rel="noopener">CMake-Tools documentation&lt;/a> for more info.&lt;/p>
+&lt;p>Let us now open it,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">code .
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Before running the CMake configuration and build it,
+we must select the appropriate &amp;lsquo;kit&amp;rsquo; (maybe VSCode has already asked you to do so).
+Open the palette (ctrl+shift+p) and search for &lt;code>'CMake: Scan for Kits'&lt;/code> and then &lt;code>'CMake: Select a Kit'&lt;/code> and make sure to select the compiler we&amp;rsquo;ve installed above, that is &lt;code>'GCC for arm-non-eabi'&lt;/code>.&lt;/p>
+&lt;p>We&amp;rsquo;re all set, let us build the example!
+Open the palette again and hit &lt;code>'CMake: Build'&lt;/code>.&lt;/p>
+&lt;h2 id="running-the-example">Running the example&lt;/h2>
+&lt;h3 id="wait-a-minute-what-does-it-do">Wait a minute. What does it do?&lt;/h3>
+&lt;p>Right, let&amp;rsquo;s break down very briefly what the example does.
+It sets up a node called &lt;code>'pico_node'&lt;/code>,
+then a publisher publishing a &lt;code>'std_msgs/msg/int32.h'&lt;/code> message on topic &lt;code>'pico_publisher'&lt;/code>,
+a recurring timer and an executor to orchestrate everything.
+Every 0.1 second, the executor spins.
+But only every second, the timer will have the publisher publish a message and increase the message data by 1.
+Simple. So let&amp;rsquo;s try it out.&lt;/p>
+&lt;h3 id="uploading-to-the-pi-pico">Uploading to the Pi Pico&lt;/h3>
+&lt;p>If everything went fine during compilation,
+you should see a new &lt;code>'build'&lt;/code> folder in your project view.
+In this folder, you will find the file that we should now upload to the Pi Pico,
+it is named here &lt;code>'pico_micro_ros_example.uf2'&lt;/code>.
+To upload it, simply connect the board with a USB cable &lt;strong>while pressing&lt;/strong> the tiny white button labelled &lt;code>'BOOTSEL'&lt;/code>.
+Doing so, the Pi Pico will mount similarly to a flash drive allowing us to very easily copy/paste the &amp;lsquo;&lt;code>.uf2&lt;/code>&amp;rsquo; file.&lt;/p>
+&lt;p>Head to a terminal and type,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">&lt;span class="nb">cd&lt;/span> build
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">cp pico_micro_ros_example.uf2 /media/&lt;span class="nv">$USER&lt;/span>/RPI-RP2
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Once the file is copied,
+the board will automatically reboot and start executing the example.&lt;/p>
+&lt;p>Easy-peasy.&lt;/p>
+&lt;h3 id="installing-the-micro-ros-agent">Installing the micro-ros-agent&lt;/h3>
+&lt;p>We have seen in the introduction that micro-ROS has a bridged communication architecture.
+We thus have to build that bridge.
+Well, fortunately the development team has built it already and distributes it both as a &lt;a href="https://snapcraft.io/micro-ros-agent" target="_blank" rel="noopener">Snap&lt;/a> or a &lt;a href="https://hub.docker.com/r/microros/micro-ros-agent" target="_blank" rel="noopener">Docker image&lt;/a>.
+Here we&amp;rsquo;ll make use of the former.
+If you are using Ubuntu 16.04 or later, snap is already pre-installed and ready to go.
+If you are running another OS, you can either &lt;a href="https://snapcraft.io/docs/installing-snap-on-ubuntu" target="_blank" rel="noopener">install snap&lt;/a> or make use of the Docker image.&lt;/p>
+&lt;p>To install the micro-ros-agent snap, type,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">sudo snap install micro-ros-agent
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>After installing it, and because we are using a serial connection,
+we need to configure a couple things.
+First we need to enable the &lt;code>'hotplug'&lt;/code> feature,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">sudo snap &lt;span class="nb">set&lt;/span> core experimental.hotplug&lt;span class="o">=&lt;/span>&lt;span class="nb">true&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>and restart the snap demon so that it takes effect,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">sudo systemctl restart snapd
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>After making sure the Pi Pico is plugged, execute,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ snap interface serial-port
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">name: serial-port
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">summary: allows accessing a specific serial port
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">plugs:
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> - micro-ros-agent
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">slots:
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> - snapd:pico &lt;span class="o">(&lt;/span>allows accessing a specific serial port&lt;span class="o">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>What we see here is that the micro-ros-agent snap has a serial &amp;lsquo;&lt;code>plug&lt;/code>&amp;rsquo; while a &amp;lsquo;&lt;code>pico&lt;/code>&amp;rsquo; &lt;code>'slot'&lt;/code> magically appeared.
+As per the semantic, we probably should connect them together. To do so run,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">snap connect micro-ros-agent:serial-port snapd:pico
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>We are now all set to finally run our example.&lt;/p>
+&lt;h3 id="actually-running-the-example">Actually running the example&lt;/h3>
+&lt;p>With the Pi Pico plugged through USB,
+we will start the micro-ros-agent as follows,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">micro-ros-agent serial --dev /dev/ttyACM0 &lt;span class="nv">baudrate&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="m">115200&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>and wait a couple seconds for the Pi Pico&amp;rsquo;s LED to light up indicating that the main loop is running.
+In case it does not light up after a few long seconds (count up to 10 mississippi),
+you may want to unplug/replug the board in order to reboot it.
+The initialization procedure of the example lacks a few error checking.
+Hey, could fixing that be &lt;strong>your&lt;/strong> first project?&lt;/p>
+&lt;p>So now the LED should shine a bright green.
+That&amp;rsquo;s cool.
+Do you know what&amp;rsquo;s cooler?
+Running on your host machine,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ &lt;span class="nb">source&lt;/span> /opt/ros/dashing/setup.bash
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">$ ros2 topic &lt;span class="nb">echo&lt;/span> /pico_publisher
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">data: &lt;span class="m">41&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">---
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">data: &lt;span class="m">42&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">---
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Awesome!&lt;/p>
+&lt;p>And hitting a&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ ros2 node list
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">/pico_node
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>proves that the micro-ROS node running on the Pi Pico is visible to ROS2 on the host machine.&lt;/p>
+&lt;p>Yatta!&lt;/p>
+&lt;h2 id="whats-next">What&amp;rsquo;s next?&lt;/h2>
+&lt;p>For a long time it wasn&amp;rsquo;t convenient to mix microcontrollers and ROS.
+But this is about to seriously change as we&amp;rsquo;ve just seen.
+No doubt that both micro-ROS and the Pi Pico will bolster great robotics applications (and more!).&lt;/p>
+&lt;p>In this tutorial we&amp;rsquo;ve reached a great starting point with a ROS2-based project ready to spin on the suppa-cool suppa-affordable Pi Pico.&lt;/p>
+&lt;p>Of course this wouldn&amp;rsquo;t have been possible without the micro-ROS dev team and Cyberbotics engineer Darko Lukić (&lt;a href="https://github.com/lukicdarkoo" target="_blank" rel="noopener">@lukicdarkoo&lt;/a>) who has put together the initial example we&amp;rsquo;ve just used.
+As often, there are super smart people out there making complicated stuff very accessible,
+shout out to them.&lt;/p>
+&lt;p>I&amp;rsquo;m personally going to keep playing with micro-ROS on Pi Pico,
+first because it is fun and second because I have a couple ideas up my sleeves.
+Be sure that if they become reality you&amp;rsquo;ll hear about them on this blog.&lt;/p>
+&lt;p>What about you? Do you have some cool projects already in mind?&lt;/p>
+&lt;!-- uROS main links --></description></item><item><title>Publishing sonar readings with micro-ROS on the Raspberry Pi Pico</title><link>https://artivis.github.io/post/2021/pi-pico-uros-sonar/</link><pubDate>Fri, 12 Mar 2021 00:00:00 +0000</pubDate><guid>https://artivis.github.io/post/2021/pi-pico-uros-sonar/</guid><description>&lt;p>In this post we will see how to wire up an HC-SR04 range sensor to the Raspberry Pi Pico and publish its readings to the ROS 2 graph using micro-ROS.
+This builds upon the previous post &lt;a href="pi-pico-uros-getting-started.md">&amp;lsquo;Getting started with micro-ROS on the Pi Pico&amp;rsquo;&lt;/a>,
+as such I&amp;rsquo;d encourage you to read it first if you are not already familiar with the topic.&lt;/p>
+&lt;hr>
+&lt;h2 id="content">Content&lt;/h2>
+&lt;ul>
+&lt;li>&lt;a href="#content">Content&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#a-sensor-you-said">A sensor you said?&lt;/a>
+&lt;ul>
+&lt;li>&lt;a href="#im-batsensor">&amp;ldquo;I&amp;rsquo;m Bat(sensor)&amp;rdquo;&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#which-sonar-model-to-pick">Which sonar model to pick?&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;a href="#wiring-up-the-sonar-to-the-pi-pico">Wiring up the sonar to the Pi Pico&lt;/a>
+&lt;ul>
+&lt;li>&lt;a href="#micro-code-for-micro-ros">Micro code for micro-ROS&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#bip-bip-bip">Bip bip bip&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;a href="#whats-next">What&amp;rsquo;s next?&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;hr>
+&lt;h2 id="a-sensor-you-said">A sensor you said?&lt;/h2>
+&lt;p>In this tutorial, we will make use of one of the most common sensors in robotics, a sonar.
+These sensors are cheap, fairly simple to use and surprisingly precise under favorable circumstances.
+Sonars are used to measure distances and can therefore be used to detect and locate obstacles so that one can make sure its robot does not run into nearby things.
+It is no mystery why they are so incredibly popular.&lt;/p>
+&lt;p>So, what&amp;rsquo;s a sonar, how does it work, which one should I pick?&lt;/p>
+&lt;h3 id="im-batsensor">&amp;ldquo;I&amp;rsquo;m Bat(sensor)&amp;rdquo;&lt;/h3>
+&lt;p>A sonar is an echolocation sensor which allows for measuring distances.
+To keep things simple to digest,
+sonars work the same way as bats do.
+Nah they don&amp;rsquo;t fly, hunting bugs at dawn;
+nor do they fight crime.
+I obviously meant the same way as bats perceive the world.
+A sonar is composed of an emitter and a receiver.
+The former emits an ultrasound signal,
+which will bounce off of facing obstacles,
+back at the receiver.
+Measuring the time difference between the signal emission and reception,
+one can easily calculate the distance travelled by the sound wave and thus the distance to the obstacle that reverberated the sound.&lt;/p>
+&lt;p>This technology can suffer from all kind of issues if, for example,
+the sound wave is reverberated away from the sensor,
+or if it is reverberated back to the sensor by two obstacles at different distances,
+or if it is absorbed by some sound dampening material.&lt;/p>
+&lt;p>If this is still unclear or you want to know more about it,
+I&amp;rsquo;ll redirect you to your favorite web search engine as it is a little out of the scope of this post.&lt;/p>
+&lt;h3 id="which-sonar-model-to-pick">Which sonar model to pick?&lt;/h3>
+&lt;p>There exists plenty different models of sonars,
+fortunately most of them works the same way.
+Furthermore they can be found for a few bucks per unit on the internet.
+Head on over to your favorite electronics supplier and you&amp;rsquo;re sure to find them for sale.&lt;/p>
+&lt;p>I&amp;rsquo;d recommend you use the &amp;lsquo;HC-SR04P&amp;rsquo; model which is the 3.3V variant of the immensely popular &amp;lsquo;HC-SR04&amp;rsquo; (5V).
+It is this model (the &amp;lsquo;HC-SR04P&amp;rsquo;) I will be using in this post.
+Given its very small power consumption, it can be powered up directly from the Pi Pico and thus the whole setup can simply be powered from the USB cable.
+In case you are using a 5V package, make sure to adapt the wiring described below or else you are risking damages to your Pi Pico!
+For reference, I ordered a lot of 5 units for less than 10$ including shipping.
+Including the Pi Pico price,
+that&amp;rsquo;s a lot of sensing for the price!&lt;/p>
+&lt;h2 id="wiring-up-the-sonar-to-the-pi-pico">Wiring up the sonar to the Pi Pico&lt;/h2>
+&lt;p>The &amp;lsquo;HC-SR04P&amp;rsquo; board comes with four pins labelled
+&amp;lsquo;Vcc&amp;rsquo;, &amp;lsquo;Gnd&amp;rsquo;, &amp;lsquo;Trig&amp;rsquo; and &amp;lsquo;Echo&amp;rsquo;.
+As you&amp;rsquo;ve already guessed, the Vcc and Gnd pins are for the 3.3V line and the ground respectively,
+while &amp;lsquo;Trig&amp;rsquo; is used to trigger the sensor and &amp;lsquo;Echo&amp;rsquo; reports the reception of the echo (the reception of the sound wave that bounced off of an obstacle).&lt;/p>
+&lt;p>From there, and referring to the &lt;a href="https://datasheets.raspberrypi.org/pico/Pico-R3-A4-Pinout.pdf" target="_blank" rel="noopener">Pi Pico pinout&lt;/a>,
+the wiring is straight forward:&lt;/p>
+&lt;ul>
+&lt;li>connect Pico&amp;rsquo;s pin 36 (3V3 OUT) to the sonar&amp;rsquo;s &amp;lsquo;Vcc&amp;rsquo;&lt;/li>
+&lt;li>connect Pico&amp;rsquo;s pin 38 (GND) to the sonar&amp;rsquo;s &amp;lsquo;Gnd&amp;rsquo;&lt;/li>
+&lt;li>connect Pico&amp;rsquo;s pin 9 (GPIO 6) to the sonar&amp;rsquo;s &amp;lsquo;Echo&amp;rsquo;&lt;/li>
+&lt;li>connect Pico&amp;rsquo;s pin 10 (GPIO 7) to the sonar&amp;rsquo;s &amp;lsquo;Trig&amp;rsquo;&lt;/li>
+&lt;/ul>
+&lt;p>This setup is depicted in the figure below.&lt;/p>
+&lt;p>
+&lt;figure >
+&lt;div class="d-flex justify-content-center">
+&lt;div class="w-100" >&lt;img src="https://artivis.github.io/img/post/2021/uros_pico_sonar.png" alt="Wiring the HC-SR04P to the Pico" loading="lazy" data-zoomable />&lt;/div>
+&lt;/div>&lt;/figure>
+&lt;/p>
+&lt;p>As far as the hardware goes, we&amp;rsquo;re done.
+Let us move to the software.&lt;/p>
+&lt;h3 id="micro-code-for-micro-ros">Micro code for micro-ROS&lt;/h3>
+&lt;p>We&amp;rsquo;ve seen in the &lt;a href="pi-pico-uros-getting-started.md">&amp;lsquo;previous post&amp;rsquo;&lt;/a> how to set up VSCode for programming micro-ros, and how to compile and flash a program on the Pi Pico.
+We&amp;rsquo;ll thus refer to the aforementioned post on how to do all that and skip it here.
+Similarly, we&amp;rsquo;ll skip all the boilerplate code and only show the bits specific to our application.
+However, know that this example (and more) is fully available on github at &lt;a href="https://github.com/artivis/mico_ros" target="_blank" rel="noopener">artivis/mico_ros&lt;/a>.&lt;/p>
+&lt;p>Alright, let&amp;rsquo;s dive a little.
+Our application is essentially composed of two functions,
+one that triggers and reads the sensor,
+and a second, the timer callback, which calls the first,
+fill up a ROS message and publishes it:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-cpp" data-lang="cpp">&lt;span class="line">&lt;span class="cl">&lt;span class="p">...&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">// The GPIO pins to which the sonar is wired
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span>&lt;span class="cp">#define GPIO_ECHO 6
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cp">#define GPIO_TRIGGER 7
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cp">&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm">/**
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> * @brief Get the range value in meter.
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> */&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kt">float&lt;/span> &lt;span class="n">read_range&lt;/span>&lt;span class="p">()&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// Send an impulse trigger of 10us
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="n">gpio_put&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">GPIO_TRIGGER&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">1&lt;/span>&lt;span class="p">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">sleep_us&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="mi">10&lt;/span>&lt;span class="p">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">gpio_put&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">GPIO_TRIGGER&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="mi">0&lt;/span>&lt;span class="p">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// Read how long is the echo
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="kt">uint32_t&lt;/span> &lt;span class="n">signaloff&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="n">signalon&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">do&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">signaloff&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">time_us_32&lt;/span>&lt;span class="p">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span> &lt;span class="k">while&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="n">gpio_get&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">GPIO_ECHO&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="o">==&lt;/span> &lt;span class="mi">0&lt;/span>&lt;span class="p">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">do&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">signalon&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">time_us_32&lt;/span>&lt;span class="p">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span> &lt;span class="k">while&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="n">gpio_get&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">GPIO_ECHO&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="o">==&lt;/span> &lt;span class="mi">1&lt;/span>&lt;span class="p">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// Actual echo duration in us
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="k">const&lt;/span> &lt;span class="kt">float&lt;/span> &lt;span class="n">dt&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">signalon&lt;/span> &lt;span class="o">-&lt;/span> &lt;span class="n">signaloff&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="c1">// distance in meter:
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="c1">// echo duration (us) x speed of sound (m/us) / 2 (round trip)
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="c1">&lt;/span> &lt;span class="k">return&lt;/span> &lt;span class="n">dt&lt;/span> &lt;span class="o">*&lt;/span> &lt;span class="mf">0.000343&lt;/span> &lt;span class="o">/&lt;/span> &lt;span class="mf">2.0&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">...&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm">/**
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> * @brief Read the range from the sensor,
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> * fill up the ROS message and publish it.
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="cm"> */&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="kt">void&lt;/span> &lt;span class="n">timer_callback&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">rcl_timer_t&lt;/span> &lt;span class="o">*&lt;/span>&lt;span class="n">timer&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="kt">int64_t&lt;/span> &lt;span class="cm">/*last_call_time*/&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="p">(&lt;/span>&lt;span class="n">timer&lt;/span>&lt;span class="p">)&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">range_msg&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">range&lt;/span> &lt;span class="o">=&lt;/span> &lt;span class="n">read_range&lt;/span>&lt;span class="p">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">fill_msg_stamp&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="n">range_msg&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">header&lt;/span>&lt;span class="p">.&lt;/span>&lt;span class="n">stamp&lt;/span>&lt;span class="p">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">rcl_publish&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="o">&amp;amp;&lt;/span>&lt;span class="n">publisher&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="o">&amp;amp;&lt;/span>&lt;span class="n">range_msg&lt;/span>&lt;span class="p">,&lt;/span> &lt;span class="nb">NULL&lt;/span>&lt;span class="p">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span> &lt;span class="k">else&lt;/span> &lt;span class="p">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="n">printf&lt;/span>&lt;span class="p">(&lt;/span>&lt;span class="s">&amp;#34;Failed to publish range. Continuing.&lt;/span>&lt;span class="se">\n&lt;/span>&lt;span class="s">&amp;#34;&lt;/span>&lt;span class="p">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">...&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>That&amp;rsquo;s pretty much it.
+The rest of the code is mostly boilerplate,
+initializing the GPIO,
+setting up the micro-ROS node, publisher, timer and executor,
+and having it all spin.&lt;/p>
+&lt;p>Note that we are using the standard &lt;code>sensor_msgs/msgs/Range&lt;/code> message.
+You can find its definition and a breakdown of its field online in the &lt;a href="https://docs.ros2.org/latest/api/sensor_msgs/msg/Range.html" target="_blank" rel="noopener">ROS2 API documentation&lt;/a>.&lt;/p>
+&lt;p>All there is to do now is to compile the code,
+flash the resulting &amp;lsquo;.uf2&amp;rsquo; file and start the micro-ROS agent.&lt;/p>
+&lt;h3 id="bip-bip-bip">Bip bip bip&lt;/h3>
+&lt;p>Assuming compiling and flashing went all fine,
+all we have to do is to plug the board to our computer and launch the micro-ROS agent.
+We do so with the following command:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">docker run -it --rm -v /dev:/dev --privileged --net&lt;span class="o">=&lt;/span>host microros/micro-ros-agent:foxy serial --dev /dev/ttyACM0 -b &lt;span class="m">115200&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Let&amp;rsquo;s see if we get anything,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ ros2 topic list
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">/parameter_events
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">/pico/range
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">/rosout
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>the topic &lt;code>/pico/range&lt;/code> is advertised, that&amp;rsquo;s a good start.
+Let see what it contains,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ ros2 topic &lt;span class="nb">echo&lt;/span> /pico/range
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">header:
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> stamp:
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> sec: &lt;span class="m">145&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> nanosec: &lt;span class="m">837599000&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> frame_id: pico_sonar_0_link
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">radiation_type: &lt;span class="m">0&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">field_of_view: 30.0
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">min_range: 0.019999999552965164
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">max_range: 4.0
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">range: 12.138598442077637
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">---
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">header:
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> stamp:
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> sec: &lt;span class="m">145&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> nanosec: &lt;span class="m">915356000&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> frame_id: pico_sonar_0_link
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">radiation_type: &lt;span class="m">0&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">field_of_view: 30.0
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">min_range: 0.019999999552965164
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">max_range: 4.0
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">range: 12.138941764831543
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">---
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">...
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>That looks great!&lt;/p>
+&lt;p>You could now play with your new sensor,
+moving an obstacle back and forth in front of it.
+Take a measuring tape and compare the reported distance to the measured one,
+you may be surprised by its accuracy, I know I was.&lt;/p>
+&lt;h2 id="whats-next">What&amp;rsquo;s next?&lt;/h2>
+&lt;p>This is a neat little project to approach micro-ROS and the possibilities it opens.
+Indeed it is really rewarding to see the actual distance between the sensor and an obstacle being readily available on our ROS 2 graph.
+But taking a step back we can start seeing an slightly larger picture;
+a picture in which one will be able to easily, effortlessly,
+add plug&amp;rsquo;n&amp;rsquo;play ROS2-ready hardware modules to existing robots.
+Plug a camera and its feed magically appears on the graph,
+an IMU module could provide a reliable odometry source,
+a motor ready to spin in a snap (pun intended).&lt;/p>
+&lt;p>We&amp;rsquo;re not there yet, but I&amp;rsquo;m definitely going to follow this line of thought for my own Turtlebot 3.
+Can you believe that it doesn&amp;rsquo;t have any sonar?!&lt;/p>
+&lt;p>Fortunately now I can easily add a pair of them and have my robot stop bumping into my lazy cat lying down on the floor,
+unwitting ninja, invisible to the laser scanner 😅.&lt;/p></description></item><item><title>Downloading Raspberry Pi Press issues</title><link>https://artivis.github.io/post/2020/rpipress/</link><pubDate>Thu, 09 Jul 2020 00:00:00 +0000</pubDate><guid>https://artivis.github.io/post/2020/rpipress/</guid><description>&lt;p>In this post we will discover the great magazines edited under the
+Raspberry Pi Press umbrella and discuss how to easily access them all.&lt;/p>
+&lt;hr>
+&lt;h2 id="content">Content&lt;/h2>
+&lt;ul>
+&lt;li>&lt;a href="#content">Content&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#the-raspberry-pi-press-magazines">The Raspberry Pi Press magazines&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#bookshelf">Bookshelf&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#rpipress-downloader">rpipress-downloader&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;hr>
+&lt;h2 id="the-raspberry-pi-press-magazines">The Raspberry Pi Press magazines&lt;/h2>
+&lt;p>The &lt;a href="https://store.rpipress.cc/" target="_blank" rel="noopener">Raspberry Pi Press&lt;/a> is a part of the Raspberry Pi Foundation
+and the publisher of a great deal of magazines and books.
+Among the many magazines edited, some are freely available for download,&lt;/p>
+&lt;ul>
+&lt;li>&lt;a href="https://hackspace.raspberrypi.org/" target="_blank" rel="noopener">HackSpace&lt;/a> is a monthly publication dedicated to those who love to make things
+and learn while doing it.&lt;/li>
+&lt;li>&lt;a href="https://helloworld.raspberrypi.org/" target="_blank" rel="noopener">HelloWorld&lt;/a> is published three times a year and targets educators
+of the computing and digital world.&lt;/li>
+&lt;li>&lt;a href="https://magpi.raspberrypi.org/" target="_blank" rel="noopener">MagPi&lt;/a> is the official magazine of the Raspberry Pi and is loaded
+with stories and project based on the single board computer.
+Published every month, the latest issue is numbered N°95 as of the time of writing,
+making it an incredible source of inspiration.&lt;/li>
+&lt;li>&lt;a href="https://wireframe.raspberrypi.org/" target="_blank" rel="noopener">Wiredframe&lt;/a> is published every 2 weeks and is entirely dedicated
+to video games. But unlike other video game magazines, it offers
+to look at how they are made, who make them and offer a lot of resources
+to get started writing your own games.&lt;/li>
+&lt;/ul>
+&lt;p>On top of that, The Raspberry Pi Press also publishes many great books.&lt;/p>
+&lt;p>Each magazine can be bought online and shipped around the globe.
+One can also sign for a yearly subscription, offering some
+discount and/or goodies. At the same time, issues are freely available
+to download in pdf from the magazine websites.&lt;/p>
+&lt;h2 id="bookshelf">Bookshelf&lt;/h2>
+&lt;p>Recently the &lt;a href="https://www.raspberrypi.org/blog/latest-raspberry-pi-os-update-may-2020/" target="_blank" rel="noopener">Raspberry Pi Foundation presented the Raspberry Pi OS&lt;/a>,
+a rebranding of Raspbian, highlighting some of its novelties.
+Among those novelties, they showcased a neat little app named &lt;code>Bookshelf&lt;/code>
+that allows you to browse and download the issues of
+several magazines edited by the Raspberry Pi Press.&lt;/p>
+&lt;p>The application is a simple interface listing all issues of each magazine
+but also some of the books.
+It allows for simply downloading any issue by simply clicking on
+the desired cover.&lt;/p>
+&lt;p>
+&lt;figure >
+&lt;div class="d-flex justify-content-center">
+&lt;div class="w-100" >&lt;img src="https://artivis.github.io/img/post/bookshelf.png" alt="The Bookshelf app" loading="lazy" data-zoomable />&lt;/div>
+&lt;/div>&lt;/figure>
+&lt;/p>
+&lt;p>Unfortunately this great app is only available through the Pi OS
+archive and its &lt;a href="https://www.raspberrypi.org/forums/viewtopic.php?f=63&amp;amp;t=278584&amp;amp;p=1687369&amp;amp;hilit=bookshelf#p1687369" target="_blank" rel="noopener">source code is not public&lt;/a> at the time of writing.
+One can still download the deb package and install it manually.
+To do so, visit the &lt;a href="http://archive.raspberrypi.org/debian/pool/main/r/rp-bookshelf/" target="_blank" rel="noopener">app archive&lt;/a> and look for the latest
+version of the debian package for your machine architecture.
+At the moment it is &lt;code>rp-bookshelf_0.4_amd64.deb&lt;/code> for common computers.
+From there, we can simply download the debian and install it,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">wget http://archive.raspberrypi.org/debian/pool/main/r/rp-bookshelf/rp-bookshelf_0.4_amd64.deb
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">dpkg -i rp-bookshelf_0.4_amd64.deb
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>To launch the app simply type,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">rp-bookshelf
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Altho this procedure works fine, it is a little unpleasant.
+Furthermore, I personally don&amp;rsquo;t care much about the GUI and I&amp;rsquo;d rather prefer
+to automatically download the latest issues I care for.
+If you feel the same, keep on reading.&lt;/p>
+&lt;h2 id="rpipress-downloader">rpipress-downloader&lt;/h2>
+&lt;p>The Raspberry Pi Press Store was &lt;a href="https://www.raspberrypi.org/blog/the-raspberry-pi-press-store-is-looking-mighty-fine/" target="_blank" rel="noopener">recently entirely redesigned&lt;/a>
+bringing some uniformization across all the magazine websites.
+That allows us to write a small web scrapping script to automatically
+download the latest (or all) issues and books of our favorite magazine(s).&lt;/p>
+&lt;p>So I went ahead and did just that, writing a small Python script that you can find
+on &lt;a href="https://github.com/artivis/rpipress-downloader" target="_blank" rel="noopener">Github&lt;/a>, or conveniently install as a Snap as follows,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">sudo snap install rpipress-downloader
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Its use it pretty simple, launch the script in a terminal
+and by default it will automatically search and download the latest issue of all
+aforementioned magazines.&lt;/p>
+&lt;p>Further options let you:&lt;/p>
+&lt;ul>
+&lt;li>
+&lt;p>specify which magazine to download&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">rpipress-downloader --magazines magpi hackspace
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/li>
+&lt;li>
+&lt;p>download &lt;strong>all&lt;/strong> issues,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">rpipress-downloader --all
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/li>
+&lt;li>
+&lt;p>download the books too,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">rpipress-downloader --books
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/li>
+&lt;li>
+&lt;p>combine options so that,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">rpipress-downloader -a -m magpi -b
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>will download all MagPi issues and books.&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;p>Issues and books are saved respectively in&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>~/rpipress/{magazine}&lt;/code>&lt;/li>
+&lt;li>&lt;code>~/rpipress/{magazine}/Books&lt;/code>&lt;/li>
+&lt;/ul>
+&lt;p>or, using the snap, in&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>~/snap/rpipress-downloader/current/rpipress/{magazine}&lt;/code>&lt;/li>
+&lt;li>&lt;code>~/snap/rpipress-downloader/current/rpipress/{magazine}/Books&lt;/code>.&lt;/li>
+&lt;/ul>
+&lt;p>Note that the script conveniently let you know the path by printing an
+hyperlink in the console,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ rpipress-downloader -m magpi
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Latest MagPi issue is N°95
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">You are up to date
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Your favorite magazines are waiting &lt;span class="k">for&lt;/span> you in file:///home/artivis/snap/rpipress-downloader/5/rpipress
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Please refer to the &lt;a href="https://github.com/artivis/rpipress-downloader" target="_blank" rel="noopener">rpipress-downloader&lt;/a> readme page
+for further information.&lt;/p>
+&lt;p>Have a good reading!&lt;/p></description></item><item><title>Get started with ROS 2 Foxy today with LXD</title><link>https://artivis.github.io/post/2020/ros-foxy-install/</link><pubDate>Sat, 06 Jun 2020 00:00:00 +0000</pubDate><guid>https://artivis.github.io/post/2020/ros-foxy-install/</guid><description>&lt;p>The 5th of June 2020 marks the release of ROS 2 Foxy Fitzroy,
+a 3 years long-term support (LTS) release and
+the first ROS 2 distribution to target &lt;a href="https://ubuntu.com/blog/ubuntu-20-04-lts-arrives" target="_blank" rel="noopener">Ubuntu 20.04&lt;/a>.&lt;/p>
+&lt;p>As summarized in the &lt;a href="https://discourse.ros.org/t/ros-foxy-fitzroy-released/14495" target="_blank" rel="noopener">ROS Discourse&lt;/a> post,
+Foxy comes loaded with performance improvements, new features,
+and maybe most importantly, with &lt;a href="https://index.ros.org/doc/ros2/Tutorials/" target="_blank" rel="noopener">tutorials&lt;/a>!
+Get a full tour of the novelties by heading down to the
+&lt;a href="https://index.ros.org/doc/ros2/Releases/Release-Foxy-Fitzroy/" target="_blank" rel="noopener">Foxy release page&lt;/a>.&lt;/p>
+&lt;p>Now, you may be very excited about ROS 2 Foxy but you,
+just as I, haven&amp;rsquo;t moved to Ubuntu 20.04 just yet.
+But that will not stop us from getting our hands on
+all the goodies this new release offers.&lt;/p>
+&lt;p>Indeed, in this post we will see how to install ROS 2 Foxy Fitzroy
+in a &lt;a href="https://linuxcontainers.org/lxd/introduction/" target="_blank" rel="noopener">LXD&lt;/a> container so that we can develop against the latest ROS 2
+release without the need to upgrade our computer just yet.&lt;/p>
+&lt;p>Hereafter we will assume that your are familiar with the command terminal
+and that LXD is already installed on your machine.
+If you are new to LXD or looking to improve your ROS development with it,
+have a look to this post &lt;a href="https://artivis.github.io/post/2020/lxc">&amp;lsquo;ROS Noetic development workflow in LXC&amp;rsquo;&lt;/a>.&lt;/p>
+&lt;p>Alright let us get started.&lt;/p>
+&lt;hr>
+&lt;h1 id="content">Content&lt;/h1>
+&lt;ul>
+&lt;li>&lt;a href="#content">Content&lt;/a>
+&lt;ul>
+&lt;li>&lt;a href="#---quick-test">* Quick test&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;a href="#spawning-an-ubuntu-2004-lxd-container">Spawning an Ubuntu 20.04 LXD container&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#installing-ros-2-foxy-fitzroy">Installing ROS 2 Foxy Fitzroy&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#quick-test">Quick test&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;hr>
+&lt;h1 id="spawning-an-ubuntu-2004-lxd-container">Spawning an Ubuntu 20.04 LXD container&lt;/h1>
+&lt;p>So the first thing we have to do is to create a LXD container based on an
+Ubuntu 20.04 image. To do so we issue the following command,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">lxc launch ubuntu:20.04 ros2-foxy
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>It creates and starts a container named &amp;lsquo;ros2-foxy&amp;rsquo; based on an
+Ubuntu 20.04 image. So far so good.&lt;/p>
+&lt;p>Now to start a shell in our fresh container we will type,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">lxc &lt;span class="nb">exec&lt;/span> ros2-foxy -- sudo --login --user ubuntu
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>We are now inside our container, logged as the non-root user &amp;lsquo;ubuntu&amp;rsquo;.
+Note that if the last command looks a bit unfriendly to you,
+you can make it a &amp;rsquo;lxc&amp;rsquo; alias
+(learn more about it in the &lt;a href="https://artivis.github.io/post/2020/lxc#lxc-aliases-to-the-rescue">aforementioned LXD post&lt;/a>).&lt;/p>
+&lt;p>Now that our container is up and running, we shall install Foxy.&lt;/p>
+&lt;h1 id="installing-ros-2-foxy-fitzroy">Installing ROS 2 Foxy Fitzroy&lt;/h1>
+&lt;p>Inside our container, we will first add the ROS packages
+repository to our sources. Starting with the key,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ sudo apt-key adv --fetch-keys https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>then the repository,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ sudo apt-add-repository http://packages.ros.org/ros2/ubuntu
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>In case of trouble, you can also refer to the
+&lt;a href="https://index.ros.org/doc/ros2/Installation/Foxy/" target="_blank" rel="noopener">official installation guide&lt;/a>.&lt;/p>
+&lt;p>We are all set to install Foxy!&lt;/p>
+&lt;p>For the installation, we can choose either of two options;
+we can choose to install only the base components,
+e.g. the communication libraries, message packages, command line tools, etc&amp;hellip;&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ sudo apt install ros-foxy-ros-base
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>or we can install the base + RViz, demos and tutorials,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ sudo apt install ros-foxy-desktop
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>You can pick any depending on your needs.
+If you are not sure which to pick,
+I would recommend you install the desktop version
+in order to have all the tools you may need already installed.
+However, note that if you intend to use some graphical applications
+in your container, you have to take an extra step and set up some parameters
+for your container.
+All of this is detailed in the &lt;a href="https://artivis.github.io/post/2020/lxc#using-graphical-applications">aforementioned LXD post&lt;/a>.&lt;/p>
+&lt;p>Since the container was created especially for Foxy,
+we will automatically source it in our &amp;lsquo;.bashrc&amp;rsquo;,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ &lt;span class="nb">echo&lt;/span> &lt;span class="s2">&amp;#34;source /opt/ros/foxy/setup.bash&amp;#34;&lt;/span> &amp;gt;&amp;gt; ~/.bashrc
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Every times we will log into our container,
+ROS 2 Foxy will be sourced and we will be ready to develop!&lt;/p>
+&lt;p>At last, we can install the Python package &amp;lsquo;argcomplete&amp;rsquo; to enable
+autocompletion for the ROS 2 command line tools.
+This is totally optional, but also totally recommended:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">sudo apt install python3-argcomplete
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>With Foxy installed, all there is left to do is to take it for a spin.&lt;/p>
+&lt;h1 id="quick-test">Quick test&lt;/h1>
+&lt;p>We will try the simple talker-listener demo,
+mixing cpp and Python to make sure that
+the installation went fine and that we can start developing right away.
+Note that if you installed the &amp;lsquo;base&amp;rsquo; version in the previous section,
+you will need to install the following packages,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">sudo apt install ros-foxy-demo-nodes-cpp ros-foxy-demo-nodes-py
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>For the test, let us start fresh and close our current shell.
+We will then open 2 new ones, one for the publisher and one for the subscriber.&lt;/p>
+&lt;p>To start the publisher in the first shell enter,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ ros2 run demo_nodes_cpp talker
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">[&lt;/span>INFO&lt;span class="o">]&lt;/span> &lt;span class="o">[&lt;/span>1591461939.792327469&lt;span class="o">]&lt;/span> &lt;span class="o">[&lt;/span>talker&lt;span class="o">]&lt;/span>: Publishing: &lt;span class="s1">&amp;#39;Hello World: 1&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">[&lt;/span>INFO&lt;span class="o">]&lt;/span> &lt;span class="o">[&lt;/span>1591461940.792228229&lt;span class="o">]&lt;/span> &lt;span class="o">[&lt;/span>talker&lt;span class="o">]&lt;/span>: Publishing: &lt;span class="s1">&amp;#39;Hello World: 2&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">[&lt;/span>INFO&lt;span class="o">]&lt;/span> &lt;span class="o">[&lt;/span>1591461941.792184798&lt;span class="o">]&lt;/span> &lt;span class="o">[&lt;/span>talker&lt;span class="o">]&lt;/span>: Publishing: &lt;span class="s1">&amp;#39;Hello World: 3&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">...
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>and we can see that it starts publishing messages right away.&lt;/p>
+&lt;p>To start the listener in the second shell enter,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ ros2 run demo_nodes_py listener
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">[&lt;/span>INFO&lt;span class="o">]&lt;/span> &lt;span class="o">[&lt;/span>1591461964.793113956&lt;span class="o">]&lt;/span> &lt;span class="o">[&lt;/span>listener&lt;span class="o">]&lt;/span>: I heard: &lt;span class="o">[&lt;/span>Hello World: 5&lt;span class="o">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">[&lt;/span>INFO&lt;span class="o">]&lt;/span> &lt;span class="o">[&lt;/span>1591461965.792782570&lt;span class="o">]&lt;/span> &lt;span class="o">[&lt;/span>listener&lt;span class="o">]&lt;/span>: I heard: &lt;span class="o">[&lt;/span>Hello World: 6&lt;span class="o">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">[&lt;/span>INFO&lt;span class="o">]&lt;/span> &lt;span class="o">[&lt;/span>1591461966.792823099&lt;span class="o">]&lt;/span> &lt;span class="o">[&lt;/span>listener&lt;span class="o">]&lt;/span>: I heard: &lt;span class="o">[&lt;/span>Hello World: 7&lt;span class="o">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">...
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>and we can see that it receives messages right away as well.&lt;/p>
+&lt;p>We are all set!&lt;/p></description></item><item><title>Managing dotfiles</title><link>https://artivis.github.io/post/2020/dotfiles/</link><pubDate>Sat, 06 Jun 2020 00:00:00 +0000</pubDate><guid>https://artivis.github.io/post/2020/dotfiles/</guid><description>&lt;p>In this post, we will see how we can easily manage our personal
+configuration files - a.k.a. dotfiles.
+Yeah dotfiles, named after there common &lt;code>~/.my_config&lt;/code> form, you know,
+all of those small configuration files lying across our $HOME.&lt;/p>
+&lt;blockquote>
+&lt;p>Because there is no place like $HOME&lt;/p>
+&lt;/blockquote>
+&lt;p>Because we are spending so much time on our machine, be it for work or for fun
+(both at the same time if you are lucky),
+we love to tweak our environment to our taste and needs.
+Change the UX, create some aliases, use some dark theme and what not,
+most if not all of these are saved in some configuration files somewhere.
+And since we spent so much time making a home for ourselves,
+wouldn&amp;rsquo;t it be great if we could quickly set it up again on a different computer?
+Change the house but keep the furniture and decorations?
+This is precisely what we are going to set up here.&lt;/p>
+&lt;hr>
+&lt;h2 id="content">Content&lt;/h2>
+&lt;ul>
+&lt;li>&lt;a href="#content">Content&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#---disposable-tiny-home">* Disposable tiny home&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#picking-a-dotfiles-manager">Picking a dotfiles manager&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#building-our-castle">Building our castle&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#quickly-setting-up-a-new-machine">Quickly setting up a new machine&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#disposable-tiny-home">Disposable tiny home&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;hr>
+&lt;h2 id="picking-a-dotfiles-manager">Picking a dotfiles manager&lt;/h2>
+&lt;p>Looking on the web for a dotfiles manager, you may find many of them -
+see a whole &lt;a href="https://dotfiles.github.io/utilities/" target="_blank" rel="noopener">list of them here&lt;/a>. Most of them work off
+the same principles, being a small set of utils to help manage our dotfiles.
+Management includes most importantly versioning, often through git and
+the installation of the files to their correct location as they are more than
+often expected to be found at a given path.
+You may want to give a look at the aforementioned list of managers
+and pick one that best answers your needs and expectations.
+Note that many are interchangeable.&lt;/p>
+&lt;p>In this post we settled using &lt;a href="https://github.com/andsens/homeshick" target="_blank" rel="noopener">&lt;code>homeshick&lt;/code>&lt;/a>.
+There are two main reasons for this choice.
+Firstly, it is entirely written in bash, making it usable virtually anywhere.
+Secondly, it &amp;lsquo;installs&amp;rsquo; dotfiles on our system using symlinks rather than
+hard copies. The files thus exist in a single place.
+Some other nice features includes, being git-based, being cli-based,
+supporting multi dotfiles repos.
+It has to be noted tho that the project is not in a really active
+development and not very feature rich compared to other solutions.
+It is a thin-layer that does the job.&lt;/p>
+&lt;p>Alright so how do we get started?&lt;/p>
+&lt;h2 id="building-our-castle">Building our castle&lt;/h2>
+&lt;p>&lt;code>homeshick&lt;/code> relies around the concept of &lt;em>castles&lt;/em> which are nothing
+more than git repositories.
+A castle contains all of our dotfiles which are organized with the same
+layout as our home directory.
+But before building our castle, we need to install the appropriate tool.
+To install &lt;code>homeshick&lt;/code>, nothing easier, we simply clone its repository
+in our home:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">git clone https://github.com/andsens/homeshick.git &lt;span class="nv">$HOME&lt;/span>/.homesick/repos/homeshick
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>And we are done. Now to use it, we only have to source it,
+e.g. directly in our &lt;code>.bashrc&lt;/code>,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">&lt;span class="nb">echo&lt;/span> &lt;span class="s2">&amp;#34;source ~/.homesick/repos/homeshick/homeshick.sh&amp;#34;&lt;/span> &amp;gt;&amp;gt; ~/.bashrc
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>We can also source its tab completion tool to ease our life,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">&lt;span class="nb">echo&lt;/span> &lt;span class="s2">&amp;#34;source ~/.homesick/repos/homeshick/completions/homeshick-completion.bash&amp;#34;&lt;/span> &amp;gt;&amp;gt; ~/.bashrc
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Alright, we are done with the installation,
+let us start creating the said castle.&lt;/p>
+&lt;p>First we create a new local git repo through &lt;code>homeshick&lt;/code> cli tool,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ homeshick generate dotfiles
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>This creates an empty castle named &amp;lsquo;dotfiles&amp;rsquo; in
+&lt;code>~/.homesick/repos/dotfiles/&lt;/code>.
+To populate our castle with a dotfile, we make use of the &amp;rsquo;track&amp;rsquo; command:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">homeshick track &lt;span class="o">{&lt;/span>castle&lt;span class="o">}&lt;/span> &lt;span class="o">{&lt;/span>dotfile&lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>To track our first file, say e.g. &lt;code>.bashrc&lt;/code>, we simply issue,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">homeshick track dotfiles ~/.bashrc
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>The command copies the file in our castle at
+&lt;code>~/.homesick/repos/dotfiles/home/.bashrc&lt;/code> and replaces the original file
+with a symlink to the copy.&lt;/p>
+&lt;p>Now all we have to do is to commit our change and save our castle online,&lt;/p>
+&lt;p>To move to our local repository, we enter,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ homeshick &lt;span class="nb">cd&lt;/span> dotfiles
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>and we can now use the usual git commands,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">git add .
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">git commit -m &lt;span class="s1">&amp;#39;add .bashrc&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Let us save our castle online, e.g. on GitHub,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">git remote add origin git@github.com:user/dotfiles.git
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">git push -u origin master
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>We may now repeat this operation for each and every configuration file
+we would like to save.
+With our castle safely backed up online, we will now see
+how we can quickly set up our environment on a new machine.&lt;/p>
+&lt;h2 id="quickly-setting-up-a-new-machine">Quickly setting up a new machine&lt;/h2>
+&lt;p>Whether you bought a new computer or nuked your old hardware with a
+fresh new distro, you will now witness the true power of &lt;code>homeshick&lt;/code>.&lt;/p>
+&lt;p>To install our cosy environment on a fresh distro,
+all we have to do is,&lt;/p>
+&lt;ol>
+&lt;li>
+&lt;p>Install &lt;code>homeshick&lt;/code>&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">git clone https://github.com/andsens/homeshick.git &lt;span class="nv">$HOME&lt;/span>/.homesick/repos/homeshick
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nb">source&lt;/span> ~/.homesick/repos/homeshick/homeshick.sh
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/li>
+&lt;li>
+&lt;p>Import our castle&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">homeshick clone git@github.com:user/dotfiles.git
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/li>
+&lt;li>
+&lt;p>Let &lt;code>homeshick&lt;/code> works its magic&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">homeshick link dotfiles
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/li>
+&lt;/ol>
+&lt;p>Voila! Home sweet home.&lt;/p>
+&lt;p>Of course this post is only a quick overview of a given dotfiles manager.
+I won&amp;rsquo;t detail here all of its options and features
+and let you discover them for yourself in its &lt;a href="https://github.com/andsens/homeshick/wiki" target="_blank" rel="noopener">wiki&lt;/a>.
+As mentioned previously many dotfiles managers rely on a git repository and the
+same layout as &lt;code>homeshick&lt;/code> so you can get started with it and later move to
+another one which better fits your needs.&lt;/p>
+&lt;p>At this point you may be wondering if this is really worth it given that you probably
+install a fresh distro every 2 years or so and completely change hardware even less
+frequently.
+Well, fellow developer, aren&amp;rsquo;t you using containers?
+If not, you definitely should consider it and check &lt;a href="https://artivis.github.io/post/2020/lxc">this other post&lt;/a>
+where I detail a development workflow for &lt;a href="https://www.ros.org/" target="_blank" rel="noopener">ROS&lt;/a> in &lt;a href="https://linuxcontainers.org/" target="_blank" rel="noopener">LXD&lt;/a>.&lt;/p>
+&lt;h2 id="disposable-tiny-home">Disposable tiny home&lt;/h2>
+&lt;p>If you are like me, trying your best to keep a tidy laptop while
+messing around with plenty of different software toys,
+then you may have had one of these days during which you spawn several containers.
+Containers in which we don&amp;rsquo;t have our sweet bash aliases;
+on our very own machine!
+But thanks to &lt;code>homeshick&lt;/code> we can now start up a fresh
+container and have it mimic &lt;code>$HOME&lt;/code> in a matter of seconds!
+Let me demonstrate it for you with a LXD container,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">lxc launch ubuntu:20.04 tmp-20-04
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">lxc profile add castle tmp-20-04
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">lxc ubuntu tmp-20-04
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Ahhh, what a cozy tiny disposable home!&lt;/p>
+&lt;p>That seemed too easy to you? Alright I confess, I used some of my own aliases here.
+But isn&amp;rsquo;t it what this whole post is about?
+Note that the above 3 lines really boils down to,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ lxc launch ubuntu:20.04 tmp-20-04
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">$ lxc &lt;span class="nb">exec&lt;/span> tmp-20-04 -- sudo --login --user ubuntu
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">...
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">$ git clone https://github.com/andsens/homeshick.git &lt;span class="nv">$HOME&lt;/span>/.homesick/repos/homeshick
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">$ &lt;span class="nb">source&lt;/span> ~/.homesick/repos/homeshick/homeshick.sh
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">$ homeshick clone git@github.com:user/dotfiles.git
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">$ homeshick link dotfiles
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>With this example,
+I hope that I managed to offer you a glimpse at the power of &lt;code>homeshick&lt;/code>
+(and more generally of dotfiles managers),
+especially when coupled to a containerized workflow.&lt;/p>
+&lt;p>Before closing this post, let me give you one last tip.
+Because we made our containerized workflow rather seamless with our
+host, it can be easy to lose track of which shell is in a container and which
+is not. To differentiate them, add the following to your &lt;code>.bashrc&lt;/code>:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">&lt;span class="k">function&lt;/span> prompt_lxc_header&lt;span class="o">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">if&lt;/span> &lt;span class="o">[&lt;/span> -e /dev/lxd/sock &lt;span class="o">]&lt;/span>&lt;span class="p">;&lt;/span> &lt;span class="k">then&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="nb">echo&lt;/span> &lt;span class="s2">&amp;#34;[LXC] &amp;#34;&lt;/span>&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> &lt;span class="k">fi&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nv">PS1&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="s1">&amp;#39;$(prompt_lxc_header)&amp;#39;&lt;/span>&lt;span class="nv">$PS1&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>When used in a container,
+a shell prompt in the said container will now look something like:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">&lt;span class="o">[&lt;/span>LXC&lt;span class="o">]&lt;/span> ubuntu@tmp-20-04:~$
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>No more confusion 👍&lt;/p></description></item><item><title>SSH the Raspberry Pi Zero over USB</title><link>https://artivis.github.io/post/2020/pi-zero/</link><pubDate>Mon, 01 Jun 2020 00:00:00 +0000</pubDate><guid>https://artivis.github.io/post/2020/pi-zero/</guid><description>&lt;p>In this post, we will see how to SSH a Raspberry Pi Zero
+over USB from a Ubuntu-based host.
+Moreover we will make sure the the Pi Zero has access to internet through the host
+so that we can install/update some software.&lt;/p>
+&lt;h2 id="content">Content&lt;/h2>
+&lt;ul>
+&lt;li>&lt;a href="#content">Content&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#install-raspbian">Install Raspbian&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#ssh-over-usb">SSH over USB&lt;/a>
+&lt;ul>
+&lt;li>&lt;a href="#set-usb-gadget-mode">Set USB Gadget mode&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#set-the-connection-to-shared-with-other-computers">Set the connection to Shared with other computers&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#set-a-static-mac-address">Set a static MAC address&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#set-a-static-ip-address">Set a static IP address&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="install-raspbian">Install Raspbian&lt;/h2>
+&lt;p>There exists plenty of tutorials on the topic of installing Raspbian
+(see the the &lt;a href="https://www.raspberrypi.org/documentation/installation/installing-images/" target="_blank" rel="noopener">official documentation&lt;/a>)
+therefore I will not detail it here.
+To summarize, you have to,&lt;/p>
+&lt;ol>
+&lt;li>
+&lt;p>Download &lt;a href="https://www.raspberrypi.org/downloads/raspbian/" target="_blank" rel="noopener">&lt;code>Raspian&lt;/code>&lt;/a> (Lite for headless)&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Burn the image on a micro SD card with &lt;a href="https://www.balena.io/etcher/" target="_blank" rel="noopener">&lt;code>Etcher&lt;/code>&lt;/a>&lt;/p>
+&lt;p>Before unplugging the card we will enable SSH connections.
+To do so, open the &lt;code>boot&lt;/code> partition on the card and simply create
+an empty &lt;code>ssh&lt;/code> file:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">&lt;span class="nb">cd&lt;/span> /path/to/root/
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">touch ssh
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/li>
+&lt;li>
+&lt;p>Plug the card on the Pi Zero&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;h2 id="ssh-over-usb">SSH over USB&lt;/h2>
+&lt;p>With the micro SD card ready we can now plug the USB cable to our host
+and Pi Zero.
+However, note that while the Pi Zero has two micro USB port,
+only one supports USB On-The-Go (OTG). It is this feature that
+will allows us to treat the connection as an Ethernet connection.
+The port in question is the &lt;strong>innermost&lt;/strong> one,
+the one closer to the center of the board, as shown in the image below.&lt;/p>
+&lt;p>
+&lt;figure >
+&lt;div class="d-flex justify-content-center">
+&lt;div class="w-100" >&lt;img src="https://artivis.github.io/img/post/pizero-usb-host.png" alt="Raspberry Pi Zero USB OTG port" loading="lazy" data-zoomable />&lt;/div>
+&lt;/div>&lt;/figure>
+&lt;/p>
+&lt;h3 id="set-usb-gadget-mode">Set USB Gadget mode&lt;/h3>
+&lt;p>We would like to be able to access the Pi Zero through SSH
+from our machine using a USB cable.
+To do that we will have to edit two files.&lt;/p>
+&lt;p>First, edit the file &lt;code>/boot/config.txt&lt;/code> and append this line at the end:&lt;/p>
+&lt;pre tabindex="0">&lt;code class="language-terminal" data-lang="terminal">dtoverlay=dwc2
+&lt;/code>&lt;/pre>&lt;p>Second, we will edit the file &lt;code>/boot/cmdline.txt&lt;/code>.
+After &lt;code>rootwait&lt;/code>, we will add&lt;/p>
+&lt;pre tabindex="0">&lt;code class="language-terminal" data-lang="terminal">modules-load=dwc2,g_ether
+&lt;/code>&lt;/pre>&lt;blockquote>
+&lt;p>⚠️ pay attention to leave only one space between &lt;code>rootwait&lt;/code>
+and the new text otherwise it might not be parsed correctly.&lt;/p>
+&lt;/blockquote>
+&lt;p>Note that there might already be some text after &lt;code>rootwait&lt;/code>
+in which case you still must add the following immediately after &lt;code>rootwait&lt;/code>!
+Again, leave a single space after &lt;code>rootwait&lt;/code> but also after &lt;code>g_ether&lt;/code>.&lt;/p>
+&lt;p>The Pi Zero is fully configured, we can now configure our host.&lt;/p>
+&lt;h3 id="set-the-connection-to-shared-with-other-computers">Set the connection to Shared with other computers&lt;/h3>
+&lt;p>On your Linux host, go to the network connections editor.
+In the &amp;lsquo;&lt;em>IPv4 Settings&lt;/em>&amp;rsquo; tab,
+set &amp;lsquo;&lt;em>Method&lt;/em>:&amp;rsquo; to &amp;lsquo;&lt;em>Shared with other computers&lt;/em>&amp;rsquo;.
+Refresh the connection (dis/connect), after what
+you should be able to SSH to the Pi Zero.&lt;/p>
+&lt;p>To SSH to the Pi Zero, open a terminal on your host and type:&lt;/p>
+&lt;pre tabindex="0">&lt;code class="language-terminal" data-lang="terminal">ssh pi@rasberrypi.local
+&lt;/code>&lt;/pre>&lt;p>You will be prompted for a password, use the
+&lt;a href="https://www.raspberrypi.org/documentation/linux/usage/users.md" target="_blank" rel="noopener">default one for user &amp;lsquo;pi&amp;rsquo;&lt;/a>.
+And do not forget to change it down the line!&lt;/p>
+&lt;p>We are now connected on our board, let&amp;rsquo;s try internet out.
+Since we are using the method &amp;lsquo;&lt;em>Shared with other computers&lt;/em>&amp;rsquo;
+we should be able to access internet:&lt;/p>
+&lt;pre tabindex="0">&lt;code class="language-terminal" data-lang="terminal">$ ping -c 3 www.google.com
+PING www.google.com (172.217.13.100) 56(84) bytes of data.
+64 bytes from yul02s04-in-f4.1e100.net (172.217.13.100): icmp_seq=1 ttl=57 time=10.7 ms
+64 bytes from yul02s04-in-f4.1e100.net (172.217.13.100): icmp_seq=2 ttl=57 time=9.60 ms
+64 bytes from yul02s04-in-f4.1e100.net (172.217.13.100): icmp_seq=3 ttl=57 time=10.4 ms
+--- www.google.com ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2001ms
+rtt min/avg/max/mdev = 9.609/10.276/10.783/0.499 ms
+&lt;/code>&lt;/pre>&lt;p>We are live!&lt;/p>
+&lt;blockquote>
+&lt;p>&lt;strong>Note&lt;/strong>: On some distro, the &amp;lsquo;&lt;em>Shared with other computers&lt;/em>&amp;rsquo; is
+not available from the default settings.
+In this case fire up &lt;code>nm-connection-editor&lt;/code> from a terminal instead
+of the network connections editor.&lt;/p>
+&lt;/blockquote>
+&lt;h3 id="set-a-static-mac-address">Set a static MAC address&lt;/h3>
+&lt;p>Because we are connecting our Pi Zero as an Ethernet device through
+USB OTG, each time the connection is established the board is issued
+with a new random MAC address. This can be quickly annoying if we rely
+on the MAC address for, e.g. assigning a static IP to our board directly
+in our router configurations.
+This set up it totally &lt;strong>optional&lt;/strong>.&lt;/p>
+&lt;p>In the &lt;code>boot&lt;/code> partition, edit the file &lt;code>cmdline.txt&lt;/code> and append at the end,&lt;/p>
+&lt;pre tabindex="0">&lt;code class="language-terminal" data-lang="terminal">g_ether.host_addr=aa:bb:cc:dd:ee:ff
+&lt;/code>&lt;/pre>&lt;p>where &lt;code>aa:bb:cc:dd:ee:ff&lt;/code> will be the static MAC address.
+We can use for instance the last mac address assigned to the board.
+To retrieve it, run &lt;code>ifconfig&lt;/code> on the host machine and look for a
+connection along the lines &lt;code>enp0s29xxxxx&lt;/code>.&lt;/p>
+&lt;h3 id="set-a-static-ip-address">Set a static IP address&lt;/h3>
+&lt;p>We can also choose to assign a static IP address to our board so that we don&amp;rsquo;t
+have to look for it every now and then.
+To set a static IP address, edit the file &lt;code>/etc/dhcpcd.conf&lt;/code> as follows,&lt;/p>
+&lt;pre tabindex="0">&lt;code class="language-terminal" data-lang="terminal">interface usb0
+static ip_address=10.42.0.42
+static routers=10.42.0.1
+&lt;/code>&lt;/pre>&lt;p>Where &lt;code>10.42.0.42&lt;/code> is your desired static IP address.&lt;/p>
+&lt;p>Reboot and have fun!&lt;/p></description></item><item><title>ROS Noetic development workflow in LXC</title><link>https://artivis.github.io/post/2020/lxc/</link><pubDate>Sat, 30 May 2020 00:00:00 +0000</pubDate><guid>https://artivis.github.io/post/2020/lxc/</guid><description>&lt;p>In this post, we will discuss how to setup a &lt;a href="https://linuxcontainers.org/" target="_blank" rel="noopener">Linux container&lt;/a>
+- a.k.a &lt;a href="https://linuxcontainers.org/" target="_blank" rel="noopener">LXC&lt;/a> - for our &lt;a href="http://wiki.ros.org/noetic" target="_blank" rel="noopener">ROS Noetic&lt;/a> development.
+Developing in containers has several
+advantages such as:&lt;/p>
+&lt;ul>
+&lt;li>allowing us to use a different Linux distribution than the one we&amp;rsquo;ve installed on
+our host machine&lt;/li>
+&lt;li>providing a repeatable course of actions&lt;/li>
+&lt;li>messing around, installing a tons of dependencies without polluting our computer&lt;/li>
+&lt;li>burning the container to the ground and starting fresh again easily&lt;/li>
+&lt;/ul>
+&lt;p>There are of course many other upsides but those are the one we are really
+interested in for now.
+We will see first how to get started with LXC and install the latest ROS release Noetic.
+We will then configure our container so that it is able to share a workspace
+with our host machine. We will also enable the use of graphical applications
+from the container (e.g. Rviz, Gazebo).&lt;/p>
+&lt;p>The main prerequisites for this post are to be familiar with:&lt;/p>
+&lt;ul>
+&lt;li>the command terminal in Linux&lt;/li>
+&lt;li>ROS development&lt;/li>
+&lt;li>LXC&lt;/li>
+&lt;/ul>
+&lt;p>Note that I will be linking resources throughout the text,
+make sure to check them whenever you need further information.&lt;/p>
+&lt;p>Finally, while we will be focusing on the latest ROS Noetic release,
+the setup presented here applies not only to other ROS distributions
+but likely to most projects, be them ROS-based or not.&lt;/p>
+&lt;hr>
+&lt;h1 id="content">Content&lt;/h1>
+&lt;ul>
+&lt;li>&lt;a href="#content">Content&lt;/a>
+&lt;ul>
+&lt;li>&lt;a href="#---wrapping-up">* Wrapping up&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;a href="#setting-up-the-lxc">Setting up the LXC&lt;/a>
+&lt;ul>
+&lt;li>&lt;a href="#creating-the-container">Creating the container&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#lxc-aliases-to-the-rescue">LXC aliases to the rescue&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;a href="#install-ros-noetic">Install ROS Noetic&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#mounting-a-local-workspace">Mounting a local workspace&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#using-graphical-applications">Using graphical applications&lt;/a>
+&lt;ul>
+&lt;li>&lt;a href="#creating-a-lxd-profile">Creating a LXD profile&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#dedicated-graphic-card">Dedicated graphic card&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;a href="#profile-all-the-things">Profile all the things&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#wrapping-up">Wrapping up&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;hr>
+&lt;h1 id="setting-up-the-lxc">Setting up the LXC&lt;/h1>
+&lt;p>We will start by installing LXD, a lightweight container hypervisor which
+extends LXC functionality over the network.
+LXD uses LXC under the covers for some container management tasks and
+provides the &amp;rsquo;lxc&amp;rsquo; command line interface tool we will use throughout this post.
+For more information, you can refer to the
+&lt;a href="https://ubuntu.com/server/docs/containers-lxc" target="_blank" rel="noopener">LXC&lt;/a> and &lt;a href="https://ubuntu.com/server/docs/containers-lxd" target="_blank" rel="noopener">LXD&lt;/a> documentation
+on the Ubuntu website.&lt;/p>
+&lt;p>Alright, let us install LXD as a &lt;a href="https://snapcraft.io/" target="_blank" rel="noopener">snap&lt;/a> to make sure we always run
+the most up to date stable version:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ sudo snap install lxd
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Before we can create our first container, we must initialize LXD,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ sudo lxd init
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>This command will prompt you with a bunch of questions to fine tune LXD use.
+Unless you know what you are doing, you can safely hit the default answers.&lt;/p>
+&lt;p>Finally, we will add our user to the &amp;rsquo;lxd&amp;rsquo; group so that we can run lxd commands
+without sudo,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ sudo gpasswd -a &lt;span class="s2">&amp;#34;&lt;/span>&lt;span class="si">${&lt;/span>&lt;span class="nv">USER&lt;/span>&lt;span class="si">}&lt;/span>&lt;span class="s2">&amp;#34;&lt;/span> lxd
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>You should log out and log in again for this to take effect.&lt;/p>
+&lt;h2 id="creating-the-container">Creating the container&lt;/h2>
+&lt;p>To create a new container, we will use the following command,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ lxc launch &lt;span class="o">{&lt;/span>remote&lt;span class="o">}&lt;/span>:&lt;span class="o">{&lt;/span>image&lt;span class="o">}&lt;/span> &lt;span class="o">{&lt;/span>container-name&lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Since Noetic runs on Ubuntu 20.04, we will fetch a Ubuntu 20.04 image
+from the official Ubuntu remote,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ lxc launch ubuntu:20.04 ros-noetic
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>We can check that the container was properly created and launched,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ lxc list
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">+---------------+---------+-----------------------+-----------------------------------------------+-----------+-----------+
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">|&lt;/span> NAME &lt;span class="p">|&lt;/span> STATE &lt;span class="p">|&lt;/span> IPV4 &lt;span class="p">|&lt;/span> IPV6 &lt;span class="p">|&lt;/span> TYPE &lt;span class="p">|&lt;/span> SNAPSHOTS &lt;span class="p">|&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">+---------------+---------+-----------------------+-----------------------------------------------+-----------+-----------+
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">|&lt;/span> ros-noetic &lt;span class="p">|&lt;/span> RUNNING &lt;span class="p">|&lt;/span> 10.160.218.172 &lt;span class="o">(&lt;/span>eth0&lt;span class="o">)&lt;/span> &lt;span class="p">|&lt;/span> dd42:5ke1:fr68:2ca4:236:eff3:fe3r:7c21 &lt;span class="o">(&lt;/span>eth0&lt;span class="o">)&lt;/span> &lt;span class="p">|&lt;/span> CONTAINER &lt;span class="p">|&lt;/span> &lt;span class="m">0&lt;/span> &lt;span class="p">|&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">+---------------+---------+-----------------------+-----------------------------------------------+-----------+-----------+
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>With our container up and running, we can open a shell in it with a non-root user
+with the following command,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ lxc &lt;span class="nb">exec&lt;/span> ros-noetic -- sudo --login --user ubuntu
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>I know, this command is not very pretty nor easy to remember.
+But worry not, we will create an alias to ease future use.&lt;/p>
+&lt;h2 id="lxc-aliases-to-the-rescue">LXC aliases to the rescue&lt;/h2>
+&lt;p>LXC aliases, just like bash aliases, allow use to create a new CLI
+keywords to which we can associate an action.
+The command to create a new alias is,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ lxc &lt;span class="nb">alias&lt;/span> add &lt;span class="o">{&lt;/span>alias&lt;span class="o">}&lt;/span> &lt;span class="s1">&amp;#39;{command}&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>As an example, let us create a shorter version of the &lt;code>lxc list&lt;/code> command
+that also prints a more compact result:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ lxc &lt;span class="nb">alias&lt;/span> add ls &lt;span class="s1">&amp;#39;list --format csv -c n&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>We can check that the alias is correctly created,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ lxc &lt;span class="nb">alias&lt;/span> list
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">+--------+----------------------------------------------------------------------------------+
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">|&lt;/span> ALIAS &lt;span class="p">|&lt;/span> TARGET &lt;span class="p">|&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">+--------+----------------------------------------------------------------------------------+
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">|&lt;/span> ls &lt;span class="p">|&lt;/span> list --format csv -c n &lt;span class="p">|&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">+--------+----------------------------------------------------------------------------------+
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>And we can now simply use it,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ lxc ls
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">ros-noetic
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>That&amp;rsquo;s pretty neat.&lt;/p>
+&lt;p>But our main goal with aliases was to simplify our shell
+login to the container, so let&amp;rsquo;s just do that.
+Borrowing from the excellent &lt;a href="https://blog.simos.info/using-command-aliases-in-lxd-to-exec-a-shell/" target="_blank" rel="noopener">blog post by Simos Xenitellis&lt;/a>
+about LXC aliases, we will create a new alias &amp;lsquo;ubuntu&amp;rsquo; such as,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ lxc &lt;span class="nb">alias&lt;/span> add ubuntu &lt;span class="s1">&amp;#39;exec @ARGS@ --mode interactive -- /bin/sh -xac $@ubuntu - exec /bin/login -p -f &amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>This alias allows us now to simply connect to our container with,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ lxc ubuntu ros-noetic
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>That&amp;rsquo;s much better isn&amp;rsquo;t it?&lt;/p>
+&lt;h1 id="install-ros-noetic">Install ROS Noetic&lt;/h1>
+&lt;p>&lt;a href="http://wiki.ros.org/noetic" target="_blank" rel="noopener">ROS Noetic&lt;/a> is the latest and final ROS 1 release.
+The ROS project hasn&amp;rsquo;t come to an end, on the contrary, it rather look forward
+and focus its efforts
+toward the second version, namely ROS 2.
+Nevertheless, ROS Noetic is an important release because it targets
+Ubuntu 20.04, has official Python 3 support and will be supported until
+May 2025 (more information on &lt;a href="http://wiki.ros.org/noetic" target="_blank" rel="noopener">Noetic wiki page&lt;/a>).
+That leaves us plenty of time to learn and move to ROS 2.&lt;/p>
+&lt;p>To install it, let&amp;rsquo;s first connect to our container using our new LXC alias,&lt;/p>
+&lt;!-- we will simply follow the [official documentation][noetic-install]. -->
+&lt;!-- Let us execute a shell in our container using our new LXC alias, -->
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ lxc ubuntu ros-noetic
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>First, we will add the ROS packages repository to our sources.
+Starting with the key,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ apt-key adv --fetch-keys https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>then the repository,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ apt-add-repository http://packages.ros.org/ros/ubuntu
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>In case of trouble, you can also refer to the &lt;a href="http://wiki.ros.org/noetic/Installation/Ubuntu" target="_blank" rel="noopener">official documentation&lt;/a>.&lt;/p>
+&lt;p>We are all set to install ROS Noetic!&lt;/p>
+&lt;p>Here we can choose either of three installations;
+we can install only the core components,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ sudo apt install ros-noetic-ros-base
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>or core + the visualization stack (e.g. Rviz),&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ sudo apt install ros-noetic-desktop
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>or core + the visualization + simulation stacks (e.g. Gazebo),&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ sudo apt install ros-noetic-desktop-full
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>You can pick any depending on your needs.
+If you are not sure, I would recommend you install only the core components
+and later install other packages on a per-need basis:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ sudo apt install ros-noetic-ros-base
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">...
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">$ sudo apt install ros-noetic-&amp;lt;package-I-need&amp;gt;
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Simply to keep the size of the container as small as possible.&lt;/p>
+&lt;p>Finally, we will automatically source Noetic since this container is dedicated
+to it,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ &lt;span class="nb">echo&lt;/span> &lt;span class="s2">&amp;#34;source /opt/ros/noetic/setup.bash&amp;#34;&lt;/span> &amp;gt;&amp;gt; ~/.bashrc
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Every times we will log into our container, ROS Noetic will be sourced
+and we will be ready to develop!&lt;/p>
+&lt;h1 id="mounting-a-local-workspace">Mounting a local workspace&lt;/h1>
+&lt;p>What would our development workflow look like without some actual source code to
+work on? Well, let us set up our ROS workspace.&lt;/p>
+&lt;p>Rather than copying/creating our workspace in the container,
+we will keep it on the host machine. By doing so,
+not only the workspace will survive deleting the LXC (persistence)
+but we will also be able to share it across several LXC
+thus across several ROS distros.&lt;/p>
+&lt;p>Hereafter, we will assume our workspace to be simply &lt;code>~/workspace&lt;/code>
+on the host with the classic tree,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ tree ~/workspace
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">/home/user/workspace/
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">└── src
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> └── my_ros_package
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> └...
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>To share a folder with the container, we have to add a &amp;lsquo;device disk&amp;rsquo; to it.
+The general command to do so is of the form,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ lxc config device add &lt;span class="o">{&lt;/span>container&lt;span class="o">}&lt;/span> &lt;span class="o">{&lt;/span>device-name&lt;span class="o">}&lt;/span> disk &lt;span class="nv">source&lt;/span>&lt;span class="o">={&lt;/span>full-path-to-folder&lt;span class="o">}&lt;/span> &lt;span class="nv">path&lt;/span>&lt;span class="o">={&lt;/span>full-path-inside-container&lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>filling up the placeholders for our use case, it reads,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ lxc config device add ros-noetic workspace disk &lt;span class="nv">source&lt;/span>&lt;span class="o">=&lt;/span>~/workspace &lt;span class="nv">path&lt;/span>&lt;span class="o">=&lt;/span>/home/ubuntu/workspace
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Once the device added, we have to configure the access rights so that we can read and write
+the folder and its content in the container,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ lxc config &lt;span class="nb">set&lt;/span> ros-noetic raw.idmap &lt;span class="s2">&amp;#34;both &lt;/span>&lt;span class="k">$(&lt;/span>id -u&lt;span class="k">)&lt;/span>&lt;span class="s2"> &lt;/span>&lt;span class="k">$(&lt;/span>id -g&lt;span class="k">)&lt;/span>&lt;span class="s2">&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>We now have to restart the container for the changes to take effects,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ lxc restart ros-noetic
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Let us log back into our container,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ lxc ubuntu ros-noetic
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>and verify that the folder is properly mounted,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ ls -l
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">drwxr-xr-x &lt;span class="m">22&lt;/span> ubuntu ubuntu &lt;span class="m">4096&lt;/span> May &lt;span class="m">22&lt;/span> 21:21 workspace
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Looks like we are good!&lt;/p>
+&lt;p>In this section we have configured our container through the &lt;code>lxc config&lt;/code>
+cli tool. Note that container configuration is saved in a yaml file, which you
+can review with,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ lxc config show &lt;span class="o">{&lt;/span>container&lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>and directly edit with,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ lxc config edit &lt;span class="o">{&lt;/span>container&lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>More on that later.&lt;/p>
+&lt;h1 id="using-graphical-applications">Using graphical applications&lt;/h1>
+&lt;p>This part is totally &lt;em>optional&lt;/em> and depends on whether you are planning to run
+some graphical applications (e.g. Rviz, Gazebo) in your container or not.
+If you are not interested in running any gui in your container,
+you may still want to have a quick look before jumping at the
+&amp;lsquo;&lt;a href="#profile-all-the-things">Profile all the things!&lt;/a>&amp;rsquo; section.
+If you do want to run graphical applications,
+then we have to configure the container to support that.&lt;/p>
+&lt;p>Unlike in the previous section, we are not going to use the &lt;code>lxc config&lt;/code> tool
+to configure our container. Instead, we will introduce &lt;code>lxc profile&lt;/code> as a way
+to create easily reusable configurations.A &lt;em>profile&lt;/em> is a set of parameters
+that can be applied to a container in one go. It can describe a full fledged
+setup or a particular feature as in our case below.
+Furthermore a profile can be use by a single container or many. Reusability!&lt;/p>
+&lt;h2 id="creating-a-lxd-profile">Creating a LXD profile&lt;/h2>
+&lt;p>Let us first create a profile named &lt;code>gui&lt;/code>,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ lxc profile create gui
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>we can now edit the profile,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ lxc profile edit gui
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>and paste the following,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-yaml" data-lang="yaml">&lt;span class="line">&lt;span class="cl">&lt;span class="nt">config&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">environment.DISPLAY&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="m">0&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">raw.idmap&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">both 1000 1000&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">description&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">Enables graphical apps use.&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">devices&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">X0&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">path&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">/tmp/.X11-unix/X0&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">source&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">/tmp/.X11-unix/X0&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">type&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">disk&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">mygpu&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">type&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">gpu&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">name&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">gui&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">used_by&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">[]&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Alternatively, you can use the following one liner,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">curl https://gist.githubusercontent.com/artivis/37c961e157e99f6fcaff0204a0f59731/raw/ca4abd1a3c6b1d8a74910207903ac7723685dce1/gui.yaml &lt;span class="p">|&lt;/span> lxc profile edit gui
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>In this profile, there might be a couple things for you to tweak depending on
+your machine. For instance your user id and guid,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">raw.idmap: both &lt;span class="m">1000&lt;/span> &lt;span class="m">1000&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>which you can retrieve respectively with:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ id -u
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="m">1000&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">$ id -g
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="m">1000&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>You may also have to check your graphic card in use looking at the directory
+&lt;code>/tmp/.X11-unix/&lt;/code>.&lt;/p>
+&lt;p>Now that our profile is set up, we have to add it to our container,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">lxc profile add ros-noetic gui
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>As previously, we have to restart the container for those change to take effect,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">lxc restart ros-noetic
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Alright, let us try to open Rviz to make sure everything went fine.
+Open two shells to the container, one running the roscore and the second
+running Rviz:&lt;/p>
+&lt;p>Shell 1&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ roscore
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Shell 2&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ rosrun rviz rviz
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>We are getting really close to our regular development experience aren&amp;rsquo;t we?&lt;/p>
+&lt;h2 id="dedicated-graphic-card">Dedicated graphic card&lt;/h2>
+&lt;p>If you have a dedicated graphic card on your host machine,
+you will also have to install the &lt;em>very same driver&lt;/em> in the container
+in order to use graphical applications.
+If you have an Nvidia card, the following should help you.
+To figure out the driver version on the host we&amp;rsquo;ll type,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ nvidia-smi
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Mon May &lt;span class="m">12&lt;/span> 11:59:59 &lt;span class="m">2020&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">+-----------------------------------------------------------------------------+
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">|&lt;/span> NVIDIA-SMI 440.82 Driver Version: 440.82 CUDA Version: 10.2 &lt;span class="p">|&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">+-------------------------------+----------------------+----------------------+
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>All we have to do now is to install the same driver in the container,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ sudo apt install nvidia-440
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h1 id="profile-all-the-things">Profile all the things&lt;/h1>
+&lt;p>We have seen in section &lt;a href="#creating-a-lxd-profile">&amp;lsquo;Creating a LXD profile&amp;rsquo;&lt;/a> how to
+create a LXC profile to easily support running graphical
+apps in our container(s).
+As we mentioned before, a profile really only is a set of configurations
+for our container.
+So one may ask&lt;/p>
+&lt;blockquote>
+&lt;p>can&amp;rsquo;t we create some other profiles to further group all the configs we&amp;rsquo;ve seen?&lt;/p>
+&lt;/blockquote>
+&lt;p>Well, yes we can! And guess what? Containers can have several profiles!
+So we could totally create another profile to automatically
+add the ROS apt repository, both for ROS 1 and ROS 2 respectively:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ lxc profile create ros-apt
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">$ lxc profile edit ros-apt
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>and add,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-yaml" data-lang="yaml">&lt;span class="line">&lt;span class="cl">&lt;span class="nt">config&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">user.user-data&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">|&lt;/span>&lt;span class="sd">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> #cloud-config
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> runcmd:
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - &amp;#34;apt-key adv --fetch-keys https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - &amp;#34;apt-add-repository http://packages.ros.org/ros/ubuntu&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - &amp;#34;apt-add-repository http://packages.ros.org/ros2/ubuntu&amp;#34;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">description&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s2">&amp;#34;Add ROS apt repository&amp;#34;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">devices&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>{}&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">name&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">ros&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">used_by&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>{}&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Similarly we could create another profile to easily share our ROS workspace
+as well,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ lxc profile create ros-ws
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">$ lxc profile edit ros-ws
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>and add,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-yaml" data-lang="yaml">&lt;span class="line">&lt;span class="cl">&lt;span class="nt">config&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">raw.idmap&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">both 1000 1000&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">description&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s2">&amp;#34;Share the ROS workspace&amp;#34;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">devices&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">workspaces&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">path&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">/home/ubuntu/workspace&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">source&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">/home/user/workspace&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">type&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">disk&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">name&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">ros-ws&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">used_by&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>{}&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>And remember to tweak both profiles (user id/guid etc.).&lt;/p>
+&lt;p>Both profiles will greatly help when creating a new container.
+However, before we get all excited, let me tell you that
+we have to be cautious when using them.
+The reason is that both should be added a rather specific times
+of the container creation. Let us see when that is.&lt;/p>
+&lt;p>First, the &amp;lsquo;ros-apt&amp;rsquo; profile makes use of &lt;a href="https://cloudinit.readthedocs.io/en/latest/index.html" target="_blank" rel="noopener">cloud-init&lt;/a>
+to preconfigure the container meaning that our &lt;code>apt-key/apt-add-repository&lt;/code>
+command will be run &lt;strong>only once&lt;/strong> when the container is &lt;strong>first created&lt;/strong>
+(see &lt;a href="https://blog.simos.info/how-to-preconfigure-lxd-containers-with-cloud-init/" target="_blank" rel="noopener">this other blog post by Simos Xenitellis&lt;/a>
+for more info about cloud-init in LXD).
+To create a container with given profile(s),
+the &lt;code>lxc launch&lt;/code> commands changes to,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ lxc launch --profile &lt;span class="o">{&lt;/span>profile-a&lt;span class="o">}&lt;/span> --profile &lt;span class="o">{&lt;/span>profile-b&lt;span class="o">}&lt;/span> &lt;span class="o">{&lt;/span>remote&lt;span class="o">}&lt;/span>:&lt;span class="o">{&lt;/span>image&lt;span class="o">}&lt;/span> &lt;span class="o">{&lt;/span>container-name&lt;span class="o">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>which in our case looks like,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ lxc launch --profile default --profile ros-apt ubuntu:20.04 ros-noetic2
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Let me insist again. If you try to &lt;em>add&lt;/em> the &amp;lsquo;ros-apt&amp;rsquo; profile after the container
+was created, &lt;em>nothing will happen&lt;/em>:
+&lt;del>&lt;code>lxd profile add ros-noetic ros-apt&lt;/code>&lt;/del>!&lt;/p>
+&lt;p>Concerning our &amp;lsquo;ros-ws&amp;rsquo; profile, it is a bit of the opposite situation.
+Indeed, when creating the container, a whole bunch of things are ran before
+the &amp;lsquo;ubuntu&amp;rsquo; user is set up. Since we are linking our workspace to &lt;code>/home/ubuntu/&lt;/code>
+we may arrive to early so to speak and it results in messing up the
+proper set up of the user. For this profile, we therefore
+&lt;em>have to add it after the container creation&lt;/em>
+(&lt;del>&lt;code>lxc launch --profile ros-ws {remote}:{image} {container-name}&lt;/code>&lt;/del>).&lt;/p>
+&lt;p>We can add our ros-ws profile to a container with,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ lxc profile add ros-noetic ros-ws
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>This whole tempo story sounds annoying.
+Alright let&amp;rsquo;s call it a day and summarize how to set up a new container.&lt;/p>
+&lt;h1 id="wrapping-up">Wrapping up&lt;/h1>
+&lt;p>Well, that was quite a journey in LXD realm.
+But our efforts were not vain for we have learned a lot
+about LXD and set up some great tools.&lt;/p>
+&lt;p>Soon, the &lt;a href="https://index.ros.org/doc/ros2/Releases/Release-Foxy-Fitzroy/" target="_blank" rel="noopener">ROS 2 Foxy&lt;/a> distro will be released
+(5th of June).
+How will we then create a Foxy container?
+Well, that&amp;rsquo;s quite simple now:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ lxc launch --profile default --profile ros-apt --profile gui ubuntu:20.04 ros-foxy
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">$ lxc profile add ros-foxy ros-ws
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">$ lxc ubuntu ros-foxy
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">...
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">$ sudo apt install ros-foxy-desktop
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Off we go!&lt;/p>
+&lt;!--
+# Speed up new LXC set up
+@todo: snapshots + create container from snapshots + lxc-this script. Maybe for another post?
+-->
+&lt;!-- Links --></description></item><item><title>My website</title><link>https://artivis.github.io/post/2020/my-website/</link><pubDate>Fri, 29 May 2020 00:00:00 +0000</pubDate><guid>https://artivis.github.io/post/2020/my-website/</guid><description>&lt;p>Here we are, looking for online visibility.
+How does one set that up quickly when starting from scratch?
+Do &lt;strong>you&lt;/strong> Remember those HTML courses?
+&lt;strong>Yeah me neither.&lt;/strong>
+But fortunately for us it is now easier than ever!&lt;/p>
+&lt;!-- &lt;details class="toc-inpage d-print-none " open>
+&lt;summary class="font-weight-bold">Table of Contents&lt;/summary>
+&lt;nav id="TableOfContents">
+&lt;ul>
+&lt;li>&lt;a href="#setting-up-the-lxc">Setting up the LXC&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#installing-hugo">Installing Hugo&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#first-view-of-our-website">First view of our website&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;ul>
+&lt;li>&lt;a href="#automatic-deployment">Automatic deployment&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;/nav>
+&lt;/details>
+-->
+&lt;p>We will discuss in this post how to create our own website with the
+&lt;a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo&lt;/a> framework from a template and
+how to deploy it to &lt;a href="https://github.com/" target="_blank" rel="noopener">GitHub&lt;/a>.
+The prerequisites are,&lt;/p>
+&lt;ul>
+&lt;li>GitHub&lt;/li>
+&lt;li>markdown&lt;/li>
+&lt;li>&lt;a href="https://linuxcontainers.org/lxd/introduction/" target="_blank" rel="noopener">LXD&lt;/a> (optional)&lt;/li>
+&lt;/ul>
+&lt;p>You may find &lt;code>GitHub&lt;/code> tutorials &lt;a href="https://guides.github.com/activities/hello-world/" target="_blank" rel="noopener">here&lt;/a>
+and &lt;a href="https://opensource.com/article/18/1/step-step-guide-git" target="_blank" rel="noopener">there&lt;/a>.
+Pages of our website will be written in &lt;a href="https://en.wikipedia.org/wiki/Markdown" target="_blank" rel="noopener">markdown&lt;/a>.
+You can learn more about markdown from those tutorials,
+&lt;a href="http://markdowntutorial.com/" target="_blank" rel="noopener">in English&lt;/a> and &lt;a href="https://openclassrooms.com/courses/redigez-en-markdown" target="_blank" rel="noopener">in French&lt;/a>.
+And if you only need a brief refresh,
+&lt;a href="https://sourcethemes.com/academic/docs/writing-markdown-latex/" target="_blank" rel="noopener">here&lt;/a> is the syntax supported by our website.
+Finally, you can find a &lt;code>LXD&lt;/code> tutorial &lt;a href="https://linuxcontainers.org/lxd/getting-started-cli/" target="_blank" rel="noopener">here&lt;/a>.&lt;/p>
+&lt;p>Now, let us set up the necessary stuff to get started, shall we?&lt;/p>
+&lt;h1 id="picking-a-website-template">Picking a website template&lt;/h1>
+&lt;p>To build our website, we will use the framework &lt;a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo&lt;/a>.
+It is very convenient for our use case because it comes with a ton of
+&lt;a href="https://themes.gohugo.io/" target="_blank" rel="noopener">predefined website themes&lt;/a>
+and it is very simple to use.&lt;/p>
+&lt;p>For the purpose of this tutorial we will use the very theme of this website,
+namely, &lt;a href="https://themes.gohugo.io/academic/" target="_blank" rel="noopener">Academic&lt;/a>.
+This theme is rather clean, well organized, fairly simple to use and most importantly
+it is &lt;a href="https://sourcethemes.com/academic/docs/" target="_blank" rel="noopener">well documented&lt;/a>!
+Furthermore, it can be found pre-bundled in a &lt;code>Hugo&lt;/code> project so that
+it is pretty much clone and play.
+However, at the time of writing, this theme requires &lt;code>Hugo *Extended*&lt;/code> version 0.67+.
+This distinction is important because,
+while it is conveniently &lt;a href="https://snapcraft.io/hugo" target="_blank" rel="noopener">packaged as a snap&lt;/a>,
+the snap only offers the classic version, not the &lt;em>Extended&lt;/em>.
+Therefore we have to fetch its debian package and install it manually.&lt;/p>
+&lt;p>First, let us clone the ready-to-go &lt;code>Academic&lt;/code> bundle on our machine:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">&lt;span class="nb">cd&lt;/span> ~/
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">git clone https://github.com/sourcethemes/academic-kickstart.git my_website
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nb">cd&lt;/span> my_website
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">git submodule update --init --recursive
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h1 id="prepping-the-tools">Prepping the tools&lt;/h1>
+&lt;p>To avoid polluting our system, we will set up a Linux container in which we will
+install &lt;code>Hugo Extended&lt;/code>.
+The container is totally optional and you can do the installation directly on your machine.
+If you do not wish to use a container, skip directly to &lt;a href="#installing-hugo">Hugo installation&lt;/a>&lt;/p>
+&lt;h2 id="setting-up-the-lxc">Setting up the LXC&lt;/h2>
+&lt;p>Let us start a fresh and pull a new &lt;code>Ubuntu 18.04&lt;/code> instance,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">lxc launch ubuntu:18.04 hugo
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>We will now mount a disk device to share the website source code between our machine and the container:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">lxc config device add hugo workspace disk &lt;span class="nv">source&lt;/span>&lt;span class="o">=&lt;/span>~/my_website &lt;span class="nv">path&lt;/span>&lt;span class="o">=&lt;/span>/home/ubuntu/my_website
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">lxc config &lt;span class="nb">set&lt;/span> hugo raw.idmap &lt;span class="s2">&amp;#34;both &lt;/span>&lt;span class="k">$(&lt;/span>id -u&lt;span class="k">)&lt;/span>&lt;span class="s2"> &lt;/span>&lt;span class="k">$(&lt;/span>id -g&lt;span class="k">)&lt;/span>&lt;span class="s2">&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">lxc restart hugo
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>The default installation of &lt;code>LXD&lt;/code> set up a bridged network so that containers
+live behind a NAT on the host. Therefore, we have to forward the port on which
+our website is served by the &lt;code>Hugo&lt;/code> framework.
+To do so, issue the following command:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">lxc config device add hugo proxy1313 proxy &lt;span class="nv">connect&lt;/span>&lt;span class="o">=&lt;/span>tcp:127.0.0.1:1313 &lt;span class="nv">listen&lt;/span>&lt;span class="o">=&lt;/span>tcp:0.0.0.0:1313
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>The container is all set up. We can log to it with:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">lxc &lt;span class="nb">exec&lt;/span> hugo -- su --login ubuntu
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="installing-hugo">Installing Hugo&lt;/h2>
+&lt;p>We will download the &lt;code>Hugo&lt;/code> extended debian directly from it &lt;code>GitHub&lt;/code> repository.
+To do so, enter in the terminal:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">wget https://github.com/gohugoio/hugo/releases/download/v0.70.0/hugo_extended_0.70.0_Linux-64bit.deb
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>At the time of writing, the latest &lt;code>Hugo Extended&lt;/code> release is version 0.70.0.&lt;/p>
+&lt;p>We can now install it with:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">sudo dpkg -i hugo_extended_*.deb
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="first-view-of-our-website">First view of our website&lt;/h2>
+&lt;p>Let the show begin. We are now ready to spawn our website and browse it.
+In a terminal, enter:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">&lt;span class="nb">cd&lt;/span> ~/my_website
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">hugo server
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Voila!&lt;/p>
+&lt;p>The website it up and running! To visualize it,
+open your web browser at the address &lt;code>http://localhost:1313&lt;/code>.
+That was easy right?&lt;/p>
+&lt;h1 id="making-the-website-your-own">Making the website your own&lt;/h1>
+&lt;p>We have a great template up and running, it is now time to make it our own.
+The &lt;code>Academic&lt;/code> theme comes with a ton of options and configurations allowing us
+to truly personalize it to our liking and use case.
+And since its online documentation is so great,
+I will let you discovers by yourself all the possibilities the theme offers.
+Head down to the &lt;a href="https://sourcethemes.com/academic/docs/get-started/" target="_blank" rel="noopener">Academic get started documentation&lt;/a>
+and have fun!&lt;/p>
+&lt;p>Just a quick advice, as you edit your website, let &lt;code>Hugo&lt;/code> run.
+It is able to update the website live so that you see your changes take effect
+immediately in your web browser!&lt;/p>
+&lt;h1 id="deploying-the-website-to-github">Deploying the website to GitHub&lt;/h1>
+&lt;p>Once our website is ready to be made public,
+all there is to do is to push it to &lt;code>GitHub&lt;/code>.
+Well, almost.&lt;/p>
+&lt;p>In your &lt;code>GitHub&lt;/code> account, we will create a repository to host your website.
+To do so hit the tiny cross &lt;code>(+)&lt;/code> in the top-right of &lt;code>GitHub&lt;/code> and select &lt;code>new repository&lt;/code>.
+For &lt;code>GitHub&lt;/code> to be able to figure out that this particular repository is your personal website
+we need to give it a specific name in the form : &lt;strong>&amp;lt;your-github-user-name&amp;gt;.github.io&lt;/strong>.&lt;/p>
+&lt;p>We will now prepare to push the website to this repository.&lt;/p>
+&lt;p>First we will add the &lt;code>GitHub&lt;/code> repository we just created as our remote,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">git add remote origin https://github.com/&amp;lt;your-github-user-name&amp;gt;/&amp;lt;your-github-user-name&amp;gt;.github.io.git
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>and change our branch name to avoid later mess,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">git branch -m master builder
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Here comes the final step before pushing to &lt;code>GitHub&lt;/code>.
+We must &lt;em>build&lt;/em> our website, or rather let &lt;code>Hugo&lt;/code> do it for us.
+Indeed so far we have edited the template that &lt;code>Hugo&lt;/code> uses to build the website.
+We have visualized it in our browser but the template cannot be deployed directly
+to &lt;code>GitHub&lt;/code>, it must be built. To build it locally, nothing easier, simply run:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">hugo
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>You will notice a new folder named &lt;code>public&lt;/code> in our project.
+It contains the generated website. It is this content that we must push to our repository.
+Furthermore, it must be pushed specifically to the &lt;code>master&lt;/code> branch.
+That&amp;rsquo;s a limitation of personal website on &lt;code>GitHub&lt;/code>.&lt;/p>
+&lt;h2 id="automatic-deployment">Automatic deployment&lt;/h2>
+&lt;p>So how could we automatize this build and deploy process?&lt;/p>
+&lt;p>We will add a small script so that every times
+we push some new content on the &lt;code>builder&lt;/code> branch,
+&lt;code>GitHub&lt;/code> will take care of calling &lt;code>Hugo&lt;/code> (building) and
+moving the &lt;code>public&lt;/code> folder directly on the &lt;code>master&lt;/code> branch (deploying).&lt;/p>
+&lt;p>For that, we will use &lt;code>GitHub actions&lt;/code> and more specifically the
+&lt;a href="https://github.com/peaceiris/actions-hugo" target="_blank" rel="noopener">&lt;code>actions-hugo&lt;/code>&lt;/a>.
+Sorry buddy but I&amp;rsquo;ll skip the details about &lt;code>actons&lt;/code> here as it is all new
+to me as well. That could be the topic for a later post tho.&lt;/p>
+&lt;p>We will simply create a new file in our project to configure the action:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">&lt;span class="nb">cd&lt;/span> ~/my_website
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">touch .github/workflows/deploy-website.yml
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>which we will edit as follows:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-yaml" data-lang="yaml">&lt;span class="line">&lt;span class="cl">&lt;span class="nt">name&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">deploy website&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="c"># We will run the actions whenever something&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="c"># is pushed to the branch &amp;#39;builder&amp;#39;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">on&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">push&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">branches&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>- &lt;span class="l">builder&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">jobs&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="c"># Our action is called &amp;#39;deploy&amp;#39; and runs on Ubuntu 18.04&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">deploy&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">runs-on&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">ubuntu-18.04&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="c"># The action executes the following steps&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">steps&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="c"># It fetch our repository and its submodules&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>- &lt;span class="nt">uses&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">actions/checkout@v2&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">with&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">submodules&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kc">true&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c"># Fetch Hugo themes&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">fetch-depth&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="m">0&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="c"># Fetch all history for .GitInfo and .Lastmod&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="c"># It then set up Hugo Extended&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>- &lt;span class="nt">name&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">Setup Hugo&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">uses&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">peaceiris/actions-hugo@v2&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">with&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">hugo-version&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s1">&amp;#39;0.68.3&amp;#39;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">extended&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="kc">true&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="c"># It runs Hugo to generate the website&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>- &lt;span class="nt">name&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">Build&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">run&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">hugo --minify&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="c"># It copies the content of the &amp;#39;public&amp;#39; folder to the branch &amp;#39;master&amp;#39;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>- &lt;span class="nt">name&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">Deploy&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">uses&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">peaceiris/actions-gh-pages@v3&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">with&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">github_token&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">${{ secrets.GITHUB_TOKEN }}&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">publish_dir&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">./public&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">publish_branch&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">master&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>With our automatic deployment configured, all there remains to do is to push to &lt;code>GitHub&lt;/code>!&lt;/p>
+&lt;p>Let us remove the &amp;lsquo;public&amp;rsquo; folder is it exists,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">&lt;span class="nb">cd&lt;/span> ~/my_website
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">rm -r public
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>and commit all of our changes,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">git add .
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">git commit &lt;span class="s1">&amp;#39;made the website my own&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Finally, we push the changes upstream,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">git push origin builder
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Voila!&lt;/p>
+&lt;p>After a couple minutes your website is now available at the address:&lt;/p>
+&lt;p>&lt;code>https://&amp;lt;your-github-user-name&amp;gt;.github.io/&lt;/code>&lt;/p>
+&lt;p>Congrats on your new online visibility, our job here is done.&lt;/p>
+&lt;h1 id="bonus-academic-publications">Bonus: Academic publications&lt;/h1>
+&lt;p>If you happen to have some academic publications that you would like to showcase
+on your website, we will install a Python tool called &lt;code>academic&lt;/code>
+that will help us to automatically generate pages from &lt;code>Bibtex&lt;/code>.&lt;/p>
+&lt;p>First we will install &lt;code>pip3&lt;/code>:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">apt install python3-pip
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>to then install &lt;code>academic&lt;/code>:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">pip3 install -U academic
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Given that we have a &lt;code>.bib&lt;/code> file that contains all of our publications,
+we can generate the pages as follows:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">&lt;span class="nb">cd&lt;/span> ~/my_website
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">academic import --bibtex &amp;lt;path_to_your/publications.bib&amp;gt;
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>You can find more information in the
+&lt;a href="https://sourcethemes.com/academic/docs/managing-content/#create-a-publication" target="_blank" rel="noopener">Academic theme documentation&lt;/a>.&lt;/p></description></item><item><title>Manif: A micro Lie theory library for state estimation in robotics applications</title><link>https://artivis.github.io/publication/deray-joss-20/</link><pubDate>Wed, 01 Jan 2020 00:00:00 +0000</pubDate><guid>https://artivis.github.io/publication/deray-joss-20/</guid><description/></item><item><title>Timed-elastic smooth curve optimization for mobile-base motion planning</title><link>https://artivis.github.io/publication/deray-iros-19/</link><pubDate>Fri, 01 Nov 2019 00:00:00 +0000</pubDate><guid>https://artivis.github.io/publication/deray-iros-19/</guid><description/></item><item><title>Timed-Elastic Bands for Manipulation Motion Planning</title><link>https://artivis.github.io/publication/magyar-ral-19/</link><pubDate>Tue, 01 Oct 2019 00:00:00 +0000</pubDate><guid>https://artivis.github.io/publication/magyar-ral-19/</guid><description/></item><item><title>Joint on-manifold self-calibration of odometry model and sensor extrinsics using pre-integration</title><link>https://artivis.github.io/publication/deray-ecmr-19/</link><pubDate>Sun, 01 Sep 2019 00:00:00 +0000</pubDate><guid>https://artivis.github.io/publication/deray-ecmr-19/</guid><description/></item><item><title>A micro Lie theory for state estimation in robotics</title><link>https://artivis.github.io/publication/sola-18-lie/</link><pubDate>Mon, 01 Jan 2018 00:00:00 +0000</pubDate><guid>https://artivis.github.io/publication/sola-18-lie/</guid><description/></item><item><title>Word ordering and document adjacency for large loop closure detection in 2D laser maps</title><link>https://artivis.github.io/publication/deray-ral-17/</link><pubDate>Sat, 01 Jul 2017 00:00:00 +0000</pubDate><guid>https://artivis.github.io/publication/deray-ral-17/</guid><description/></item><item><title>Hand Gestures Recognition and Tracking</title><link>https://artivis.github.io/publication/gurung-hal-00903898/</link><pubDate>Sat, 01 Jun 2013 00:00:00 +0000</pubDate><guid>https://artivis.github.io/publication/gurung-hal-00903898/</guid><description/></item><item><title/><link>https://artivis.github.io/about/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://artivis.github.io/about/</guid><description/></item><item><title/><link>https://artivis.github.io/contact/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://artivis.github.io/contact/</guid><description/></item><item><title/><link>https://artivis.github.io/tag/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://artivis.github.io/tag/</guid><description/></item></channel></rss>

@@ -1,0 +1,185 @@
+<!doctype html><html lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=generator content="Wowchemy 5.5.0 for Hugo"><link rel=preconnect href=https://fonts.gstatic.com crossorigin><link rel=preload as=style href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto+Mono&family=Roboto:wght@400;700&display=swap"><link rel=stylesheet href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto+Mono&family=Roboto:wght@400;700&display=swap" media=print onload="this.media='all'"><meta name=author content="Jérémie Deray"><meta name=description content="In this post we will see how to wire up an HC-SR04 range sensor to the Raspberry Pi Pico and publish its readings to the ROS 2 graph using micro-ROS. This builds upon the previous post &lsquo;Getting started with micro-ROS on the Pi Pico&rsquo;, as such I&rsquo;d encourage you to read it first if you are not already familiar with the topic."><link rel=alternate hreflang=en-us href=https://artivis.github.io/post/2021/pi-pico-uros-sonar/><meta name=theme-color content="hsl(115, 82%, 48%)"><script src=/js/mathjax-config.js></script>
+<link rel=stylesheet href=/css/vendor-bundle.min.css media=print onload="this.media='all'"><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/academicons@1.9.1/css/academicons.min.css integrity="sha512-W0xM4mr6dEP9nREo7Z9z+9X70wytKvMGeDsj7ps2+xg5QPrEBXC8tAW1IFnzjR6eoJ90JmCnFzerQJTLzIEHjA==" crossorigin=anonymous media=print onload="this.media='all'"><link rel=stylesheet href=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/styles/github.min.css crossorigin=anonymous title=hl-light media=print onload="this.media='all'"><link rel=stylesheet href=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/styles/dracula.min.css crossorigin=anonymous title=hl-dark media=print onload="this.media='all'" disabled><script src=https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js integrity crossorigin=anonymous async></script>
+<link rel=stylesheet href=/css/wowchemy.css><link rel=manifest href=/manifest.webmanifest><link rel=icon type=image/png href=/media/icon_hud2d1771ce140e1d1fd4d0e59d51cebc4_11712_32x32_fill_lanczos_center_3.png><link rel=apple-touch-icon type=image/png href=/media/icon_hud2d1771ce140e1d1fd4d0e59d51cebc4_11712_180x180_fill_lanczos_center_3.png><link rel=canonical href=https://artivis.github.io/post/2021/pi-pico-uros-sonar/><meta property="twitter:card" content="summary"><meta property="og:site_name" content="Home to artivis"><meta property="og:url" content="https://artivis.github.io/post/2021/pi-pico-uros-sonar/"><meta property="og:title" content="Publishing sonar readings with micro-ROS on the Raspberry Pi Pico | Home to artivis"><meta property="og:description" content="In this post we will see how to wire up an HC-SR04 range sensor to the Raspberry Pi Pico and publish its readings to the ROS 2 graph using micro-ROS. This builds upon the previous post &lsquo;Getting started with micro-ROS on the Pi Pico&rsquo;, as such I&rsquo;d encourage you to read it first if you are not already familiar with the topic."><meta property="og:image" content="https://artivis.github.io/media/icon_hud2d1771ce140e1d1fd4d0e59d51cebc4_11712_512x512_fill_lanczos_center_3.png"><meta property="twitter:image" content="https://artivis.github.io/media/icon_hud2d1771ce140e1d1fd4d0e59d51cebc4_11712_512x512_fill_lanczos_center_3.png"><meta property="og:locale" content="en-us"><meta property="article:published_time" content="2021-03-12T00:00:00+00:00"><meta property="article:modified_time" content="2021-03-12T00:00:00+00:00"><script type=application/ld+json>{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://artivis.github.io/post/2021/pi-pico-uros-sonar/"},"headline":"Publishing sonar readings with micro-ROS on the Raspberry Pi Pico","datePublished":"2021-03-12T00:00:00Z","dateModified":"2021-03-12T00:00:00Z","author":{"@type":"Person","name":"Jérémie Deray"},"publisher":{"@type":"Organization","name":"Home to artivis","logo":{"@type":"ImageObject","url":"https://artivis.github.io/media/icon_hud2d1771ce140e1d1fd4d0e59d51cebc4_11712_192x192_fill_lanczos_center_3.png"}},"description":"In this post we will see how to wire up an HC-SR04 range sensor to the Raspberry Pi Pico and publish its readings to the ROS 2 graph using micro-ROS. This builds upon the previous post \u0026lsquo;Getting started with micro-ROS on the Pi Pico\u0026rsquo;, as such I\u0026rsquo;d encourage you to read it first if you are not already familiar with the topic."}</script><script src=https://cdn.jsdelivr.net/gh/osano/cookieconsent@3.1.1/build/cookieconsent.min.js integrity="sha512-yXXqOFjdjHNH1GND+1EO0jbvvebABpzGKD66djnUfiKlYME5HGMUJHoCaeE4D5PTG2YsSJf6dwqyUUvQvS0vaA==" crossorigin=anonymous></script>
+<link rel=stylesheet href=https://cdn.jsdelivr.net/gh/osano/cookieconsent@3.1.1/build/cookieconsent.min.css integrity="sha512-LQ97camar/lOliT/MqjcQs5kWgy6Qz/cCRzzRzUCfv0fotsCTC9ZHXaPQmJV8Xu/PVALfJZ7BDezl5lW3/qBxg==" crossorigin=anonymous><script>window.addEventListener("load",function(){window.cookieconsent.initialise({palette:{popup:{background:"hsl(115, 82%, 48%)",text:"#292a2d"},button:{background:"#292a2d",text:"hsl(115, 82%, 48%)"}},theme:"classic",content:{message:"This website uses cookies to ensure you get the best experience on our website.",dismiss:"Got it!",link:"Learn more",href:"https://www.cookiesandyou.com"}})})</script><title>Publishing sonar readings with micro-ROS on the Raspberry Pi Pico | Home to artivis</title></head><body id=top data-spy=scroll data-offset=70 data-target=#TableOfContents class=page-wrapper data-wc-page-id=0888a684eacd5d63bd108ef62df75f84><script src=/js/wowchemy-init.min.js></script><aside class=search-modal id=search><div class=container><section class=search-header><div class="row no-gutters justify-content-between mb-3"><div class=col-6><h1>Search</h1></div><div class="col-6 col-search-close"><a class=js-search href=# aria-label=Close><i class="fas fa-times-circle text-muted" aria-hidden=true></i></a></div></div><div id=search-box><input name=q id=search-query placeholder=Search... autocapitalize=off autocomplete=off autocorrect=off spellcheck=false type=search class=form-control aria-label=Search...></div></section><section class=section-search-results><div id=search-hits></div></section></div></aside><div class=page-header><header class=header--fixed><nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id=navbar-main><div class=container-xl><div class="d-none d-lg-inline-flex"><a class=navbar-brand href=/><a href=/ style=text-decoration:none><div class=logo><span class=logo__mark>></span>
+<span class=logo__text>$ cd /home/</span>
+<span class=logo__cursor style=background-color:#27df16;animation-duration:2s></span></div></a></a></div><button type=button class=navbar-toggler data-toggle=collapse data-target=#navbar-content aria-controls=navbar-content aria-expanded=false aria-label="Toggle navigation">
+<span><i class="fas fa-bars"></i></span></button><div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none"><a class=navbar-brand href=/>Home to artivis</a></div><div class="navbar-collapse main-menu-item collapse justify-content-end" id=navbar-content><ul class="navbar-nav d-md-inline-flex"><li class=nav-item><a class="nav-link active" href=/post><span>Posts</span></a></li><li class=nav-item><a class=nav-link href=/tag><span>Tags</span></a></li><li class=nav-item><a class=nav-link href=/publication><span>Publications</span></a></li><li class=nav-item><a class=nav-link href=/about><span>About</span></a></li><li class=nav-item><a class=nav-link href=/contact><span>Contact</span></a></li></ul></div><ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2"><li class=nav-item>|</li><li class=nav-item><a class="nav-link js-search" href=# aria-label=Search><i class="fas fa-search" aria-hidden=true></i></a></li></ul></div></nav></header></div><div class=page-body><div class="container-fluid docs"><div class="row flex-xl-nowrap"><div class="d-none d-xl-block col-xl-2 docs-toc"><nav id=TableOfContents><ul><li><a href=#content>Content</a></li><li><a href=#a-sensor-you-said>A sensor you said?</a><ul><li><a href=#im-batsensor>&ldquo;I&rsquo;m Bat(sensor)&rdquo;</a></li><li><a href=#which-sonar-model-to-pick>Which sonar model to pick?</a></li></ul></li><li><a href=#wiring-up-the-sonar-to-the-pi-pico>Wiring up the sonar to the Pi Pico</a><ul><li><a href=#micro-code-for-micro-ros>Micro code for micro-ROS</a></li><li><a href=#bip-bip-bip>Bip bip bip</a></li></ul></li><li><a href=#whats-next>What&rsquo;s next?</a></li></ul></nav></div><main class="col-12 col-md-0 col-xl-10 py-md-3 pl-md-5 docs-content" role=main><article class=article><div class="article-container pt-3"><h1>Publishing sonar readings with micro-ROS on the Raspberry Pi Pico</h1><p class=page-subtitle>Bip Bip Bip</p><div class=article-metadata><span class=article-date>Mar 12, 2021</span>
+<span class=middot-divider></span>
+<span class=article-reading-time>7 min read</span></div></div><div class=article-container><div class=article-style><p>In this post we will see how to wire up an HC-SR04 range sensor to the Raspberry Pi Pico and publish its readings to the ROS 2 graph using micro-ROS.
+This builds upon the previous post <a href=pi-pico-uros-getting-started.md>&lsquo;Getting started with micro-ROS on the Pi Pico&rsquo;</a>,
+as such I&rsquo;d encourage you to read it first if you are not already familiar with the topic.</p><hr><h2 id=content>Content</h2><ul><li><a href=#content>Content</a></li><li><a href=#a-sensor-you-said>A sensor you said?</a><ul><li><a href=#im-batsensor>&ldquo;I&rsquo;m Bat(sensor)&rdquo;</a></li><li><a href=#which-sonar-model-to-pick>Which sonar model to pick?</a></li></ul></li><li><a href=#wiring-up-the-sonar-to-the-pi-pico>Wiring up the sonar to the Pi Pico</a><ul><li><a href=#micro-code-for-micro-ros>Micro code for micro-ROS</a></li><li><a href=#bip-bip-bip>Bip bip bip</a></li></ul></li><li><a href=#whats-next>What&rsquo;s next?</a></li></ul><hr><h2 id=a-sensor-you-said>A sensor you said?</h2><p>In this tutorial, we will make use of one of the most common sensors in robotics, a sonar.
+These sensors are cheap, fairly simple to use and surprisingly precise under favorable circumstances.
+Sonars are used to measure distances and can therefore be used to detect and locate obstacles so that one can make sure its robot does not run into nearby things.
+It is no mystery why they are so incredibly popular.</p><p>So, what&rsquo;s a sonar, how does it work, which one should I pick?</p><h3 id=im-batsensor>&ldquo;I&rsquo;m Bat(sensor)&rdquo;</h3><p>A sonar is an echolocation sensor which allows for measuring distances.
+To keep things simple to digest,
+sonars work the same way as bats do.
+Nah they don&rsquo;t fly, hunting bugs at dawn;
+nor do they fight crime.
+I obviously meant the same way as bats perceive the world.
+A sonar is composed of an emitter and a receiver.
+The former emits an ultrasound signal,
+which will bounce off of facing obstacles,
+back at the receiver.
+Measuring the time difference between the signal emission and reception,
+one can easily calculate the distance travelled by the sound wave and thus the distance to the obstacle that reverberated the sound.</p><p>This technology can suffer from all kind of issues if, for example,
+the sound wave is reverberated away from the sensor,
+or if it is reverberated back to the sensor by two obstacles at different distances,
+or if it is absorbed by some sound dampening material.</p><p>If this is still unclear or you want to know more about it,
+I&rsquo;ll redirect you to your favorite web search engine as it is a little out of the scope of this post.</p><h3 id=which-sonar-model-to-pick>Which sonar model to pick?</h3><p>There exists plenty different models of sonars,
+fortunately most of them works the same way.
+Furthermore they can be found for a few bucks per unit on the internet.
+Head on over to your favorite electronics supplier and you&rsquo;re sure to find them for sale.</p><p>I&rsquo;d recommend you use the &lsquo;HC-SR04P&rsquo; model which is the 3.3V variant of the immensely popular &lsquo;HC-SR04&rsquo; (5V).
+It is this model (the &lsquo;HC-SR04P&rsquo;) I will be using in this post.
+Given its very small power consumption, it can be powered up directly from the Pi Pico and thus the whole setup can simply be powered from the USB cable.
+In case you are using a 5V package, make sure to adapt the wiring described below or else you are risking damages to your Pi Pico!
+For reference, I ordered a lot of 5 units for less than 10$ including shipping.
+Including the Pi Pico price,
+that&rsquo;s a lot of sensing for the price!</p><h2 id=wiring-up-the-sonar-to-the-pi-pico>Wiring up the sonar to the Pi Pico</h2><p>The &lsquo;HC-SR04P&rsquo; board comes with four pins labelled
+&lsquo;Vcc&rsquo;, &lsquo;Gnd&rsquo;, &lsquo;Trig&rsquo; and &lsquo;Echo&rsquo;.
+As you&rsquo;ve already guessed, the Vcc and Gnd pins are for the 3.3V line and the ground respectively,
+while &lsquo;Trig&rsquo; is used to trigger the sensor and &lsquo;Echo&rsquo; reports the reception of the echo (the reception of the sound wave that bounced off of an obstacle).</p><p>From there, and referring to the <a href=https://datasheets.raspberrypi.org/pico/Pico-R3-A4-Pinout.pdf target=_blank rel=noopener>Pi Pico pinout</a>,
+the wiring is straight forward:</p><ul><li>connect Pico&rsquo;s pin 36 (3V3 OUT) to the sonar&rsquo;s &lsquo;Vcc&rsquo;</li><li>connect Pico&rsquo;s pin 38 (GND) to the sonar&rsquo;s &lsquo;Gnd&rsquo;</li><li>connect Pico&rsquo;s pin 9 (GPIO 6) to the sonar&rsquo;s &lsquo;Echo&rsquo;</li><li>connect Pico&rsquo;s pin 10 (GPIO 7) to the sonar&rsquo;s &lsquo;Trig&rsquo;</li></ul><p>This setup is depicted in the figure below.</p><p><figure><div class="d-flex justify-content-center"><div class=w-100><img src=/img/post/2021/uros_pico_sonar.png alt="Wiring the HC-SR04P to the Pico" loading=lazy data-zoomable></div></div></figure></p><p>As far as the hardware goes, we&rsquo;re done.
+Let us move to the software.</p><h3 id=micro-code-for-micro-ros>Micro code for micro-ROS</h3><p>We&rsquo;ve seen in the <a href=pi-pico-uros-getting-started.md>&lsquo;previous post&rsquo;</a> how to set up VSCode for programming micro-ros, and how to compile and flash a program on the Pi Pico.
+We&rsquo;ll thus refer to the aforementioned post on how to do all that and skip it here.
+Similarly, we&rsquo;ll skip all the boilerplate code and only show the bits specific to our application.
+However, know that this example (and more) is fully available on github at <a href=https://github.com/artivis/mico_ros target=_blank rel=noopener>artivis/mico_ros</a>.</p><p>Alright, let&rsquo;s dive a little.
+Our application is essentially composed of two functions,
+one that triggers and reads the sensor,
+and a second, the timer callback, which calls the first,
+fill up a ROS message and publishes it:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cpp data-lang=cpp><span class=line><span class=cl><span class=p>...</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>// The GPIO pins to which the sonar is wired
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=cp>#define GPIO_ECHO 6
+</span></span></span><span class=line><span class=cl><span class=cp>#define GPIO_TRIGGER 7
+</span></span></span><span class=line><span class=cl><span class=cp></span>
+</span></span><span class=line><span class=cl><span class=cm>/**
+</span></span></span><span class=line><span class=cl><span class=cm> * @brief Get the range value in meter.
+</span></span></span><span class=line><span class=cl><span class=cm> */</span>
+</span></span><span class=line><span class=cl><span class=kt>float</span> <span class=n>read_range</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>  <span class=c1>// Send an impulse trigger of 10us
+</span></span></span><span class=line><span class=cl><span class=c1></span>  <span class=n>gpio_put</span><span class=p>(</span><span class=n>GPIO_TRIGGER</span><span class=p>,</span> <span class=mi>1</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>  <span class=n>sleep_us</span><span class=p>(</span><span class=mi>10</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>  <span class=n>gpio_put</span><span class=p>(</span><span class=n>GPIO_TRIGGER</span><span class=p>,</span> <span class=mi>0</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>  <span class=c1>// Read how long is the echo
+</span></span></span><span class=line><span class=cl><span class=c1></span>  <span class=kt>uint32_t</span> <span class=n>signaloff</span><span class=p>,</span> <span class=n>signalon</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>  <span class=k>do</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=n>signaloff</span> <span class=o>=</span> <span class=n>time_us_32</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>  <span class=p>}</span> <span class=k>while</span> <span class=p>(</span><span class=n>gpio_get</span><span class=p>(</span><span class=n>GPIO_ECHO</span><span class=p>)</span> <span class=o>==</span> <span class=mi>0</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>  <span class=k>do</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=n>signalon</span> <span class=o>=</span> <span class=n>time_us_32</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>  <span class=p>}</span> <span class=k>while</span> <span class=p>(</span><span class=n>gpio_get</span><span class=p>(</span><span class=n>GPIO_ECHO</span><span class=p>)</span> <span class=o>==</span> <span class=mi>1</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>  <span class=c1>// Actual echo duration in us
+</span></span></span><span class=line><span class=cl><span class=c1></span>  <span class=k>const</span> <span class=kt>float</span> <span class=n>dt</span> <span class=o>=</span> <span class=n>signalon</span> <span class=o>-</span> <span class=n>signaloff</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>  <span class=c1>// distance in meter:
+</span></span></span><span class=line><span class=cl><span class=c1></span>  <span class=c1>// echo duration (us) x speed of sound (m/us) / 2 (round trip)
+</span></span></span><span class=line><span class=cl><span class=c1></span>  <span class=k>return</span> <span class=n>dt</span> <span class=o>*</span> <span class=mf>0.000343</span> <span class=o>/</span> <span class=mf>2.0</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=p>...</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=cm>/**
+</span></span></span><span class=line><span class=cl><span class=cm> * @brief Read the range from the sensor,
+</span></span></span><span class=line><span class=cl><span class=cm> * fill up the ROS message and publish it.
+</span></span></span><span class=line><span class=cl><span class=cm> */</span>
+</span></span><span class=line><span class=cl><span class=kt>void</span> <span class=n>timer_callback</span><span class=p>(</span><span class=n>rcl_timer_t</span> <span class=o>*</span><span class=n>timer</span><span class=p>,</span> <span class=kt>int64_t</span> <span class=cm>/*last_call_time*/</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=k>if</span> <span class=p>(</span><span class=n>timer</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=n>range_msg</span><span class=p>.</span><span class=n>range</span> <span class=o>=</span> <span class=n>read_range</span><span class=p>();</span>
+</span></span><span class=line><span class=cl>    <span class=n>fill_msg_stamp</span><span class=p>(</span><span class=n>range_msg</span><span class=p>.</span><span class=n>header</span><span class=p>.</span><span class=n>stamp</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=n>rcl_publish</span><span class=p>(</span><span class=o>&amp;</span><span class=n>publisher</span><span class=p>,</span> <span class=o>&amp;</span><span class=n>range_msg</span><span class=p>,</span> <span class=nb>NULL</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>  <span class=p>}</span> <span class=k>else</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=n>printf</span><span class=p>(</span><span class=s>&#34;Failed to publish range. Continuing.</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>  <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=p>...</span>
+</span></span></code></pre></div><p>That&rsquo;s pretty much it.
+The rest of the code is mostly boilerplate,
+initializing the GPIO,
+setting up the micro-ROS node, publisher, timer and executor,
+and having it all spin.</p><p>Note that we are using the standard <code>sensor_msgs/msgs/Range</code> message.
+You can find its definition and a breakdown of its field online in the <a href=https://docs.ros2.org/latest/api/sensor_msgs/msg/Range.html target=_blank rel=noopener>ROS2 API documentation</a>.</p><p>All there is to do now is to compile the code,
+flash the resulting &lsquo;.uf2&rsquo; file and start the micro-ROS agent.</p><h3 id=bip-bip-bip>Bip bip bip</h3><p>Assuming compiling and flashing went all fine,
+all we have to do is to plug the board to our computer and launch the micro-ROS agent.
+We do so with the following command:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>docker run -it --rm -v /dev:/dev --privileged --net<span class=o>=</span>host microros/micro-ros-agent:foxy serial --dev /dev/ttyACM0 -b <span class=m>115200</span>
+</span></span></code></pre></div><p>Let&rsquo;s see if we get anything,</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>$ ros2 topic list
+</span></span><span class=line><span class=cl>/parameter_events
+</span></span><span class=line><span class=cl>/pico/range
+</span></span><span class=line><span class=cl>/rosout
+</span></span></code></pre></div><p>the topic <code>/pico/range</code> is advertised, that&rsquo;s a good start.
+Let see what it contains,</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>$ ros2 topic <span class=nb>echo</span> /pico/range
+</span></span><span class=line><span class=cl>header:
+</span></span><span class=line><span class=cl>  stamp:
+</span></span><span class=line><span class=cl>    sec: <span class=m>145</span>
+</span></span><span class=line><span class=cl>    nanosec: <span class=m>837599000</span>
+</span></span><span class=line><span class=cl>  frame_id: pico_sonar_0_link
+</span></span><span class=line><span class=cl>radiation_type: <span class=m>0</span>
+</span></span><span class=line><span class=cl>field_of_view: 30.0
+</span></span><span class=line><span class=cl>min_range: 0.019999999552965164
+</span></span><span class=line><span class=cl>max_range: 4.0
+</span></span><span class=line><span class=cl>range: 12.138598442077637
+</span></span><span class=line><span class=cl>---
+</span></span><span class=line><span class=cl>header:
+</span></span><span class=line><span class=cl>  stamp:
+</span></span><span class=line><span class=cl>    sec: <span class=m>145</span>
+</span></span><span class=line><span class=cl>    nanosec: <span class=m>915356000</span>
+</span></span><span class=line><span class=cl>  frame_id: pico_sonar_0_link
+</span></span><span class=line><span class=cl>radiation_type: <span class=m>0</span>
+</span></span><span class=line><span class=cl>field_of_view: 30.0
+</span></span><span class=line><span class=cl>min_range: 0.019999999552965164
+</span></span><span class=line><span class=cl>max_range: 4.0
+</span></span><span class=line><span class=cl>range: 12.138941764831543
+</span></span><span class=line><span class=cl>---
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>...
+</span></span></code></pre></div><p>That looks great!</p><p>You could now play with your new sensor,
+moving an obstacle back and forth in front of it.
+Take a measuring tape and compare the reported distance to the measured one,
+you may be surprised by its accuracy, I know I was.</p><h2 id=whats-next>What&rsquo;s next?</h2><p>This is a neat little project to approach micro-ROS and the possibilities it opens.
+Indeed it is really rewarding to see the actual distance between the sensor and an obstacle being readily available on our ROS 2 graph.
+But taking a step back we can start seeing an slightly larger picture;
+a picture in which one will be able to easily, effortlessly,
+add plug&rsquo;n&rsquo;play ROS2-ready hardware modules to existing robots.
+Plug a camera and its feed magically appears on the graph,
+an IMU module could provide a reliable odometry source,
+a motor ready to spin in a snap (pun intended).</p><p>We&rsquo;re not there yet, but I&rsquo;m definitely going to follow this line of thought for my own Turtlebot 3.
+Can you believe that it doesn&rsquo;t have any sonar?!</p><p>Fortunately now I can easily add a pair of them and have my robot stop bumping into my lazy cat lying down on the floor,
+unwitting ninja, invisible to the laser scanner 😅.</p><ul class="nav toc-top"><li><a href=# id=back_to_top class=docs-toc-title><button id=goTop class=btn-top><svg class="arrow up" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="5 0 50 80"><polyline fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" points="0.375, 35.375 28.375, 0.375 58.67, 35.375"/></svg></button></a></li></ul></div><p class=edit-page><a href=https://github.com/artivis/artivis.github.io/edit/main/content/post/2021/pi-pico-uros-sonar.md><i class="fas fa-pen pr-2"></i>Edit this page</a></p><div class=article-tags><a class="badge badge-light" href=/tag/tutorial/>tutorial</a>
+<a class="badge badge-light" href=/tag/raspberry-pi/>Raspberry Pi</a>
+<a class="badge badge-light" href=/tag/pi-pico/>Pi Pico</a>
+<a class="badge badge-light" href=/tag/ros2/>ROS2</a>
+<a class="badge badge-light" href=/tag/micro-ros/>micro-ROS</a>
+<a class="badge badge-light" href=/tag/sensors/>sensors</a></div><div class=share-box><ul class=share><li><a href="https://twitter.com/intent/tweet?url=https://artivis.github.io/post/2021/pi-pico-uros-sonar/&text=Publishing%20sonar%20readings%20with%20micro-ROS%20on%20the%20Raspberry%20Pi%20Pico" target=_blank rel=noopener class=share-btn-twitter aria-label=twitter><i class="fab fa-twitter"></i></a></li><li><a href="https://www.facebook.com/sharer.php?u=https://artivis.github.io/post/2021/pi-pico-uros-sonar/&t=Publishing%20sonar%20readings%20with%20micro-ROS%20on%20the%20Raspberry%20Pi%20Pico" target=_blank rel=noopener class=share-btn-facebook aria-label=facebook><i class="fab fa-facebook"></i></a></li><li><a href="mailto:?subject=Publishing%20sonar%20readings%20with%20micro-ROS%20on%20the%20Raspberry%20Pi%20Pico&body=https://artivis.github.io/post/2021/pi-pico-uros-sonar/" target=_blank rel=noopener class=share-btn-email aria-label=envelope><i class="fas fa-envelope"></i></a></li><li><a href="https://www.linkedin.com/shareArticle?url=https://artivis.github.io/post/2021/pi-pico-uros-sonar/&title=Publishing%20sonar%20readings%20with%20micro-ROS%20on%20the%20Raspberry%20Pi%20Pico" target=_blank rel=noopener class=share-btn-linkedin aria-label=linkedin-in><i class="fab fa-linkedin-in"></i></a></li><li><a href="whatsapp://send?text=Publishing%20sonar%20readings%20with%20micro-ROS%20on%20the%20Raspberry%20Pi%20Pico%20https://artivis.github.io/post/2021/pi-pico-uros-sonar/" target=_blank rel=noopener class=share-btn-whatsapp aria-label=whatsapp><i class="fab fa-whatsapp"></i></a></li><li><a href="https://service.weibo.com/share/share.php?url=https://artivis.github.io/post/2021/pi-pico-uros-sonar/&title=Publishing%20sonar%20readings%20with%20micro-ROS%20on%20the%20Raspberry%20Pi%20Pico" target=_blank rel=noopener class=share-btn-weibo aria-label=weibo><i class="fab fa-weibo"></i></a></li></ul></div><div class="article-widget content-widget-hr"><h3>Related</h3><ul><li><a href=/post/2021/pi-pico-uros-getting-started/>Getting started with micro-ROS on the Pi Pico</a></li><li><a href=/post/2020/rpipress/>Downloading Raspberry Pi Press issues</a></li><li><a href=/post/2020/pi-zero/>SSH the Raspberry Pi Zero over USB</a></li><li><a href=/post/2022/ros2-humble/>Setting up ROS 2 Humble with LXD</a></li><li><a href=/post/2020/ros-foxy-install/>Get started with ROS 2 Foxy today with LXD</a></li></ul></div></div></article></main></div></div></div><div class=page-footer><div class=container><footer class=site-footer><p class="powered-by copyright-license-text">Jérémie Deray © 2022. This work is licensed under <a href=https://creativecommons.org/licenses/by-nc-nd/4.0 rel="noopener noreferrer" target=_blank>CC BY NC ND 4.0</a></p><p class="powered-by footer-license-icons"><a href=https://creativecommons.org/licenses/by-nc-nd/4.0 rel="noopener noreferrer" target=_blank aria-label="Creative Commons"><i class="fab fa-creative-commons fa-2x" aria-hidden=true></i>
+<i class="fab fa-creative-commons-by fa-2x" aria-hidden=true></i>
+<i class="fab fa-creative-commons-nc fa-2x" aria-hidden=true></i>
+<i class="fab fa-creative-commons-nd fa-2x" aria-hidden=true></i></a></p><p class=powered-by></p></footer></div></div><script src=/js/vendor-bundle.min.js></script>
+<script src=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/highlight.min.js integrity="sha512-Ypjm0o7jOxAd4hpdoppSEN0TQOC19UtPAqD+4s5AlXmUvbmmS/YMxYqAqarQYyxTnB6/rqip9qcxlNB/3U9Wdg==" crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/latex.min.js crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/bash.min.js crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/python.min.js crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/c++.min.js crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/c.min.js crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/terminal.min.js crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/yaml.min.js crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/xml.min.js crossorigin=anonymous></script>
+<script id=search-hit-fuse-template type=text/x-template>
+        <div class="search-hit" id="summary-{{key}}">
+          <div class="search-hit-content">
+            <div class="search-hit-name">
+              <a href="{{relpermalink}}">{{title}}</a>
+              <div class="article-metadata search-hit-type">{{type}}</div>
+              <p class="search-hit-description">{{snippet}}</p>
+            </div>
+          </div>
+        </div>
+      </script><script src=https://cdn.jsdelivr.net/gh/krisk/Fuse@v3.2.1/dist/fuse.min.js integrity="sha512-o38bmzBGX+hD3JHWUFCDA09btWaqrNmoJ3RXLlrysA7PP01Kgs4UlE4MhelE1v5dJR3+cxlR4qQlotsW7jKsnw==" crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/gh/julmot/mark.js@8.11.1/dist/jquery.mark.min.js integrity="sha512-mhbv5DqBMgrWL+32MmsDOt/OAvqr/cHimk6B8y/bx/xS88MVkYGPiVv2ixKVrkywF2qHplNRUvFsAHUdxZ3Krg==" crossorigin=anonymous></script>
+<script id=page-data type=application/json>{"use_headroom":true}</script><script src=/js/wowchemy-headroom.js type=module></script>
+<script src=/en/js/wowchemy.min.js></script><div id=modal class="modal fade" role=dialog><div class=modal-dialog><div class=modal-content><div class=modal-header><h5 class=modal-title>Cite</h5><button type=button class=close data-dismiss=modal aria-label=Close>
+<span aria-hidden=true>&#215;</span></button></div><div class=modal-body><pre><code class="tex hljs"></code></pre></div><div class=modal-footer><a class="btn btn-outline-primary my-1 js-copy-cite" href=# target=_blank><i class="fas fa-copy"></i> Copy</a>
+<a class="btn btn-outline-primary my-1 js-download-cite" href=# target=_blank><i class="fas fa-download"></i> Download</a><div id=modal-error></div></div></div></div></div><script src=/js/wowchemy-publication.js type=module></script></body></html>

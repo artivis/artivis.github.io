@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Humble | Home to artivis</title><link>https://artivis.github.io/tag/humble/</link><atom:link href="https://artivis.github.io/tag/humble/index.xml" rel="self" type="application/rss+xml"/><description>Humble</description><generator>Wowchemy (https://wowchemy.com)</generator><language>en-us</language><lastBuildDate>Mon, 23 May 2022 00:00:00 +0000</lastBuildDate><image><url>https://artivis.github.io/media/icon_hud2d1771ce140e1d1fd4d0e59d51cebc4_11712_512x512_fill_lanczos_center_3.png</url><title>Humble</title><link>https://artivis.github.io/tag/humble/</link></image><item><title>Setting up ROS 2 Humble with LXD</title><link>https://artivis.github.io/post/2022/ros2-humble/</link><pubDate>Mon, 23 May 2022 00:00:00 +0000</pubDate><guid>https://artivis.github.io/post/2022/ros2-humble/</guid><description>&lt;p>&lt;a href="https://discourse.ros.org/t/ros-2-humble-hawksbill-released" target="_blank" rel="noopener">ROS 2 Humble Hawksbill is out!&lt;/a>&lt;/p>
+&lt;p>
+&lt;figure >
+&lt;div class="d-flex justify-content-center">
+&lt;div class="w-100" >&lt;img src="https://aws1.discourse-cdn.com/business7/uploads/ros/original/2X/e/e2b80a2e45b12a397dbfebddb3abe92a1b4ce921.png" alt="ROS 2 Humble Hawksbill logo" loading="lazy" data-zoomable />&lt;/div>
+&lt;/div>&lt;/figure>
+&lt;/p>
+&lt;p>Congratulations to &lt;a href="https://www.openrobotics.org/" target="_blank" rel="noopener">Open Robotics&lt;/a> and through them to the entire ROS 2 community.
+This is really quite an event as it marks an important milestone: it is the first 5 year LTS release for ROS 2.
+The release of maturity as people say.&lt;/p>
+&lt;p>ROS 2 Humble officially supports Ubuntu 22.04, but chance is,
+you haven&amp;rsquo;t made that jump yet.
+So in this post we will see how to set it up in an &lt;a href="https://linuxcontainers.org/lxd/introduction/" target="_blank" rel="noopener">LXD&lt;/a> container so that we can start &lt;del>playing&lt;/del> working on our good old machine.&lt;/p>
+&lt;p>We&amp;rsquo;ve covered how to get started with LXD in numerous previous posts;
+so here we will only go over the commands to get started as quickly and conveniently as possible.&lt;/p>
+&lt;hr>
+&lt;h2 id="content">Content&lt;/h2>
+&lt;ul>
+&lt;li>&lt;a href="#content">Content&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#setting-up-lxd">Setting up LXD&lt;/a>
+&lt;ul>
+&lt;li>&lt;a href="#launching-a-first-container">Launching a first container&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;a href="#an-humble-profile">An Humble profile&lt;/a>
+&lt;ul>
+&lt;li>&lt;a href="#launching-a-ros-2-humble-container">Launching a ROS 2 Humble container&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#one-liniiiiing">One-liniiiiing&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;a href="#develop-like-a-pro">Develop like a pro&lt;/a>
+&lt;ul>
+&lt;li>&lt;a href="#using-vs-code-with-lxd">Using VS Code with LXD&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;a href="#conclusion">Conclusion&lt;/a>
+&lt;ul>
+&lt;li>&lt;a href="#bonus">Bonus&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;hr>
+&lt;h2 id="setting-up-lxd">Setting up LXD&lt;/h2>
+&lt;p>&lt;a href="https://linuxcontainers.org/lxd/introduction/" target="_blank" rel="noopener">LXD&lt;/a> is a manager for &lt;a href="https://linuxcontainers.org/lxc/introduction/" target="_blank" rel="noopener">LXC&lt;/a>.&lt;/p>
+&lt;p>With this out of the way,
+the simplest way to install it is to use the snap package:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">sudo snap install lxd --channel&lt;span class="o">=&lt;/span>5.0/stable
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Note that we are specifying the use of the recently released 5.0 LTS version.&lt;/p>
+&lt;p>Let us now configure LXD,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">sudo lxd init --minimal
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>The minimal setup will configure LXD with default options.
+You may find more information about this in the &lt;a href="https://linuxcontainers.org/lxd/getting-started-cli/#initial-configuration" target="_blank" rel="noopener">online documentation&lt;/a>.&lt;/p>
+&lt;h3 id="launching-a-first-container">Launching a first container&lt;/h3>
+&lt;p>To make sure that everything works fine,
+let us try to launch a first container rocking Ubuntu 22.04,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">lxc launch ubuntu:22.04 first-container
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Is it running?&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ lxc list
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">+---------------------+---------+----------------------+-----------------------------------------------+-----------+-----------+
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">|&lt;/span> NAME &lt;span class="p">|&lt;/span> STATE &lt;span class="p">|&lt;/span> IPV4 &lt;span class="p">|&lt;/span> IPV6 &lt;span class="p">|&lt;/span> TYPE &lt;span class="p">|&lt;/span> SNAPSHOTS &lt;span class="p">|&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">+---------------------+---------+----------------------+-----------------------------------------------+-----------+-----------+
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">|&lt;/span> first-container &lt;span class="p">|&lt;/span> RUNNING &lt;span class="p">|&lt;/span> 10.190.86.230 &lt;span class="o">(&lt;/span>eth0&lt;span class="o">)&lt;/span> &lt;span class="p">|&lt;/span> fd42:1726:4b4d:8cd3:216:3eff:fed8:7a69 &lt;span class="o">(&lt;/span>eth0&lt;span class="o">)&lt;/span> &lt;span class="p">|&lt;/span> CONTAINER &lt;span class="p">|&lt;/span> &lt;span class="m">0&lt;/span> &lt;span class="p">|&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">+---------------------+---------+----------------------+-----------------------------------------------+-----------+-----------+
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>It seems so; then let&amp;rsquo;s try to get a shell inside the container,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ lxc shell first-container
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">root@ros2-humble:~ lsb_release -a
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">No LSB modules are available.
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Distributor ID: Ubuntu
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Description: Ubuntu 22.04 LTS
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Release: 22.04
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Codename: jammy
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>We&amp;rsquo;re in, running 22.04.
+Everything looks good!&lt;/p>
+&lt;p>From there we could simply follow the &lt;a href="https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debians.html" target="_blank" rel="noopener">installation instructions from the ROS 2 Humble documentation&lt;/a>.
+But where is the fun in that?
+Instead we will create a &lt;a href="https://linuxcontainers.org/lxd/docs/master/profiles/" target="_blank" rel="noopener">LXD profile&lt;/a> that will do all the lifting for us every time we will create a new container.&lt;/p>
+&lt;h2 id="an-humble-profile">An Humble profile&lt;/h2>
+&lt;p>First we need to create a profile,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">lxc profile create ros2-humble
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>We will then edit it to add the bits we need.
+But rather than editing the profile itself,
+we will work on a good-old yaml file, located on our machine.
+The reason is that it is more convenient and most importantly,
+we will be able to carry that yaml file and re-use it on other machines.
+Let&amp;rsquo;s create that profile,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">mkdir -p ~/lxc_dotfiles/profile/
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">touch ~/lxc_dotfiles/profile/ros2-humble.yml
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>which we populate as follows,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-yaml" data-lang="yaml">&lt;span class="line">&lt;span class="cl">&lt;span class="nt">config&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">user.user-data&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">|&lt;/span>&lt;span class="sd">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> #cloud-config
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> # Add the ROS 2 sources
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> apt:
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> sources:
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> ros2:
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> source: &amp;#34;deb [arch=amd64] http://repo.ros2.org/ubuntu/main jammy main&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> keyid: C1CF 6E31 E6BA DE88 68B1 72B4 F42E D6FB AB17 C654
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> package_upgrade: true
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> packages:
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> # dev
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - vim
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - silversearcher-ag
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> # ROS 2 dev
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - locales
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - curl
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - gnupg
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - lsb-release
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - build-essential
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - cmake
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - git
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - python3-argcomplete
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - python3-colcon-common-extensions
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - python3-flake8
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - python3-flake8-blind-except
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - python3-flake8-builtins
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - python3-flake8-class-newline
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - python3-flake8-comprehensions
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - python3-flake8-deprecated
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - python3-flake8-docstrings
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - python3-flake8-import-order
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - python3-flake8-quotes
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - python3-pip
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - python3-pytest
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - python3-pytest-cov
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - python3-pytest-repeat
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - python3-pytest-rerunfailures
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - python3-rosdep
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - python3-setuptools
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - python3-vcstool
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - wget
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> # ROS 2 packages
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - ros-humble-ros-core
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> runcmd:
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> # System setup
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - &amp;#34;locale-gen en_US en_US.UTF-8&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - &amp;#34;update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - &amp;#34;export LANG=en_US.UTF-8&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> #
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> # Fetch ROS 2 sources
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - [su, ubuntu, -c, &amp;#34;mkdir -p /home/ubuntu/ros2_ws/src&amp;#34;]
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - [su, ubuntu, -c, &amp;#34;wget https://raw.githubusercontent.com/ros2/ros2/master/ros2.repos -O /home/ubuntu/ros2_ws/ros2.repos&amp;#34;]
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - [su, ubuntu, -c, &amp;#34;vcs import /home/ubuntu/ros2_ws/src &amp;lt; /home/ubuntu/ros2_ws/ros2.repos&amp;#34;]
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> #
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> # Install deps
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - [su, ubuntu, -c, &amp;#34;sudo rosdep init&amp;#34;]
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - [su, ubuntu, -c, &amp;#34;rosdep update&amp;#34;]
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - [su, ubuntu, -c, &amp;#34;rosdep install --from-paths /home/ubuntu/ros2_ws/src --ignore-src -y --skip-keys &amp;#39;fastcdr rti-connext-dds-6.0.1 urdfdom_headers gazebo_ros_pkgs&amp;#39; --rosdistro humble&amp;#34;]
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> final_message: &amp;#34;ROS 2 Humble Hawksbill dev container ready!&amp;#34;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">description&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="s2">&amp;#34;A profile to automatically a ROS 2 Humble dev container.&amp;#34;&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">devices&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>{}&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">name&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="l">ros2-humble&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nt">used_by&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">[]&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>We will not go into the details of this profile,
+note simply that it takes advantage of &lt;a href="https://linuxcontainers.org/lxd/docs/master/cloud-init/" target="_blank" rel="noopener">LXD support of cloud-init&lt;/a> to set up the ppa, install packages and fetch the ROS 2 Humble source code.
+Alright, let us carry on and launch our Humble container.
+But let&amp;rsquo;s not forget to edit our LXD profile from the yaml file we have just created,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">lxc profile edit ros2-humble &amp;lt; ~/lxc_dotfiles/profile/ros2-humble.yml
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="launching-a-ros-2-humble-container">Launching a ROS 2 Humble container&lt;/h3>
+&lt;p>With our profile ready,
+all we have to do is to launch a new container with that profile,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ lxc launch ubuntu:22.04 -p default -p ros2-humble ros2-humble
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Creating ros2-humble
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Starting ros2-humble
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Note that we are also adding the &lt;code>default&lt;/code> profile which sets up the root filesystem and the network of our container.&lt;/p>
+&lt;p>At this point the container is up and running.
+However it isn&amp;rsquo;t quite ready yet.
+Indeed, it is crunching the specified commands to get our ROS 2 environment ready.&lt;/p>
+&lt;p>To monitor this process (the cloud-init initialization),
+we can issue the following command,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ lxc &lt;span class="nb">exec&lt;/span> ros2-humble -- cloud-init status --wait
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">...............................................................................
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">status: &lt;span class="k">done&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>which will print dots on the terminal as the initialization goes on,
+and will do so until it is done.
+When the command returns, the container is fully ready.&lt;/p>
+&lt;p>We can now open a shell into the container as the default &lt;code>ubuntu&lt;/code> user,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ lxc &lt;span class="nb">exec&lt;/span> ros2-humble -- sudo --login --user ubuntu
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">ubuntu@ros2-humble:~$ ls
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">ros2_ws
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">ubuntu@ros2-humble:~$ ls /opt/ros/humble
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">bin cmake include lib &lt;span class="nb">local&lt;/span> local_setup.bash local_setup.sh _local_setup_util.py local_setup.zsh setup.bash setup.sh setup.zsh share src tools
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>The source workspace is there and the packages are installed.
+Looks like we are ready to develop.&lt;/p>
+&lt;h3 id="one-liniiiiing">One-liniiiiing&lt;/h3>
+&lt;p>Phew; that was quite a few commands.
+Some we will definitely not remember.
+Let&amp;rsquo;s make our life easier and create some &lt;a href="https://linuxcontainers.org/lxd/advanced-guide/#command-aliases" target="_blank" rel="noopener">LXD aliases&lt;/a>.&lt;/p>
+&lt;p>First, an alias to create a new ROS 2 Humble container given a name,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">lxc &lt;span class="nb">alias&lt;/span> add launch-ros2-humble &lt;span class="s1">&amp;#39;launch ubuntu:22.04 -p default -p ros2-humble @ARGS@&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>use e.g.,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">lxc launch-ros2-humble another-ros2-humble
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Then an alias to wait for a container to be ready,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">lxc &lt;span class="nb">alias&lt;/span> add wait-for &lt;span class="s1">&amp;#39;exec @ARGS@ -- cloud-init status --wait&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>use e.g.,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">lxc wait-for another-ros2-humble
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>And one to open a shell as the ubuntu user,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">lxc &lt;span class="nb">alias&lt;/span> add ubuntu &lt;span class="s1">&amp;#39;exec @ARGS@ --mode interactive -- /bin/sh -xac $@ubuntu - exec /bin/login -p -f&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>use e.g.,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">lxc ubuntu another-ros2-humble
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Alright, we can now launch a branch new container,
+wait for it to be ready and open a shell,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ lxc launch-ros2-humble ros2-humble &lt;span class="o">&amp;amp;&amp;amp;&lt;/span> lxc wait-for ros2-humble &lt;span class="o">&amp;amp;&amp;amp;&lt;/span> lxc ubuntu ros2-humble
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Creating ros2-humble
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Starting ros2-humble
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">..................................................................................................................................................................................................................................................................................
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">status: &lt;span class="k">done&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">+ &lt;span class="nb">exec&lt;/span> /bin/login -p -f ubuntu
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Welcome to Ubuntu 22.04 LTS &lt;span class="o">(&lt;/span>GNU/Linux 5.4.0-110-generic x86_64&lt;span class="o">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> * Documentation: https://help.ubuntu.com
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> * Management: https://landscape.canonical.com
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> * Support: https://ubuntu.com/advantage
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> System information as of Sun May &lt;span class="m">22&lt;/span> 10:06:39 PM UTC &lt;span class="m">2022&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> System load: 1.06347656253
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> Usage of /home: unknown
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> Memory usage: 45%
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> Swap usage: 68%
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> Temperature: 59.0 C
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> Processes: &lt;span class="m">30&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> Users logged in: &lt;span class="m">0&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> IPv4 address &lt;span class="k">for&lt;/span> eth0: 10.190.86.215
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> IPv6 address &lt;span class="k">for&lt;/span> eth0: fd42:1726:4b4d:8cd3:216:3eff:fefb:fc68
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="m">0&lt;/span> updates can be applied immediately.
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">The programs included with the Ubuntu system are free software&lt;span class="p">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">the exact distribution terms &lt;span class="k">for&lt;/span> each program are described in the
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">individual files in /usr/share/doc/*/copyright.
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Ubuntu comes with ABSOLUTELY NO WARRANTY, to the extent permitted by
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">applicable law.
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">ubuntu@ros2-humble:~$
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>That was easy&amp;hellip;&lt;/p>
+&lt;p>PS- you&amp;rsquo;ll excuse me for abusing a little the one-liner claim :D
+(altho we could hide that in a bash alias&amp;hellip;).&lt;/p>
+&lt;h2 id="develop-like-a-pro">Develop like a pro&lt;/h2>
+&lt;p>That was a nice ride and all but now what?
+Well, we could enable an easy SSH access to our container.
+To do so we will push our SSH key to the container,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">cp ~/.ssh/id_rsa.pub /tmp/authorized_keys
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">lxc file push /tmp/authorized_keys ros2-humble/home/ubuntu/.ssh/authorized_keys -p
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>and we can then access our container through SSH,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">ssh ubuntu@&amp;lt;container-ip&amp;gt;
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>We should really add this step to our profile instead.
+And to do so we will simply add the following lines,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-yaml" data-lang="yaml">&lt;span class="line">&lt;span class="cl">&lt;span class="nt">config&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w"> &lt;/span>&lt;span class="nt">user.user-data&lt;/span>&lt;span class="p">:&lt;/span>&lt;span class="w"> &lt;/span>&lt;span class="p">|&lt;/span>&lt;span class="sd">
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> #cloud-config
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> # Retrieve SSH key to give the default user SSH access to the container
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> # The key here is retrieved from GitHub user &amp;#39;myuser&amp;#39;
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> ssh_import_id:
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> - gh:myuser
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> # Add the ROS 2 sources
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> apt:
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="sd"> ...&lt;/span>&lt;span class="w">
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>which will fetch our SSH public key from our GitHub user and set them up for the default user in the container.
+If you prefer to retrieve the key from Launchpad instead,
+replace &lt;code>- gh:myuser&lt;/code> with &lt;code>- lp:myuser&lt;/code>.
+Also, make sure to replace &lt;code>myuser&lt;/code> with your actual user; just saying :D.&lt;/p>
+&lt;p>Let&amp;rsquo;s make sure we update our profile again,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">lxc profile edit ros2-humble &amp;lt; ~/lxc_dotfiles/profile/ros2-humble.yml
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Note that because cloud-init only runs during the first boot,
+we would need to recreate our container for this to take effect,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">lxc stop ros2-humble &lt;span class="o">&amp;amp;&amp;amp;&lt;/span> lxc delete ros2-humble
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">lxc launch-ros2-humble ros2-humble &lt;span class="o">&amp;amp;&amp;amp;&lt;/span> lxc wait-for ros2-humble
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Again, once ready, we can SSH into our container,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">ssh ubuntu@&amp;lt;container-ip&amp;gt;
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="using-vs-code-with-lxd">Using VS Code with LXD&lt;/h3>
+&lt;p>Since we can SSH,
+we can also make use of the &lt;a href="https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-ssh" target="_blank" rel="noopener">VS Code Remote - SSH extension&lt;/a>.
+This neat little feature allows us to open any file or folder in a container,
+a VM, or a remote machine.&lt;/p>
+&lt;p>To install the extension,
+head to Code and search for &amp;ldquo;remote ssh&amp;rdquo; in the Extensions panel or type in your terminal,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">code --install-extension ms-vscode-remote.remote-ssh
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Then, open Code&amp;rsquo;s Command Palette (&lt;code>Ctrl+Shift+P&lt;/code>),
+search for &lt;code>Remote-SSH: Connect to Host... &lt;/code> and enter your SSH connection details:
+&lt;code>ubuntu@&amp;lt;container_ip&amp;gt;&lt;/code>.
+From there you are able to browse and work on your fresh ROS 2 Humble workspace
+using &lt;strong>File &amp;gt; Open&amp;hellip;&lt;/strong> or &lt;strong>File &amp;gt; Open Workspace&amp;hellip;&lt;/strong> just as you would locally!&lt;/p>
+&lt;h2 id="conclusion">Conclusion&lt;/h2>
+&lt;p>ROS 2 Humble Hawksbill is an exciting new release and I can&amp;rsquo;t wait to get started with it.
+Fortunately, as we&amp;rsquo;ve seen in this post,
+we don&amp;rsquo;t have to wait to upgrade our machine to Ubuntu 22.04 to do so.&lt;/p>
+&lt;p>If you want to know more about all the new shiny thingies that Humble brings,
+have a look at this &lt;a href="https://docs.ros.org/en/foxy/Releases/Release-Humble-Hawksbill.html" target="_blank" rel="noopener">release page&lt;/a> and/or jump directly into the &lt;a href="https://docs.ros.org/en/humble/" target="_blank" rel="noopener">documentation&lt;/a>.&lt;/p>
+&lt;p>Let us have fun!&lt;/p>
+&lt;h3 id="bonus">Bonus&lt;/h3>
+&lt;p>I&amp;rsquo;d strongly encourage you to revisit some older posts,
+especially the following two that cover some interesting aspects of day-to-day development with LXD:&lt;/p>
+&lt;ul>
+&lt;li>&lt;a href="https://artivis.github.io/post/2020/dotfiles">&amp;ldquo;Managing dotfiles&amp;rdquo;&lt;/a> - details how to manage our dotfiles and how that streamlines development in containers.&lt;/li>
+&lt;li>&lt;a href="https://artivis.github.io/post/2020/lxc">&amp;ldquo;ROS Noetic development workflow in LXC&amp;rdquo;&lt;/a> - is a previous iteration over this very post and also covers how to enable graphical applications in LXD.
+Something you may be interested in if you&amp;rsquo;d like to run things like Rviz!&lt;/li>
+&lt;/ul></description></item></channel></rss>

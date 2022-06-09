@@ -1,0 +1,248 @@
+<!doctype html><html lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=generator content="Wowchemy 5.5.0 for Hugo"><link rel=preconnect href=https://fonts.gstatic.com crossorigin><link rel=preload as=style href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto+Mono&family=Roboto:wght@400;700&display=swap"><link rel=stylesheet href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto+Mono&family=Roboto:wght@400;700&display=swap" media=print onload="this.media='all'"><meta name=author content="Jérémie Deray"><meta name=description content="ROS 2 Humble Hawksbill is out!
+Congratulations to Open Robotics and through them to the entire ROS 2 community. This is really quite an event as it marks an important milestone: it is the first 5 year LTS release for ROS 2."><link rel=alternate hreflang=en-us href=https://artivis.github.io/post/2022/ros2-humble/><meta name=theme-color content="hsl(115, 82%, 48%)"><script src=/js/mathjax-config.js></script>
+<link rel=stylesheet href=/css/vendor-bundle.min.css media=print onload="this.media='all'"><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/academicons@1.9.1/css/academicons.min.css integrity="sha512-W0xM4mr6dEP9nREo7Z9z+9X70wytKvMGeDsj7ps2+xg5QPrEBXC8tAW1IFnzjR6eoJ90JmCnFzerQJTLzIEHjA==" crossorigin=anonymous media=print onload="this.media='all'"><link rel=stylesheet href=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/styles/github.min.css crossorigin=anonymous title=hl-light media=print onload="this.media='all'"><link rel=stylesheet href=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/styles/dracula.min.css crossorigin=anonymous title=hl-dark media=print onload="this.media='all'" disabled><script src=https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js integrity crossorigin=anonymous async></script>
+<link rel=stylesheet href=/css/wowchemy.css><link rel=manifest href=/manifest.webmanifest><link rel=icon type=image/png href=/media/icon_hud2d1771ce140e1d1fd4d0e59d51cebc4_11712_32x32_fill_lanczos_center_3.png><link rel=apple-touch-icon type=image/png href=/media/icon_hud2d1771ce140e1d1fd4d0e59d51cebc4_11712_180x180_fill_lanczos_center_3.png><link rel=canonical href=https://artivis.github.io/post/2022/ros2-humble/><meta property="twitter:card" content="summary"><meta property="og:site_name" content="Home to artivis"><meta property="og:url" content="https://artivis.github.io/post/2022/ros2-humble/"><meta property="og:title" content="Setting up ROS 2 Humble with LXD | Home to artivis"><meta property="og:description" content="ROS 2 Humble Hawksbill is out!
+Congratulations to Open Robotics and through them to the entire ROS 2 community. This is really quite an event as it marks an important milestone: it is the first 5 year LTS release for ROS 2."><meta property="og:image" content="https://artivis.github.io/media/icon_hud2d1771ce140e1d1fd4d0e59d51cebc4_11712_512x512_fill_lanczos_center_3.png"><meta property="twitter:image" content="https://artivis.github.io/media/icon_hud2d1771ce140e1d1fd4d0e59d51cebc4_11712_512x512_fill_lanczos_center_3.png"><meta property="og:locale" content="en-us"><meta property="article:published_time" content="2022-05-23T00:00:00+00:00"><meta property="article:modified_time" content="2022-05-23T00:00:00+00:00"><script type=application/ld+json>{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://artivis.github.io/post/2022/ros2-humble/"},"headline":"Setting up ROS 2 Humble with LXD","datePublished":"2022-05-23T00:00:00Z","dateModified":"2022-05-23T00:00:00Z","author":{"@type":"Person","name":"Jérémie Deray"},"publisher":{"@type":"Organization","name":"Home to artivis","logo":{"@type":"ImageObject","url":"https://artivis.github.io/media/icon_hud2d1771ce140e1d1fd4d0e59d51cebc4_11712_192x192_fill_lanczos_center_3.png"}},"description":"ROS 2 Humble Hawksbill is out!\nCongratulations to Open Robotics and through them to the entire ROS 2 community. This is really quite an event as it marks an important milestone: it is the first 5 year LTS release for ROS 2."}</script><script src=https://cdn.jsdelivr.net/gh/osano/cookieconsent@3.1.1/build/cookieconsent.min.js integrity="sha512-yXXqOFjdjHNH1GND+1EO0jbvvebABpzGKD66djnUfiKlYME5HGMUJHoCaeE4D5PTG2YsSJf6dwqyUUvQvS0vaA==" crossorigin=anonymous></script>
+<link rel=stylesheet href=https://cdn.jsdelivr.net/gh/osano/cookieconsent@3.1.1/build/cookieconsent.min.css integrity="sha512-LQ97camar/lOliT/MqjcQs5kWgy6Qz/cCRzzRzUCfv0fotsCTC9ZHXaPQmJV8Xu/PVALfJZ7BDezl5lW3/qBxg==" crossorigin=anonymous><script>window.addEventListener("load",function(){window.cookieconsent.initialise({palette:{popup:{background:"hsl(115, 82%, 48%)",text:"#292a2d"},button:{background:"#292a2d",text:"hsl(115, 82%, 48%)"}},theme:"classic",content:{message:"This website uses cookies to ensure you get the best experience on our website.",dismiss:"Got it!",link:"Learn more",href:"https://www.cookiesandyou.com"}})})</script><title>Setting up ROS 2 Humble with LXD | Home to artivis</title></head><body id=top data-spy=scroll data-offset=70 data-target=#TableOfContents class=page-wrapper data-wc-page-id=8192b0967dc50dc45c65356e77e60d3d><script src=/js/wowchemy-init.min.js></script><aside class=search-modal id=search><div class=container><section class=search-header><div class="row no-gutters justify-content-between mb-3"><div class=col-6><h1>Search</h1></div><div class="col-6 col-search-close"><a class=js-search href=# aria-label=Close><i class="fas fa-times-circle text-muted" aria-hidden=true></i></a></div></div><div id=search-box><input name=q id=search-query placeholder=Search... autocapitalize=off autocomplete=off autocorrect=off spellcheck=false type=search class=form-control aria-label=Search...></div></section><section class=section-search-results><div id=search-hits></div></section></div></aside><div class=page-header><header class=header--fixed><nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id=navbar-main><div class=container-xl><div class="d-none d-lg-inline-flex"><a class=navbar-brand href=/><a href=/ style=text-decoration:none><div class=logo><span class=logo__mark>></span>
+<span class=logo__text>$ cd /home/</span>
+<span class=logo__cursor style=background-color:#27df16;animation-duration:2s></span></div></a></a></div><button type=button class=navbar-toggler data-toggle=collapse data-target=#navbar-content aria-controls=navbar-content aria-expanded=false aria-label="Toggle navigation">
+<span><i class="fas fa-bars"></i></span></button><div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none"><a class=navbar-brand href=/>Home to artivis</a></div><div class="navbar-collapse main-menu-item collapse justify-content-end" id=navbar-content><ul class="navbar-nav d-md-inline-flex"><li class=nav-item><a class="nav-link active" href=/post><span>Posts</span></a></li><li class=nav-item><a class=nav-link href=/tag><span>Tags</span></a></li><li class=nav-item><a class=nav-link href=/publication><span>Publications</span></a></li><li class=nav-item><a class=nav-link href=/about><span>About</span></a></li><li class=nav-item><a class=nav-link href=/contact><span>Contact</span></a></li></ul></div><ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2"><li class=nav-item>|</li><li class=nav-item><a class="nav-link js-search" href=# aria-label=Search><i class="fas fa-search" aria-hidden=true></i></a></li></ul></div></nav></header></div><div class=page-body><div class="container-fluid docs"><div class="row flex-xl-nowrap"><div class="d-none d-xl-block col-xl-2 docs-toc"><nav id=TableOfContents><ul><li><a href=#content>Content</a></li><li><a href=#setting-up-lxd>Setting up LXD</a><ul><li><a href=#launching-a-first-container>Launching a first container</a></li></ul></li><li><a href=#an-humble-profile>An Humble profile</a><ul><li><a href=#launching-a-ros-2-humble-container>Launching a ROS 2 Humble container</a></li><li><a href=#one-liniiiiing>One-liniiiiing</a></li></ul></li><li><a href=#develop-like-a-pro>Develop like a pro</a><ul><li><a href=#using-vs-code-with-lxd>Using VS Code with LXD</a></li></ul></li><li><a href=#conclusion>Conclusion</a><ul><li><a href=#bonus>Bonus</a></li></ul></li></ul></nav></div><main class="col-12 col-md-0 col-xl-10 py-md-3 pl-md-5 docs-content" role=main><article class=article><div class="article-container pt-3"><h1>Setting up ROS 2 Humble with LXD</h1><p class=page-subtitle>An Humble container</p><div class=article-metadata><span class=article-date>May 23, 2022</span>
+<span class=middot-divider></span>
+<span class=article-reading-time>9 min read</span></div></div><div class=article-container><div class=article-style><p><a href=https://discourse.ros.org/t/ros-2-humble-hawksbill-released target=_blank rel=noopener>ROS 2 Humble Hawksbill is out!</a></p><p><figure><div class="d-flex justify-content-center"><div class=w-100><img src=https://aws1.discourse-cdn.com/business7/uploads/ros/original/2X/e/e2b80a2e45b12a397dbfebddb3abe92a1b4ce921.png alt="ROS 2 Humble Hawksbill logo" loading=lazy data-zoomable></div></div></figure></p><p>Congratulations to <a href=https://www.openrobotics.org/ target=_blank rel=noopener>Open Robotics</a> and through them to the entire ROS 2 community.
+This is really quite an event as it marks an important milestone: it is the first 5 year LTS release for ROS 2.
+The release of maturity as people say.</p><p>ROS 2 Humble officially supports Ubuntu 22.04, but chance is,
+you haven&rsquo;t made that jump yet.
+So in this post we will see how to set it up in an <a href=https://linuxcontainers.org/lxd/introduction/ target=_blank rel=noopener>LXD</a> container so that we can start <del>playing</del> working on our good old machine.</p><p>We&rsquo;ve covered how to get started with LXD in numerous previous posts;
+so here we will only go over the commands to get started as quickly and conveniently as possible.</p><hr><h2 id=content>Content</h2><ul><li><a href=#content>Content</a></li><li><a href=#setting-up-lxd>Setting up LXD</a><ul><li><a href=#launching-a-first-container>Launching a first container</a></li></ul></li><li><a href=#an-humble-profile>An Humble profile</a><ul><li><a href=#launching-a-ros-2-humble-container>Launching a ROS 2 Humble container</a></li><li><a href=#one-liniiiiing>One-liniiiiing</a></li></ul></li><li><a href=#develop-like-a-pro>Develop like a pro</a><ul><li><a href=#using-vs-code-with-lxd>Using VS Code with LXD</a></li></ul></li><li><a href=#conclusion>Conclusion</a><ul><li><a href=#bonus>Bonus</a></li></ul></li></ul><hr><h2 id=setting-up-lxd>Setting up LXD</h2><p><a href=https://linuxcontainers.org/lxd/introduction/ target=_blank rel=noopener>LXD</a> is a manager for <a href=https://linuxcontainers.org/lxc/introduction/ target=_blank rel=noopener>LXC</a>.</p><p>With this out of the way,
+the simplest way to install it is to use the snap package:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>sudo snap install lxd --channel<span class=o>=</span>5.0/stable
+</span></span></code></pre></div><p>Note that we are specifying the use of the recently released 5.0 LTS version.</p><p>Let us now configure LXD,</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>sudo lxd init --minimal
+</span></span></code></pre></div><p>The minimal setup will configure LXD with default options.
+You may find more information about this in the <a href=https://linuxcontainers.org/lxd/getting-started-cli/#initial-configuration target=_blank rel=noopener>online documentation</a>.</p><h3 id=launching-a-first-container>Launching a first container</h3><p>To make sure that everything works fine,
+let us try to launch a first container rocking Ubuntu 22.04,</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>lxc launch ubuntu:22.04 first-container
+</span></span></code></pre></div><p>Is it running?</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>$ lxc list
+</span></span><span class=line><span class=cl>+---------------------+---------+----------------------+-----------------------------------------------+-----------+-----------+
+</span></span><span class=line><span class=cl><span class=p>|</span>        NAME         <span class=p>|</span>  STATE  <span class=p>|</span>         IPV4         <span class=p>|</span>                     IPV6                      <span class=p>|</span>   TYPE    <span class=p>|</span> SNAPSHOTS <span class=p>|</span>
+</span></span><span class=line><span class=cl>+---------------------+---------+----------------------+-----------------------------------------------+-----------+-----------+
+</span></span><span class=line><span class=cl><span class=p>|</span> first-container     <span class=p>|</span> RUNNING <span class=p>|</span> 10.190.86.230 <span class=o>(</span>eth0<span class=o>)</span> <span class=p>|</span> fd42:1726:4b4d:8cd3:216:3eff:fed8:7a69 <span class=o>(</span>eth0<span class=o>)</span> <span class=p>|</span> CONTAINER <span class=p>|</span> <span class=m>0</span>         <span class=p>|</span>
+</span></span><span class=line><span class=cl>+---------------------+---------+----------------------+-----------------------------------------------+-----------+-----------+
+</span></span></code></pre></div><p>It seems so; then let&rsquo;s try to get a shell inside the container,</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>$ lxc shell first-container
+</span></span><span class=line><span class=cl>root@ros2-humble:~ lsb_release -a
+</span></span><span class=line><span class=cl>No LSB modules are available.
+</span></span><span class=line><span class=cl>Distributor ID:	Ubuntu
+</span></span><span class=line><span class=cl>Description:	Ubuntu 22.04 LTS
+</span></span><span class=line><span class=cl>Release:	22.04
+</span></span><span class=line><span class=cl>Codename:	jammy
+</span></span></code></pre></div><p>We&rsquo;re in, running 22.04.
+Everything looks good!</p><p>From there we could simply follow the <a href=https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debians.html target=_blank rel=noopener>installation instructions from the ROS 2 Humble documentation</a>.
+But where is the fun in that?
+Instead we will create a <a href=https://linuxcontainers.org/lxd/docs/master/profiles/ target=_blank rel=noopener>LXD profile</a> that will do all the lifting for us every time we will create a new container.</p><h2 id=an-humble-profile>An Humble profile</h2><p>First we need to create a profile,</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>lxc profile create ros2-humble
+</span></span></code></pre></div><p>We will then edit it to add the bits we need.
+But rather than editing the profile itself,
+we will work on a good-old yaml file, located on our machine.
+The reason is that it is more convenient and most importantly,
+we will be able to carry that yaml file and re-use it on other machines.
+Let&rsquo;s create that profile,</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>mkdir -p ~/lxc_dotfiles/profile/
+</span></span><span class=line><span class=cl>touch ~/lxc_dotfiles/profile/ros2-humble.yml
+</span></span></code></pre></div><p>which we populate as follows,</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>config</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>user.user-data</span><span class=p>:</span><span class=w> </span><span class=p>|</span><span class=sd>
+</span></span></span><span class=line><span class=cl><span class=sd>    #cloud-config
+</span></span></span><span class=line><span class=cl><span class=sd>    # Add the ROS 2 sources
+</span></span></span><span class=line><span class=cl><span class=sd>    apt:
+</span></span></span><span class=line><span class=cl><span class=sd>      sources:
+</span></span></span><span class=line><span class=cl><span class=sd>        ros2:
+</span></span></span><span class=line><span class=cl><span class=sd>          source: &#34;deb [arch=amd64] http://repo.ros2.org/ubuntu/main jammy main&#34;
+</span></span></span><span class=line><span class=cl><span class=sd>          keyid: C1CF 6E31 E6BA DE88 68B1 72B4 F42E D6FB AB17 C654
+</span></span></span><span class=line><span class=cl><span class=sd>    package_upgrade: true
+</span></span></span><span class=line><span class=cl><span class=sd>    packages:
+</span></span></span><span class=line><span class=cl><span class=sd>      # dev
+</span></span></span><span class=line><span class=cl><span class=sd>      - vim
+</span></span></span><span class=line><span class=cl><span class=sd>      - silversearcher-ag
+</span></span></span><span class=line><span class=cl><span class=sd>      # ROS 2 dev
+</span></span></span><span class=line><span class=cl><span class=sd>      - locales
+</span></span></span><span class=line><span class=cl><span class=sd>      - curl
+</span></span></span><span class=line><span class=cl><span class=sd>      - gnupg
+</span></span></span><span class=line><span class=cl><span class=sd>      - lsb-release
+</span></span></span><span class=line><span class=cl><span class=sd>      - build-essential
+</span></span></span><span class=line><span class=cl><span class=sd>      - cmake
+</span></span></span><span class=line><span class=cl><span class=sd>      - git
+</span></span></span><span class=line><span class=cl><span class=sd>      - python3-argcomplete
+</span></span></span><span class=line><span class=cl><span class=sd>      - python3-colcon-common-extensions
+</span></span></span><span class=line><span class=cl><span class=sd>      - python3-flake8
+</span></span></span><span class=line><span class=cl><span class=sd>      - python3-flake8-blind-except
+</span></span></span><span class=line><span class=cl><span class=sd>      - python3-flake8-builtins
+</span></span></span><span class=line><span class=cl><span class=sd>      - python3-flake8-class-newline
+</span></span></span><span class=line><span class=cl><span class=sd>      - python3-flake8-comprehensions
+</span></span></span><span class=line><span class=cl><span class=sd>      - python3-flake8-deprecated
+</span></span></span><span class=line><span class=cl><span class=sd>      - python3-flake8-docstrings
+</span></span></span><span class=line><span class=cl><span class=sd>      - python3-flake8-import-order
+</span></span></span><span class=line><span class=cl><span class=sd>      - python3-flake8-quotes
+</span></span></span><span class=line><span class=cl><span class=sd>      - python3-pip
+</span></span></span><span class=line><span class=cl><span class=sd>      - python3-pytest
+</span></span></span><span class=line><span class=cl><span class=sd>      - python3-pytest-cov
+</span></span></span><span class=line><span class=cl><span class=sd>      - python3-pytest-repeat
+</span></span></span><span class=line><span class=cl><span class=sd>      - python3-pytest-rerunfailures
+</span></span></span><span class=line><span class=cl><span class=sd>      - python3-rosdep
+</span></span></span><span class=line><span class=cl><span class=sd>      - python3-setuptools
+</span></span></span><span class=line><span class=cl><span class=sd>      - python3-vcstool
+</span></span></span><span class=line><span class=cl><span class=sd>      - wget
+</span></span></span><span class=line><span class=cl><span class=sd>      # ROS 2 packages
+</span></span></span><span class=line><span class=cl><span class=sd>      - ros-humble-ros-core
+</span></span></span><span class=line><span class=cl><span class=sd>    runcmd:
+</span></span></span><span class=line><span class=cl><span class=sd>      # System setup
+</span></span></span><span class=line><span class=cl><span class=sd>      - &#34;locale-gen en_US en_US.UTF-8&#34;
+</span></span></span><span class=line><span class=cl><span class=sd>      - &#34;update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8&#34;
+</span></span></span><span class=line><span class=cl><span class=sd>      - &#34;export LANG=en_US.UTF-8&#34;
+</span></span></span><span class=line><span class=cl><span class=sd>      #
+</span></span></span><span class=line><span class=cl><span class=sd>      # Fetch ROS 2 sources
+</span></span></span><span class=line><span class=cl><span class=sd>      - [su, ubuntu, -c, &#34;mkdir -p /home/ubuntu/ros2_ws/src&#34;]
+</span></span></span><span class=line><span class=cl><span class=sd>      - [su, ubuntu, -c, &#34;wget https://raw.githubusercontent.com/ros2/ros2/master/ros2.repos -O /home/ubuntu/ros2_ws/ros2.repos&#34;]
+</span></span></span><span class=line><span class=cl><span class=sd>      - [su, ubuntu, -c, &#34;vcs import /home/ubuntu/ros2_ws/src &lt; /home/ubuntu/ros2_ws/ros2.repos&#34;]
+</span></span></span><span class=line><span class=cl><span class=sd>      #
+</span></span></span><span class=line><span class=cl><span class=sd>      # Install deps
+</span></span></span><span class=line><span class=cl><span class=sd>      - [su, ubuntu, -c, &#34;sudo rosdep init&#34;]
+</span></span></span><span class=line><span class=cl><span class=sd>      - [su, ubuntu, -c, &#34;rosdep update&#34;]
+</span></span></span><span class=line><span class=cl><span class=sd>      - [su, ubuntu, -c, &#34;rosdep install --from-paths /home/ubuntu/ros2_ws/src --ignore-src -y --skip-keys &#39;fastcdr rti-connext-dds-6.0.1 urdfdom_headers gazebo_ros_pkgs&#39; --rosdistro humble&#34;]
+</span></span></span><span class=line><span class=cl><span class=sd>    final_message: &#34;ROS 2 Humble Hawksbill dev container ready!&#34;</span><span class=w>    
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>description</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;A profile to automatically a ROS 2 Humble dev container.&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>devices</span><span class=p>:</span><span class=w> </span>{}<span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>ros2-humble</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>used_by</span><span class=p>:</span><span class=w> </span><span class=p>[]</span><span class=w>
+</span></span></span></code></pre></div><p>We will not go into the details of this profile,
+note simply that it takes advantage of <a href=https://linuxcontainers.org/lxd/docs/master/cloud-init/ target=_blank rel=noopener>LXD support of cloud-init</a> to set up the ppa, install packages and fetch the ROS 2 Humble source code.
+Alright, let us carry on and launch our Humble container.
+But let&rsquo;s not forget to edit our LXD profile from the yaml file we have just created,</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>lxc profile edit ros2-humble &lt; ~/lxc_dotfiles/profile/ros2-humble.yml
+</span></span></code></pre></div><h3 id=launching-a-ros-2-humble-container>Launching a ROS 2 Humble container</h3><p>With our profile ready,
+all we have to do is to launch a new container with that profile,</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>$ lxc launch ubuntu:22.04 -p default -p ros2-humble ros2-humble
+</span></span><span class=line><span class=cl>Creating ros2-humble
+</span></span><span class=line><span class=cl>Starting ros2-humble
+</span></span></code></pre></div><p>Note that we are also adding the <code>default</code> profile which sets up the root filesystem and the network of our container.</p><p>At this point the container is up and running.
+However it isn&rsquo;t quite ready yet.
+Indeed, it is crunching the specified commands to get our ROS 2 environment ready.</p><p>To monitor this process (the cloud-init initialization),
+we can issue the following command,</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>$ lxc <span class=nb>exec</span> ros2-humble -- cloud-init status --wait
+</span></span><span class=line><span class=cl>...............................................................................
+</span></span><span class=line><span class=cl>status: <span class=k>done</span>
+</span></span></code></pre></div><p>which will print dots on the terminal as the initialization goes on,
+and will do so until it is done.
+When the command returns, the container is fully ready.</p><p>We can now open a shell into the container as the default <code>ubuntu</code> user,</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>$ lxc <span class=nb>exec</span> ros2-humble -- sudo --login --user ubuntu
+</span></span><span class=line><span class=cl>ubuntu@ros2-humble:~$ ls
+</span></span><span class=line><span class=cl>ros2_ws
+</span></span><span class=line><span class=cl>ubuntu@ros2-humble:~$ ls /opt/ros/humble
+</span></span><span class=line><span class=cl>bin  cmake  include  lib  <span class=nb>local</span>  local_setup.bash  local_setup.sh  _local_setup_util.py  local_setup.zsh  setup.bash  setup.sh  setup.zsh  share  src  tools
+</span></span></code></pre></div><p>The source workspace is there and the packages are installed.
+Looks like we are ready to develop.</p><h3 id=one-liniiiiing>One-liniiiiing</h3><p>Phew; that was quite a few commands.
+Some we will definitely not remember.
+Let&rsquo;s make our life easier and create some <a href=https://linuxcontainers.org/lxd/advanced-guide/#command-aliases target=_blank rel=noopener>LXD aliases</a>.</p><p>First, an alias to create a new ROS 2 Humble container given a name,</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>lxc <span class=nb>alias</span> add launch-ros2-humble <span class=s1>&#39;launch ubuntu:22.04 -p default -p ros2-humble @ARGS@&#39;</span>
+</span></span></code></pre></div><p>use e.g.,</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>lxc launch-ros2-humble another-ros2-humble
+</span></span></code></pre></div><p>Then an alias to wait for a container to be ready,</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>lxc <span class=nb>alias</span> add wait-for <span class=s1>&#39;exec @ARGS@ -- cloud-init status --wait&#39;</span>
+</span></span></code></pre></div><p>use e.g.,</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>lxc wait-for another-ros2-humble
+</span></span></code></pre></div><p>And one to open a shell as the ubuntu user,</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>lxc <span class=nb>alias</span> add ubuntu <span class=s1>&#39;exec @ARGS@ --mode interactive -- /bin/sh -xac $@ubuntu - exec /bin/login -p -f&#39;</span>
+</span></span></code></pre></div><p>use e.g.,</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>lxc ubuntu another-ros2-humble
+</span></span></code></pre></div><p>Alright, we can now launch a branch new container,
+wait for it to be ready and open a shell,</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>$ lxc launch-ros2-humble ros2-humble <span class=o>&amp;&amp;</span> lxc wait-for ros2-humble <span class=o>&amp;&amp;</span> lxc ubuntu ros2-humble
+</span></span><span class=line><span class=cl>Creating ros2-humble
+</span></span><span class=line><span class=cl>Starting ros2-humble
+</span></span><span class=line><span class=cl>..................................................................................................................................................................................................................................................................................
+</span></span><span class=line><span class=cl>status: <span class=k>done</span>
+</span></span><span class=line><span class=cl>+ <span class=nb>exec</span> /bin/login -p -f ubuntu
+</span></span><span class=line><span class=cl>Welcome to Ubuntu 22.04 LTS <span class=o>(</span>GNU/Linux 5.4.0-110-generic x86_64<span class=o>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl> * Documentation:  https://help.ubuntu.com
+</span></span><span class=line><span class=cl> * Management:     https://landscape.canonical.com
+</span></span><span class=line><span class=cl> * Support:        https://ubuntu.com/advantage
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>  System information as of Sun May <span class=m>22</span> 10:06:39 PM UTC <span class=m>2022</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>  System load:           1.06347656253
+</span></span><span class=line><span class=cl>  Usage of /home:        unknown
+</span></span><span class=line><span class=cl>  Memory usage:          45%
+</span></span><span class=line><span class=cl>  Swap usage:            68%
+</span></span><span class=line><span class=cl>  Temperature:           59.0 C
+</span></span><span class=line><span class=cl>  Processes:             <span class=m>30</span>
+</span></span><span class=line><span class=cl>  Users logged in:       <span class=m>0</span>
+</span></span><span class=line><span class=cl>  IPv4 address <span class=k>for</span> eth0: 10.190.86.215
+</span></span><span class=line><span class=cl>  IPv6 address <span class=k>for</span> eth0: fd42:1726:4b4d:8cd3:216:3eff:fefb:fc68
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=m>0</span> updates can be applied immediately.
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>The programs included with the Ubuntu system are free software<span class=p>;</span>
+</span></span><span class=line><span class=cl>the exact distribution terms <span class=k>for</span> each program are described in the
+</span></span><span class=line><span class=cl>individual files in /usr/share/doc/*/copyright.
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>Ubuntu comes with ABSOLUTELY NO WARRANTY, to the extent permitted by
+</span></span><span class=line><span class=cl>applicable law.
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>ubuntu@ros2-humble:~$
+</span></span></code></pre></div><p>That was easy&mldr;</p><p>PS- you&rsquo;ll excuse me for abusing a little the one-liner claim :D
+(altho we could hide that in a bash alias&mldr;).</p><h2 id=develop-like-a-pro>Develop like a pro</h2><p>That was a nice ride and all but now what?
+Well, we could enable an easy SSH access to our container.
+To do so we will push our SSH key to the container,</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>cp ~/.ssh/id_rsa.pub /tmp/authorized_keys
+</span></span><span class=line><span class=cl>lxc file push /tmp/authorized_keys ros2-humble/home/ubuntu/.ssh/authorized_keys -p
+</span></span></code></pre></div><p>and we can then access our container through SSH,</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>ssh ubuntu@&lt;container-ip&gt;
+</span></span></code></pre></div><p>We should really add this step to our profile instead.
+And to do so we will simply add the following lines,</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>config</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>user.user-data</span><span class=p>:</span><span class=w> </span><span class=p>|</span><span class=sd>
+</span></span></span><span class=line><span class=cl><span class=sd>    #cloud-config
+</span></span></span><span class=line><span class=cl><span class=sd>    # Retrieve SSH key to give the default user SSH access to the container
+</span></span></span><span class=line><span class=cl><span class=sd>    # The key here is retrieved from GitHub user &#39;myuser&#39;
+</span></span></span><span class=line><span class=cl><span class=sd>    ssh_import_id:
+</span></span></span><span class=line><span class=cl><span class=sd>      - gh:myuser
+</span></span></span><span class=line><span class=cl><span class=sd>    # Add the ROS 2 sources
+</span></span></span><span class=line><span class=cl><span class=sd>    apt:
+</span></span></span><span class=line><span class=cl><span class=sd>    ...</span><span class=w>    
+</span></span></span></code></pre></div><p>which will fetch our SSH public key from our GitHub user and set them up for the default user in the container.
+If you prefer to retrieve the key from Launchpad instead,
+replace <code>- gh:myuser</code> with <code>- lp:myuser</code>.
+Also, make sure to replace <code>myuser</code> with your actual user; just saying :D.</p><p>Let&rsquo;s make sure we update our profile again,</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>lxc profile edit ros2-humble &lt; ~/lxc_dotfiles/profile/ros2-humble.yml
+</span></span></code></pre></div><p>Note that because cloud-init only runs during the first boot,
+we would need to recreate our container for this to take effect,</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>lxc stop ros2-humble <span class=o>&amp;&amp;</span> lxc delete ros2-humble
+</span></span><span class=line><span class=cl>lxc launch-ros2-humble ros2-humble <span class=o>&amp;&amp;</span> lxc wait-for ros2-humble
+</span></span></code></pre></div><p>Again, once ready, we can SSH into our container,</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>ssh ubuntu@&lt;container-ip&gt;
+</span></span></code></pre></div><h3 id=using-vs-code-with-lxd>Using VS Code with LXD</h3><p>Since we can SSH,
+we can also make use of the <a href="https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-ssh" target=_blank rel=noopener>VS Code Remote - SSH extension</a>.
+This neat little feature allows us to open any file or folder in a container,
+a VM, or a remote machine.</p><p>To install the extension,
+head to Code and search for &ldquo;remote ssh&rdquo; in the Extensions panel or type in your terminal,</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>code --install-extension ms-vscode-remote.remote-ssh
+</span></span></code></pre></div><p>Then, open Code&rsquo;s Command Palette (<code>Ctrl+Shift+P</code>),
+search for <code>Remote-SSH: Connect to Host...</code> and enter your SSH connection details:
+<code>ubuntu@&lt;container_ip></code>.
+From there you are able to browse and work on your fresh ROS 2 Humble workspace
+using <strong>File > Open&mldr;</strong> or <strong>File > Open Workspace&mldr;</strong> just as you would locally!</p><h2 id=conclusion>Conclusion</h2><p>ROS 2 Humble Hawksbill is an exciting new release and I can&rsquo;t wait to get started with it.
+Fortunately, as we&rsquo;ve seen in this post,
+we don&rsquo;t have to wait to upgrade our machine to Ubuntu 22.04 to do so.</p><p>If you want to know more about all the new shiny thingies that Humble brings,
+have a look at this <a href=https://docs.ros.org/en/foxy/Releases/Release-Humble-Hawksbill.html target=_blank rel=noopener>release page</a> and/or jump directly into the <a href=https://docs.ros.org/en/humble/ target=_blank rel=noopener>documentation</a>.</p><p>Let us have fun!</p><h3 id=bonus>Bonus</h3><p>I&rsquo;d strongly encourage you to revisit some older posts,
+especially the following two that cover some interesting aspects of day-to-day development with LXD:</p><ul><li><a href=/post/2020/dotfiles>&ldquo;Managing dotfiles&rdquo;</a> - details how to manage our dotfiles and how that streamlines development in containers.</li><li><a href=/post/2020/lxc>&ldquo;ROS Noetic development workflow in LXC&rdquo;</a> - is a previous iteration over this very post and also covers how to enable graphical applications in LXD.
+Something you may be interested in if you&rsquo;d like to run things like Rviz!</li></ul><ul class="nav toc-top"><li><a href=# id=back_to_top class=docs-toc-title><button id=goTop class=btn-top><svg class="arrow up" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="5 0 50 80"><polyline fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" points="0.375, 35.375 28.375, 0.375 58.67, 35.375"/></svg></button></a></li></ul></div><p class=edit-page><a href=https://github.com/artivis/artivis.github.io/edit/main/content/post/2022/ros2-humble.md><i class="fas fa-pen pr-2"></i>Edit this page</a></p><div class=article-tags><a class="badge badge-light" href=/tag/tutorial/>tutorial</a>
+<a class="badge badge-light" href=/tag/ros-2/>ROS 2</a>
+<a class="badge badge-light" href=/tag/humble/>Humble</a>
+<a class="badge badge-light" href=/tag/lxc/>LXC</a>
+<a class="badge badge-light" href=/tag/lxd/>LXD</a></div><div class=share-box><ul class=share><li><a href="https://twitter.com/intent/tweet?url=https://artivis.github.io/post/2022/ros2-humble/&text=Setting%20up%20ROS%202%20Humble%20with%20LXD" target=_blank rel=noopener class=share-btn-twitter aria-label=twitter><i class="fab fa-twitter"></i></a></li><li><a href="https://www.facebook.com/sharer.php?u=https://artivis.github.io/post/2022/ros2-humble/&t=Setting%20up%20ROS%202%20Humble%20with%20LXD" target=_blank rel=noopener class=share-btn-facebook aria-label=facebook><i class="fab fa-facebook"></i></a></li><li><a href="mailto:?subject=Setting%20up%20ROS%202%20Humble%20with%20LXD&body=https://artivis.github.io/post/2022/ros2-humble/" target=_blank rel=noopener class=share-btn-email aria-label=envelope><i class="fas fa-envelope"></i></a></li><li><a href="https://www.linkedin.com/shareArticle?url=https://artivis.github.io/post/2022/ros2-humble/&title=Setting%20up%20ROS%202%20Humble%20with%20LXD" target=_blank rel=noopener class=share-btn-linkedin aria-label=linkedin-in><i class="fab fa-linkedin-in"></i></a></li><li><a href="whatsapp://send?text=Setting%20up%20ROS%202%20Humble%20with%20LXD%20https://artivis.github.io/post/2022/ros2-humble/" target=_blank rel=noopener class=share-btn-whatsapp aria-label=whatsapp><i class="fab fa-whatsapp"></i></a></li><li><a href="https://service.weibo.com/share/share.php?url=https://artivis.github.io/post/2022/ros2-humble/&title=Setting%20up%20ROS%202%20Humble%20with%20LXD" target=_blank rel=noopener class=share-btn-weibo aria-label=weibo><i class="fab fa-weibo"></i></a></li></ul></div><div class="article-widget content-widget-hr"><h3>Related</h3><ul><li><a href=/post/2020/ros-foxy-install/>Get started with ROS 2 Foxy today with LXD</a></li><li><a href=/post/2020/dotfiles/>Managing dotfiles</a></li><li><a href=/post/2020/lxc/>ROS Noetic development workflow in LXC</a></li><li><a href=/post/2021/pi-pico-uros-getting-started/>Getting started with micro-ROS on the Pi Pico</a></li><li><a href=/post/2021/pi-pico-uros-sonar/>Publishing sonar readings with micro-ROS on the Raspberry Pi Pico</a></li></ul></div></div></article></main></div></div></div><div class=page-footer><div class=container><footer class=site-footer><p class="powered-by copyright-license-text">Jérémie Deray © 2022. This work is licensed under <a href=https://creativecommons.org/licenses/by-nc-nd/4.0 rel="noopener noreferrer" target=_blank>CC BY NC ND 4.0</a></p><p class="powered-by footer-license-icons"><a href=https://creativecommons.org/licenses/by-nc-nd/4.0 rel="noopener noreferrer" target=_blank aria-label="Creative Commons"><i class="fab fa-creative-commons fa-2x" aria-hidden=true></i>
+<i class="fab fa-creative-commons-by fa-2x" aria-hidden=true></i>
+<i class="fab fa-creative-commons-nc fa-2x" aria-hidden=true></i>
+<i class="fab fa-creative-commons-nd fa-2x" aria-hidden=true></i></a></p><p class=powered-by></p></footer></div></div><script src=/js/vendor-bundle.min.js></script>
+<script src=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/highlight.min.js integrity="sha512-Ypjm0o7jOxAd4hpdoppSEN0TQOC19UtPAqD+4s5AlXmUvbmmS/YMxYqAqarQYyxTnB6/rqip9qcxlNB/3U9Wdg==" crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/latex.min.js crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/bash.min.js crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/python.min.js crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/c++.min.js crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/c.min.js crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/terminal.min.js crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/yaml.min.js crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/xml.min.js crossorigin=anonymous></script>
+<script id=search-hit-fuse-template type=text/x-template>
+        <div class="search-hit" id="summary-{{key}}">
+          <div class="search-hit-content">
+            <div class="search-hit-name">
+              <a href="{{relpermalink}}">{{title}}</a>
+              <div class="article-metadata search-hit-type">{{type}}</div>
+              <p class="search-hit-description">{{snippet}}</p>
+            </div>
+          </div>
+        </div>
+      </script><script src=https://cdn.jsdelivr.net/gh/krisk/Fuse@v3.2.1/dist/fuse.min.js integrity="sha512-o38bmzBGX+hD3JHWUFCDA09btWaqrNmoJ3RXLlrysA7PP01Kgs4UlE4MhelE1v5dJR3+cxlR4qQlotsW7jKsnw==" crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/gh/julmot/mark.js@8.11.1/dist/jquery.mark.min.js integrity="sha512-mhbv5DqBMgrWL+32MmsDOt/OAvqr/cHimk6B8y/bx/xS88MVkYGPiVv2ixKVrkywF2qHplNRUvFsAHUdxZ3Krg==" crossorigin=anonymous></script>
+<script id=page-data type=application/json>{"use_headroom":true}</script><script src=/js/wowchemy-headroom.js type=module></script>
+<script src=/en/js/wowchemy.min.js></script><div id=modal class="modal fade" role=dialog><div class=modal-dialog><div class=modal-content><div class=modal-header><h5 class=modal-title>Cite</h5><button type=button class=close data-dismiss=modal aria-label=Close>
+<span aria-hidden=true>&#215;</span></button></div><div class=modal-body><pre><code class="tex hljs"></code></pre></div><div class=modal-footer><a class="btn btn-outline-primary my-1 js-copy-cite" href=# target=_blank><i class="fas fa-copy"></i> Copy</a>
+<a class="btn btn-outline-primary my-1 js-download-cite" href=# target=_blank><i class="fas fa-download"></i> Download</a><div id=modal-error></div></div></div></div></div><script src=/js/wowchemy-publication.js type=module></script></body></html>

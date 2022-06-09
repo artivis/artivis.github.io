@@ -1,0 +1,260 @@
+<!doctype html><html lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=generator content="Wowchemy 5.5.0 for Hugo"><link rel=preconnect href=https://fonts.gstatic.com crossorigin><link rel=preload as=style href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto+Mono&family=Roboto:wght@400;700&display=swap"><link rel=stylesheet href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto+Mono&family=Roboto:wght@400;700&display=swap" media=print onload="this.media='all'"><meta name=author content="Jérémie Deray"><meta name=description content="In this post, we will discuss how to setup a Linux container - a.k.a LXC - for our ROS Noetic development. Developing in containers has several advantages such as:
+allowing us to use a different Linux distribution than the one we&rsquo;ve installed on our host machine providing a repeatable course of actions messing around, installing a tons of dependencies without polluting our computer burning the container to the ground and starting fresh again easily There are of course many other upsides but those are the one we are really interested in for now."><link rel=alternate hreflang=en-us href=https://artivis.github.io/post/2020/lxc/><meta name=theme-color content="hsl(115, 82%, 48%)"><script src=/js/mathjax-config.js></script>
+<link rel=stylesheet href=/css/vendor-bundle.min.css media=print onload="this.media='all'"><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/academicons@1.9.1/css/academicons.min.css integrity="sha512-W0xM4mr6dEP9nREo7Z9z+9X70wytKvMGeDsj7ps2+xg5QPrEBXC8tAW1IFnzjR6eoJ90JmCnFzerQJTLzIEHjA==" crossorigin=anonymous media=print onload="this.media='all'"><link rel=stylesheet href=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/styles/github.min.css crossorigin=anonymous title=hl-light media=print onload="this.media='all'"><link rel=stylesheet href=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/styles/dracula.min.css crossorigin=anonymous title=hl-dark media=print onload="this.media='all'" disabled><script src=https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js integrity crossorigin=anonymous async></script>
+<link rel=stylesheet href=/css/wowchemy.css><link rel=manifest href=/manifest.webmanifest><link rel=icon type=image/png href=/media/icon_hud2d1771ce140e1d1fd4d0e59d51cebc4_11712_32x32_fill_lanczos_center_3.png><link rel=apple-touch-icon type=image/png href=/media/icon_hud2d1771ce140e1d1fd4d0e59d51cebc4_11712_180x180_fill_lanczos_center_3.png><link rel=canonical href=https://artivis.github.io/post/2020/lxc/><meta property="twitter:card" content="summary"><meta property="og:site_name" content="Home to artivis"><meta property="og:url" content="https://artivis.github.io/post/2020/lxc/"><meta property="og:title" content="ROS Noetic development workflow in LXC | Home to artivis"><meta property="og:description" content="In this post, we will discuss how to setup a Linux container - a.k.a LXC - for our ROS Noetic development. Developing in containers has several advantages such as:
+allowing us to use a different Linux distribution than the one we&rsquo;ve installed on our host machine providing a repeatable course of actions messing around, installing a tons of dependencies without polluting our computer burning the container to the ground and starting fresh again easily There are of course many other upsides but those are the one we are really interested in for now."><meta property="og:image" content="https://artivis.github.io/media/icon_hud2d1771ce140e1d1fd4d0e59d51cebc4_11712_512x512_fill_lanczos_center_3.png"><meta property="twitter:image" content="https://artivis.github.io/media/icon_hud2d1771ce140e1d1fd4d0e59d51cebc4_11712_512x512_fill_lanczos_center_3.png"><meta property="og:locale" content="en-us"><meta property="article:published_time" content="2020-05-30T00:00:00+00:00"><meta property="article:modified_time" content="2020-05-30T00:00:00+00:00"><script type=application/ld+json>{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://artivis.github.io/post/2020/lxc/"},"headline":"ROS Noetic development workflow in LXC","datePublished":"2020-05-30T00:00:00Z","dateModified":"2020-05-30T00:00:00Z","author":{"@type":"Person","name":"Jérémie Deray"},"publisher":{"@type":"Organization","name":"Home to artivis","logo":{"@type":"ImageObject","url":"https://artivis.github.io/media/icon_hud2d1771ce140e1d1fd4d0e59d51cebc4_11712_192x192_fill_lanczos_center_3.png"}},"description":"In this post, we will discuss how to setup a Linux container - a.k.a LXC - for our ROS Noetic development. Developing in containers has several advantages such as:\nallowing us to use a different Linux distribution than the one we\u0026rsquo;ve installed on our host machine providing a repeatable course of actions messing around, installing a tons of dependencies without polluting our computer burning the container to the ground and starting fresh again easily There are of course many other upsides but those are the one we are really interested in for now."}</script><script src=https://cdn.jsdelivr.net/gh/osano/cookieconsent@3.1.1/build/cookieconsent.min.js integrity="sha512-yXXqOFjdjHNH1GND+1EO0jbvvebABpzGKD66djnUfiKlYME5HGMUJHoCaeE4D5PTG2YsSJf6dwqyUUvQvS0vaA==" crossorigin=anonymous></script>
+<link rel=stylesheet href=https://cdn.jsdelivr.net/gh/osano/cookieconsent@3.1.1/build/cookieconsent.min.css integrity="sha512-LQ97camar/lOliT/MqjcQs5kWgy6Qz/cCRzzRzUCfv0fotsCTC9ZHXaPQmJV8Xu/PVALfJZ7BDezl5lW3/qBxg==" crossorigin=anonymous><script>window.addEventListener("load",function(){window.cookieconsent.initialise({palette:{popup:{background:"hsl(115, 82%, 48%)",text:"#292a2d"},button:{background:"#292a2d",text:"hsl(115, 82%, 48%)"}},theme:"classic",content:{message:"This website uses cookies to ensure you get the best experience on our website.",dismiss:"Got it!",link:"Learn more",href:"https://www.cookiesandyou.com"}})})</script><title>ROS Noetic development workflow in LXC | Home to artivis</title></head><body id=top data-spy=scroll data-offset=70 data-target=#TableOfContents class=page-wrapper data-wc-page-id=6e9ac8c4106f150dee9ba7aed739cb49><script src=/js/wowchemy-init.min.js></script><aside class=search-modal id=search><div class=container><section class=search-header><div class="row no-gutters justify-content-between mb-3"><div class=col-6><h1>Search</h1></div><div class="col-6 col-search-close"><a class=js-search href=# aria-label=Close><i class="fas fa-times-circle text-muted" aria-hidden=true></i></a></div></div><div id=search-box><input name=q id=search-query placeholder=Search... autocapitalize=off autocomplete=off autocorrect=off spellcheck=false type=search class=form-control aria-label=Search...></div></section><section class=section-search-results><div id=search-hits></div></section></div></aside><div class=page-header><header class=header--fixed><nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id=navbar-main><div class=container-xl><div class="d-none d-lg-inline-flex"><a class=navbar-brand href=/><a href=/ style=text-decoration:none><div class=logo><span class=logo__mark>></span>
+<span class=logo__text>$ cd /home/</span>
+<span class=logo__cursor style=background-color:#27df16;animation-duration:2s></span></div></a></a></div><button type=button class=navbar-toggler data-toggle=collapse data-target=#navbar-content aria-controls=navbar-content aria-expanded=false aria-label="Toggle navigation">
+<span><i class="fas fa-bars"></i></span></button><div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none"><a class=navbar-brand href=/>Home to artivis</a></div><div class="navbar-collapse main-menu-item collapse justify-content-end" id=navbar-content><ul class="navbar-nav d-md-inline-flex"><li class=nav-item><a class="nav-link active" href=/post><span>Posts</span></a></li><li class=nav-item><a class=nav-link href=/tag><span>Tags</span></a></li><li class=nav-item><a class=nav-link href=/publication><span>Publications</span></a></li><li class=nav-item><a class=nav-link href=/about><span>About</span></a></li><li class=nav-item><a class=nav-link href=/contact><span>Contact</span></a></li></ul></div><ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2"><li class=nav-item>|</li><li class=nav-item><a class="nav-link js-search" href=# aria-label=Search><i class="fas fa-search" aria-hidden=true></i></a></li></ul></div></nav></header></div><div class=page-body><div class="container-fluid docs"><div class="row flex-xl-nowrap"><div class="d-none d-xl-block col-xl-2 docs-toc"><nav id=TableOfContents><ul><li><a href=#creating-the-container>Creating the container</a></li><li><a href=#lxc-aliases-to-the-rescue>LXC aliases to the rescue</a></li></ul><ul><li><a href=#creating-a-lxd-profile>Creating a LXD profile</a></li><li><a href=#dedicated-graphic-card>Dedicated graphic card</a></li></ul></nav></div><main class="col-12 col-md-0 col-xl-10 py-md-3 pl-md-5 docs-content" role=main><article class=article><div class="article-container pt-3"><h1>ROS Noetic development workflow in LXC</h1><p class=page-subtitle>Containerize all the things!</p><div class=article-metadata><span class=article-date>May 30, 2020</span>
+<span class=middot-divider></span>
+<span class=article-reading-time>12 min read</span></div></div><div class=article-container><div class=article-style><p>In this post, we will discuss how to setup a <a href=https://linuxcontainers.org/ target=_blank rel=noopener>Linux container</a>
+- a.k.a <a href=https://linuxcontainers.org/ target=_blank rel=noopener>LXC</a> - for our <a href=http://wiki.ros.org/noetic target=_blank rel=noopener>ROS Noetic</a> development.
+Developing in containers has several
+advantages such as:</p><ul><li>allowing us to use a different Linux distribution than the one we&rsquo;ve installed on
+our host machine</li><li>providing a repeatable course of actions</li><li>messing around, installing a tons of dependencies without polluting our computer</li><li>burning the container to the ground and starting fresh again easily</li></ul><p>There are of course many other upsides but those are the one we are really
+interested in for now.
+We will see first how to get started with LXC and install the latest ROS release Noetic.
+We will then configure our container so that it is able to share a workspace
+with our host machine. We will also enable the use of graphical applications
+from the container (e.g. Rviz, Gazebo).</p><p>The main prerequisites for this post are to be familiar with:</p><ul><li>the command terminal in Linux</li><li>ROS development</li><li>LXC</li></ul><p>Note that I will be linking resources throughout the text,
+make sure to check them whenever you need further information.</p><p>Finally, while we will be focusing on the latest ROS Noetic release,
+the setup presented here applies not only to other ROS distributions
+but likely to most projects, be them ROS-based or not.</p><hr><h1 id=content>Content</h1><ul><li><a href=#content>Content</a><ul><li><a href=#---wrapping-up>* Wrapping up</a></li></ul></li><li><a href=#setting-up-the-lxc>Setting up the LXC</a><ul><li><a href=#creating-the-container>Creating the container</a></li><li><a href=#lxc-aliases-to-the-rescue>LXC aliases to the rescue</a></li></ul></li><li><a href=#install-ros-noetic>Install ROS Noetic</a></li><li><a href=#mounting-a-local-workspace>Mounting a local workspace</a></li><li><a href=#using-graphical-applications>Using graphical applications</a><ul><li><a href=#creating-a-lxd-profile>Creating a LXD profile</a></li><li><a href=#dedicated-graphic-card>Dedicated graphic card</a></li></ul></li><li><a href=#profile-all-the-things>Profile all the things</a></li><li><a href=#wrapping-up>Wrapping up</a></li></ul><hr><h1 id=setting-up-the-lxc>Setting up the LXC</h1><p>We will start by installing LXD, a lightweight container hypervisor which
+extends LXC functionality over the network.
+LXD uses LXC under the covers for some container management tasks and
+provides the &rsquo;lxc&rsquo; command line interface tool we will use throughout this post.
+For more information, you can refer to the
+<a href=https://ubuntu.com/server/docs/containers-lxc target=_blank rel=noopener>LXC</a> and <a href=https://ubuntu.com/server/docs/containers-lxd target=_blank rel=noopener>LXD</a> documentation
+on the Ubuntu website.</p><p>Alright, let us install LXD as a <a href=https://snapcraft.io/ target=_blank rel=noopener>snap</a> to make sure we always run
+the most up to date stable version:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>$ sudo snap install lxd
+</span></span></code></pre></div><p>Before we can create our first container, we must initialize LXD,</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>$ sudo lxd init
+</span></span></code></pre></div><p>This command will prompt you with a bunch of questions to fine tune LXD use.
+Unless you know what you are doing, you can safely hit the default answers.</p><p>Finally, we will add our user to the &rsquo;lxd&rsquo; group so that we can run lxd commands
+without sudo,</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>$ sudo gpasswd -a <span class=s2>&#34;</span><span class=si>${</span><span class=nv>USER</span><span class=si>}</span><span class=s2>&#34;</span> lxd
+</span></span></code></pre></div><p>You should log out and log in again for this to take effect.</p><h2 id=creating-the-container>Creating the container</h2><p>To create a new container, we will use the following command,</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>$ lxc launch <span class=o>{</span>remote<span class=o>}</span>:<span class=o>{</span>image<span class=o>}</span> <span class=o>{</span>container-name<span class=o>}</span>
+</span></span></code></pre></div><p>Since Noetic runs on Ubuntu 20.04, we will fetch a Ubuntu 20.04 image
+from the official Ubuntu remote,</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>$ lxc launch ubuntu:20.04 ros-noetic
+</span></span></code></pre></div><p>We can check that the container was properly created and launched,</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>$ lxc list
+</span></span><span class=line><span class=cl>+---------------+---------+-----------------------+-----------------------------------------------+-----------+-----------+
+</span></span><span class=line><span class=cl><span class=p>|</span>     NAME      <span class=p>|</span>  STATE  <span class=p>|</span>         IPV4          <span class=p>|</span>                     IPV6                      <span class=p>|</span>   TYPE    <span class=p>|</span> SNAPSHOTS <span class=p>|</span>
+</span></span><span class=line><span class=cl>+---------------+---------+-----------------------+-----------------------------------------------+-----------+-----------+
+</span></span><span class=line><span class=cl><span class=p>|</span> ros-noetic    <span class=p>|</span> RUNNING <span class=p>|</span> 10.160.218.172 <span class=o>(</span>eth0<span class=o>)</span> <span class=p>|</span> dd42:5ke1:fr68:2ca4:236:eff3:fe3r:7c21 <span class=o>(</span>eth0<span class=o>)</span> <span class=p>|</span> CONTAINER <span class=p>|</span> <span class=m>0</span>         <span class=p>|</span>
+</span></span><span class=line><span class=cl>+---------------+---------+-----------------------+-----------------------------------------------+-----------+-----------+
+</span></span></code></pre></div><p>With our container up and running, we can open a shell in it with a non-root user
+with the following command,</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>$ lxc <span class=nb>exec</span> ros-noetic -- sudo --login --user ubuntu
+</span></span></code></pre></div><p>I know, this command is not very pretty nor easy to remember.
+But worry not, we will create an alias to ease future use.</p><h2 id=lxc-aliases-to-the-rescue>LXC aliases to the rescue</h2><p>LXC aliases, just like bash aliases, allow use to create a new CLI
+keywords to which we can associate an action.
+The command to create a new alias is,</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>$ lxc <span class=nb>alias</span> add <span class=o>{</span>alias<span class=o>}</span> <span class=s1>&#39;{command}&#39;</span>
+</span></span></code></pre></div><p>As an example, let us create a shorter version of the <code>lxc list</code> command
+that also prints a more compact result:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>$ lxc <span class=nb>alias</span> add ls <span class=s1>&#39;list --format csv -c n&#39;</span>
+</span></span></code></pre></div><p>We can check that the alias is correctly created,</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>$ lxc <span class=nb>alias</span> list
+</span></span><span class=line><span class=cl>+--------+----------------------------------------------------------------------------------+
+</span></span><span class=line><span class=cl><span class=p>|</span> ALIAS  <span class=p>|</span>                                      TARGET                                      <span class=p>|</span>
+</span></span><span class=line><span class=cl>+--------+----------------------------------------------------------------------------------+
+</span></span><span class=line><span class=cl><span class=p>|</span> ls     <span class=p>|</span> list --format csv -c n                                                           <span class=p>|</span>
+</span></span><span class=line><span class=cl>+--------+----------------------------------------------------------------------------------+
+</span></span></code></pre></div><p>And we can now simply use it,</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>$ lxc ls
+</span></span><span class=line><span class=cl>ros-noetic
+</span></span></code></pre></div><p>That&rsquo;s pretty neat.</p><p>But our main goal with aliases was to simplify our shell
+login to the container, so let&rsquo;s just do that.
+Borrowing from the excellent <a href=https://blog.simos.info/using-command-aliases-in-lxd-to-exec-a-shell/ target=_blank rel=noopener>blog post by Simos Xenitellis</a>
+about LXC aliases, we will create a new alias &lsquo;ubuntu&rsquo; such as,</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>$ lxc <span class=nb>alias</span> add ubuntu <span class=s1>&#39;exec @ARGS@ --mode interactive -- /bin/sh -xac $@ubuntu - exec /bin/login -p -f &#39;</span>
+</span></span></code></pre></div><p>This alias allows us now to simply connect to our container with,</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>$ lxc ubuntu ros-noetic
+</span></span></code></pre></div><p>That&rsquo;s much better isn&rsquo;t it?</p><h1 id=install-ros-noetic>Install ROS Noetic</h1><p><a href=http://wiki.ros.org/noetic target=_blank rel=noopener>ROS Noetic</a> is the latest and final ROS 1 release.
+The ROS project hasn&rsquo;t come to an end, on the contrary, it rather look forward
+and focus its efforts
+toward the second version, namely ROS 2.
+Nevertheless, ROS Noetic is an important release because it targets
+Ubuntu 20.04, has official Python 3 support and will be supported until
+May 2025 (more information on <a href=http://wiki.ros.org/noetic target=_blank rel=noopener>Noetic wiki page</a>).
+That leaves us plenty of time to learn and move to ROS 2.</p><p>To install it, let&rsquo;s first connect to our container using our new LXC alias,</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>$ lxc ubuntu ros-noetic
+</span></span></code></pre></div><p>First, we will add the ROS packages repository to our sources.
+Starting with the key,</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>$ apt-key adv --fetch-keys https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc
+</span></span></code></pre></div><p>then the repository,</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>$ apt-add-repository http://packages.ros.org/ros/ubuntu
+</span></span></code></pre></div><p>In case of trouble, you can also refer to the <a href=http://wiki.ros.org/noetic/Installation/Ubuntu target=_blank rel=noopener>official documentation</a>.</p><p>We are all set to install ROS Noetic!</p><p>Here we can choose either of three installations;
+we can install only the core components,</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>$ sudo apt install ros-noetic-ros-base
+</span></span></code></pre></div><p>or core + the visualization stack (e.g. Rviz),</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>$ sudo apt install ros-noetic-desktop
+</span></span></code></pre></div><p>or core + the visualization + simulation stacks (e.g. Gazebo),</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>$ sudo apt install ros-noetic-desktop-full
+</span></span></code></pre></div><p>You can pick any depending on your needs.
+If you are not sure, I would recommend you install only the core components
+and later install other packages on a per-need basis:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>$ sudo apt install ros-noetic-ros-base
+</span></span><span class=line><span class=cl>...
+</span></span><span class=line><span class=cl>$ sudo apt install ros-noetic-&lt;package-I-need&gt;
+</span></span></code></pre></div><p>Simply to keep the size of the container as small as possible.</p><p>Finally, we will automatically source Noetic since this container is dedicated
+to it,</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>$ <span class=nb>echo</span> <span class=s2>&#34;source /opt/ros/noetic/setup.bash&#34;</span> &gt;&gt; ~/.bashrc
+</span></span></code></pre></div><p>Every times we will log into our container, ROS Noetic will be sourced
+and we will be ready to develop!</p><h1 id=mounting-a-local-workspace>Mounting a local workspace</h1><p>What would our development workflow look like without some actual source code to
+work on? Well, let us set up our ROS workspace.</p><p>Rather than copying/creating our workspace in the container,
+we will keep it on the host machine. By doing so,
+not only the workspace will survive deleting the LXC (persistence)
+but we will also be able to share it across several LXC
+thus across several ROS distros.</p><p>Hereafter, we will assume our workspace to be simply <code>~/workspace</code>
+on the host with the classic tree,</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>$ tree ~/workspace
+</span></span><span class=line><span class=cl>/home/user/workspace/
+</span></span><span class=line><span class=cl>└── src
+</span></span><span class=line><span class=cl>    └── my_ros_package
+</span></span><span class=line><span class=cl>        └...
+</span></span></code></pre></div><p>To share a folder with the container, we have to add a &lsquo;device disk&rsquo; to it.
+The general command to do so is of the form,</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>$ lxc config device add <span class=o>{</span>container<span class=o>}</span> <span class=o>{</span>device-name<span class=o>}</span> disk <span class=nv>source</span><span class=o>={</span>full-path-to-folder<span class=o>}</span> <span class=nv>path</span><span class=o>={</span>full-path-inside-container<span class=o>}</span>
+</span></span></code></pre></div><p>filling up the placeholders for our use case, it reads,</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>$ lxc config device add ros-noetic workspace disk <span class=nv>source</span><span class=o>=</span>~/workspace <span class=nv>path</span><span class=o>=</span>/home/ubuntu/workspace
+</span></span></code></pre></div><p>Once the device added, we have to configure the access rights so that we can read and write
+the folder and its content in the container,</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>$ lxc config <span class=nb>set</span> ros-noetic raw.idmap <span class=s2>&#34;both </span><span class=k>$(</span>id -u<span class=k>)</span><span class=s2> </span><span class=k>$(</span>id -g<span class=k>)</span><span class=s2>&#34;</span>
+</span></span></code></pre></div><p>We now have to restart the container for the changes to take effects,</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>$ lxc restart ros-noetic
+</span></span></code></pre></div><p>Let us log back into our container,</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>$ lxc ubuntu ros-noetic
+</span></span></code></pre></div><p>and verify that the folder is properly mounted,</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>$ ls -l
+</span></span><span class=line><span class=cl>drwxr-xr-x <span class=m>22</span> ubuntu ubuntu <span class=m>4096</span> May <span class=m>22</span> 21:21 workspace
+</span></span></code></pre></div><p>Looks like we are good!</p><p>In this section we have configured our container through the <code>lxc config</code>
+cli tool. Note that container configuration is saved in a yaml file, which you
+can review with,</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>$ lxc config show <span class=o>{</span>container<span class=o>}</span>
+</span></span></code></pre></div><p>and directly edit with,</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>$ lxc config edit <span class=o>{</span>container<span class=o>}</span>
+</span></span></code></pre></div><p>More on that later.</p><h1 id=using-graphical-applications>Using graphical applications</h1><p>This part is totally <em>optional</em> and depends on whether you are planning to run
+some graphical applications (e.g. Rviz, Gazebo) in your container or not.
+If you are not interested in running any gui in your container,
+you may still want to have a quick look before jumping at the
+&lsquo;<a href=#profile-all-the-things>Profile all the things!</a>&rsquo; section.
+If you do want to run graphical applications,
+then we have to configure the container to support that.</p><p>Unlike in the previous section, we are not going to use the <code>lxc config</code> tool
+to configure our container. Instead, we will introduce <code>lxc profile</code> as a way
+to create easily reusable configurations.A <em>profile</em> is a set of parameters
+that can be applied to a container in one go. It can describe a full fledged
+setup or a particular feature as in our case below.
+Furthermore a profile can be use by a single container or many. Reusability!</p><h2 id=creating-a-lxd-profile>Creating a LXD profile</h2><p>Let us first create a profile named <code>gui</code>,</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>$ lxc profile create gui
+</span></span></code></pre></div><p>we can now edit the profile,</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>$ lxc profile edit gui
+</span></span></code></pre></div><p>and paste the following,</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>config</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>environment.DISPLAY</span><span class=p>:</span><span class=w> </span><span class=p>:</span><span class=m>0</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>raw.idmap</span><span class=p>:</span><span class=w> </span><span class=l>both 1000 1000</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>description</span><span class=p>:</span><span class=w> </span><span class=l>Enables graphical apps use.</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>devices</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>X0</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>path</span><span class=p>:</span><span class=w> </span><span class=l>/tmp/.X11-unix/X0</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>source</span><span class=p>:</span><span class=w> </span><span class=l>/tmp/.X11-unix/X0</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>type</span><span class=p>:</span><span class=w> </span><span class=l>disk</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>mygpu</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>type</span><span class=p>:</span><span class=w> </span><span class=l>gpu</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>gui</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>used_by</span><span class=p>:</span><span class=w> </span><span class=p>[]</span><span class=w>
+</span></span></span></code></pre></div><p>Alternatively, you can use the following one liner,</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>curl https://gist.githubusercontent.com/artivis/37c961e157e99f6fcaff0204a0f59731/raw/ca4abd1a3c6b1d8a74910207903ac7723685dce1/gui.yaml <span class=p>|</span> lxc profile edit gui
+</span></span></code></pre></div><p>In this profile, there might be a couple things for you to tweak depending on
+your machine. For instance your user id and guid,</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>raw.idmap: both <span class=m>1000</span> <span class=m>1000</span>
+</span></span></code></pre></div><p>which you can retrieve respectively with:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>$ id -u
+</span></span><span class=line><span class=cl><span class=m>1000</span>
+</span></span><span class=line><span class=cl>$ id -g
+</span></span><span class=line><span class=cl><span class=m>1000</span>
+</span></span></code></pre></div><p>You may also have to check your graphic card in use looking at the directory
+<code>/tmp/.X11-unix/</code>.</p><p>Now that our profile is set up, we have to add it to our container,</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>lxc profile add ros-noetic gui
+</span></span></code></pre></div><p>As previously, we have to restart the container for those change to take effect,</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>lxc restart ros-noetic
+</span></span></code></pre></div><p>Alright, let us try to open Rviz to make sure everything went fine.
+Open two shells to the container, one running the roscore and the second
+running Rviz:</p><p>Shell 1</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>$ roscore
+</span></span></code></pre></div><p>Shell 2</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>$ rosrun rviz rviz
+</span></span></code></pre></div><p>We are getting really close to our regular development experience aren&rsquo;t we?</p><h2 id=dedicated-graphic-card>Dedicated graphic card</h2><p>If you have a dedicated graphic card on your host machine,
+you will also have to install the <em>very same driver</em> in the container
+in order to use graphical applications.
+If you have an Nvidia card, the following should help you.
+To figure out the driver version on the host we&rsquo;ll type,</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>$ nvidia-smi
+</span></span><span class=line><span class=cl>Mon May <span class=m>12</span> 11:59:59 <span class=m>2020</span>
+</span></span><span class=line><span class=cl>+-----------------------------------------------------------------------------+
+</span></span><span class=line><span class=cl><span class=p>|</span> NVIDIA-SMI 440.82       Driver Version: 440.82       CUDA Version: 10.2     <span class=p>|</span>
+</span></span><span class=line><span class=cl>+-------------------------------+----------------------+----------------------+
+</span></span></code></pre></div><p>All we have to do now is to install the same driver in the container,</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>$ sudo apt install nvidia-440
+</span></span></code></pre></div><h1 id=profile-all-the-things>Profile all the things</h1><p>We have seen in section <a href=#creating-a-lxd-profile>&lsquo;Creating a LXD profile&rsquo;</a> how to
+create a LXC profile to easily support running graphical
+apps in our container(s).
+As we mentioned before, a profile really only is a set of configurations
+for our container.
+So one may ask</p><blockquote><p>can&rsquo;t we create some other profiles to further group all the configs we&rsquo;ve seen?</p></blockquote><p>Well, yes we can! And guess what? Containers can have several profiles!
+So we could totally create another profile to automatically
+add the ROS apt repository, both for ROS 1 and ROS 2 respectively:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>$ lxc profile create ros-apt
+</span></span><span class=line><span class=cl>$ lxc profile edit ros-apt
+</span></span></code></pre></div><p>and add,</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>config</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>user.user-data</span><span class=p>:</span><span class=w> </span><span class=p>|</span><span class=sd>
+</span></span></span><span class=line><span class=cl><span class=sd>    #cloud-config
+</span></span></span><span class=line><span class=cl><span class=sd>    runcmd:
+</span></span></span><span class=line><span class=cl><span class=sd>      - &#34;apt-key adv --fetch-keys https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc&#34;
+</span></span></span><span class=line><span class=cl><span class=sd>      - &#34;apt-add-repository http://packages.ros.org/ros/ubuntu&#34;
+</span></span></span><span class=line><span class=cl><span class=sd>      - &#34;apt-add-repository http://packages.ros.org/ros2/ubuntu&#34;</span><span class=w>    
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>description</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;Add ROS apt repository&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>devices</span><span class=p>:</span><span class=w> </span>{}<span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>ros</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>used_by</span><span class=p>:</span><span class=w> </span>{}<span class=w>
+</span></span></span></code></pre></div><p>Similarly we could create another profile to easily share our ROS workspace
+as well,</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>$ lxc profile create ros-ws
+</span></span><span class=line><span class=cl>$ lxc profile edit ros-ws
+</span></span></code></pre></div><p>and add,</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=nt>config</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>raw.idmap</span><span class=p>:</span><span class=w> </span><span class=l>both 1000 1000</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>description</span><span class=p>:</span><span class=w> </span><span class=s2>&#34;Share the ROS workspace&#34;</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>devices</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>  </span><span class=nt>workspaces</span><span class=p>:</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>path</span><span class=p>:</span><span class=w> </span><span class=l>/home/ubuntu/workspace</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>source</span><span class=p>:</span><span class=w> </span><span class=l>/home/user/workspace</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w>    </span><span class=nt>type</span><span class=p>:</span><span class=w> </span><span class=l>disk</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>name</span><span class=p>:</span><span class=w> </span><span class=l>ros-ws</span><span class=w>
+</span></span></span><span class=line><span class=cl><span class=w></span><span class=nt>used_by</span><span class=p>:</span><span class=w> </span>{}<span class=w>
+</span></span></span></code></pre></div><p>And remember to tweak both profiles (user id/guid etc.).</p><p>Both profiles will greatly help when creating a new container.
+However, before we get all excited, let me tell you that
+we have to be cautious when using them.
+The reason is that both should be added a rather specific times
+of the container creation. Let us see when that is.</p><p>First, the &lsquo;ros-apt&rsquo; profile makes use of <a href=https://cloudinit.readthedocs.io/en/latest/index.html target=_blank rel=noopener>cloud-init</a>
+to preconfigure the container meaning that our <code>apt-key/apt-add-repository</code>
+command will be run <strong>only once</strong> when the container is <strong>first created</strong>
+(see <a href=https://blog.simos.info/how-to-preconfigure-lxd-containers-with-cloud-init/ target=_blank rel=noopener>this other blog post by Simos Xenitellis</a>
+for more info about cloud-init in LXD).
+To create a container with given profile(s),
+the <code>lxc launch</code> commands changes to,</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>$ lxc launch --profile <span class=o>{</span>profile-a<span class=o>}</span> --profile <span class=o>{</span>profile-b<span class=o>}</span> <span class=o>{</span>remote<span class=o>}</span>:<span class=o>{</span>image<span class=o>}</span> <span class=o>{</span>container-name<span class=o>}</span>
+</span></span></code></pre></div><p>which in our case looks like,</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>$ lxc launch --profile default --profile ros-apt ubuntu:20.04 ros-noetic2
+</span></span></code></pre></div><p>Let me insist again. If you try to <em>add</em> the &lsquo;ros-apt&rsquo; profile after the container
+was created, <em>nothing will happen</em>:
+<del><code>lxd profile add ros-noetic ros-apt</code></del>!</p><p>Concerning our &lsquo;ros-ws&rsquo; profile, it is a bit of the opposite situation.
+Indeed, when creating the container, a whole bunch of things are ran before
+the &lsquo;ubuntu&rsquo; user is set up. Since we are linking our workspace to <code>/home/ubuntu/</code>
+we may arrive to early so to speak and it results in messing up the
+proper set up of the user. For this profile, we therefore
+<em>have to add it after the container creation</em>
+(<del><code>lxc launch --profile ros-ws {remote}:{image} {container-name}</code></del>).</p><p>We can add our ros-ws profile to a container with,</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>$ lxc profile add ros-noetic ros-ws
+</span></span></code></pre></div><p>This whole tempo story sounds annoying.
+Alright let&rsquo;s call it a day and summarize how to set up a new container.</p><h1 id=wrapping-up>Wrapping up</h1><p>Well, that was quite a journey in LXD realm.
+But our efforts were not vain for we have learned a lot
+about LXD and set up some great tools.</p><p>Soon, the <a href=https://index.ros.org/doc/ros2/Releases/Release-Foxy-Fitzroy/ target=_blank rel=noopener>ROS 2 Foxy</a> distro will be released
+(5th of June).
+How will we then create a Foxy container?
+Well, that&rsquo;s quite simple now:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>$ lxc launch --profile default --profile ros-apt --profile gui ubuntu:20.04 ros-foxy
+</span></span><span class=line><span class=cl>$ lxc profile add ros-foxy ros-ws
+</span></span><span class=line><span class=cl>$ lxc ubuntu ros-foxy
+</span></span><span class=line><span class=cl>...
+</span></span><span class=line><span class=cl>$ sudo apt install ros-foxy-desktop
+</span></span></code></pre></div><p>Off we go!</p><ul class="nav toc-top"><li><a href=# id=back_to_top class=docs-toc-title><button id=goTop class=btn-top><svg class="arrow up" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="5 0 50 80"><polyline fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" points="0.375, 35.375 28.375, 0.375 58.67, 35.375"/></svg></button></a></li></ul></div><p class=edit-page><a href=https://github.com/artivis/artivis.github.io/edit/main/content/post/2020/lxc.md><i class="fas fa-pen pr-2"></i>Edit this page</a></p><div class=article-tags><a class="badge badge-light" href=/tag/tutorial/>tutorial</a>
+<a class="badge badge-light" href=/tag/lxc/>LXC</a>
+<a class="badge badge-light" href=/tag/lxd/>LXD</a>
+<a class="badge badge-light" href=/tag/ros/>ROS</a>
+<a class="badge badge-light" href=/tag/noetic/>Noetic</a>
+<a class="badge badge-light" href=/tag/ubuntu/>Ubuntu</a></div><div class=share-box><ul class=share><li><a href="https://twitter.com/intent/tweet?url=https://artivis.github.io/post/2020/lxc/&text=ROS%20Noetic%20development%20workflow%20in%20LXC" target=_blank rel=noopener class=share-btn-twitter aria-label=twitter><i class="fab fa-twitter"></i></a></li><li><a href="https://www.facebook.com/sharer.php?u=https://artivis.github.io/post/2020/lxc/&t=ROS%20Noetic%20development%20workflow%20in%20LXC" target=_blank rel=noopener class=share-btn-facebook aria-label=facebook><i class="fab fa-facebook"></i></a></li><li><a href="mailto:?subject=ROS%20Noetic%20development%20workflow%20in%20LXC&body=https://artivis.github.io/post/2020/lxc/" target=_blank rel=noopener class=share-btn-email aria-label=envelope><i class="fas fa-envelope"></i></a></li><li><a href="https://www.linkedin.com/shareArticle?url=https://artivis.github.io/post/2020/lxc/&title=ROS%20Noetic%20development%20workflow%20in%20LXC" target=_blank rel=noopener class=share-btn-linkedin aria-label=linkedin-in><i class="fab fa-linkedin-in"></i></a></li><li><a href="whatsapp://send?text=ROS%20Noetic%20development%20workflow%20in%20LXC%20https://artivis.github.io/post/2020/lxc/" target=_blank rel=noopener class=share-btn-whatsapp aria-label=whatsapp><i class="fab fa-whatsapp"></i></a></li><li><a href="https://service.weibo.com/share/share.php?url=https://artivis.github.io/post/2020/lxc/&title=ROS%20Noetic%20development%20workflow%20in%20LXC" target=_blank rel=noopener class=share-btn-weibo aria-label=weibo><i class="fab fa-weibo"></i></a></li></ul></div><div class="article-widget content-widget-hr"><h3>Related</h3><ul><li><a href=/post/2022/ros2-humble/>Setting up ROS 2 Humble with LXD</a></li><li><a href=/post/2020/ros-foxy-install/>Get started with ROS 2 Foxy today with LXD</a></li><li><a href=/post/2020/dotfiles/>Managing dotfiles</a></li><li><a href=/post/2021/pi-pico-uros-getting-started/>Getting started with micro-ROS on the Pi Pico</a></li><li><a href=/post/2021/pi-pico-uros-sonar/>Publishing sonar readings with micro-ROS on the Raspberry Pi Pico</a></li></ul></div></div></article></main></div></div></div><div class=page-footer><div class=container><footer class=site-footer><p class="powered-by copyright-license-text">Jérémie Deray © 2022. This work is licensed under <a href=https://creativecommons.org/licenses/by-nc-nd/4.0 rel="noopener noreferrer" target=_blank>CC BY NC ND 4.0</a></p><p class="powered-by footer-license-icons"><a href=https://creativecommons.org/licenses/by-nc-nd/4.0 rel="noopener noreferrer" target=_blank aria-label="Creative Commons"><i class="fab fa-creative-commons fa-2x" aria-hidden=true></i>
+<i class="fab fa-creative-commons-by fa-2x" aria-hidden=true></i>
+<i class="fab fa-creative-commons-nc fa-2x" aria-hidden=true></i>
+<i class="fab fa-creative-commons-nd fa-2x" aria-hidden=true></i></a></p><p class=powered-by></p></footer></div></div><script src=/js/vendor-bundle.min.js></script>
+<script src=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/highlight.min.js integrity="sha512-Ypjm0o7jOxAd4hpdoppSEN0TQOC19UtPAqD+4s5AlXmUvbmmS/YMxYqAqarQYyxTnB6/rqip9qcxlNB/3U9Wdg==" crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/latex.min.js crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/bash.min.js crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/python.min.js crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/c++.min.js crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/c.min.js crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/terminal.min.js crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/yaml.min.js crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@10.2.1/build/languages/xml.min.js crossorigin=anonymous></script>
+<script id=search-hit-fuse-template type=text/x-template>
+        <div class="search-hit" id="summary-{{key}}">
+          <div class="search-hit-content">
+            <div class="search-hit-name">
+              <a href="{{relpermalink}}">{{title}}</a>
+              <div class="article-metadata search-hit-type">{{type}}</div>
+              <p class="search-hit-description">{{snippet}}</p>
+            </div>
+          </div>
+        </div>
+      </script><script src=https://cdn.jsdelivr.net/gh/krisk/Fuse@v3.2.1/dist/fuse.min.js integrity="sha512-o38bmzBGX+hD3JHWUFCDA09btWaqrNmoJ3RXLlrysA7PP01Kgs4UlE4MhelE1v5dJR3+cxlR4qQlotsW7jKsnw==" crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/gh/julmot/mark.js@8.11.1/dist/jquery.mark.min.js integrity="sha512-mhbv5DqBMgrWL+32MmsDOt/OAvqr/cHimk6B8y/bx/xS88MVkYGPiVv2ixKVrkywF2qHplNRUvFsAHUdxZ3Krg==" crossorigin=anonymous></script>
+<script id=page-data type=application/json>{"use_headroom":true}</script><script src=/js/wowchemy-headroom.js type=module></script>
+<script src=/en/js/wowchemy.min.js></script><div id=modal class="modal fade" role=dialog><div class=modal-dialog><div class=modal-content><div class=modal-header><h5 class=modal-title>Cite</h5><button type=button class=close data-dismiss=modal aria-label=Close>
+<span aria-hidden=true>&#215;</span></button></div><div class=modal-body><pre><code class="tex hljs"></code></pre></div><div class=modal-footer><a class="btn btn-outline-primary my-1 js-copy-cite" href=# target=_blank><i class="fas fa-copy"></i> Copy</a>
+<a class="btn btn-outline-primary my-1 js-download-cite" href=# target=_blank><i class="fas fa-download"></i> Download</a><div id=modal-error></div></div></div></div></div><script src=/js/wowchemy-publication.js type=module></script></body></html>
