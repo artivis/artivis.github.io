@@ -1,0 +1,163 @@
+# SITE SETUP
+# Guide: https://wowchemy.com/docs/getting-started/
+# Documentation: https://wowchemy.com/docs/
+# This file is formatted using YAML syntax - learn more at https://learnxinyminutes.com/docs/yaml/
+
+# toc
+
+# toc: true
+
+nickname: artivis
+
+# Logo
+
+logo:
+  logoText: '$ cd /home/'
+  # logoHomeLink = "/"
+  # Set true to remove the logo cursor entirely.
+  # logoCursorDisabled = false
+  # Set to a valid CSS time value to change the animation duration, "0s" to disable.
+  logoCursorAnimate: '2s'
+
+# Social
+
+social:
+  - name: email
+    # url  = "mailto:nobody@example.com"
+    url: '/contact'
+  - name: github
+    url: "https://github.com/artivis"
+  - name: linkedin
+    url: "https://www.linkedin.com/in/jeremiederay/"
+  - name: googlescholar
+    url: "https://scholar.google.fr/citations?user=hGRQ8qYAAAAJ&hl"
+
+# Appearance
+
+appearance:
+  # theme_day: dark_green
+  theme_night: dark_green
+  font: minimal
+  font_size: L
+
+# SEO
+
+marketing:
+  seo:
+    site_type: Person
+    local_business_type: ''
+    org_name: ''
+    description: 'artivis personal website.'
+    twitter: ''
+  analytics:
+    google_analytics: '#UA-169921319-1'
+    baidu_tongji: ''
+  verification:
+    google: ''
+    baidu: ''
+
+# Site header
+
+header:
+  navbar:
+    # Display the navigation bar?
+    enable: true
+    # Align menu links: left (l), center (c), or right (r)
+    align: r
+    # Display your site title or `assets/media/logo*` image in the nav bar?
+    show_logo: true
+    # Show a language chooser (if you have translated your site content)?
+    show_translations: true
+    # If `show_translations` is enabled, do you wish to display the current language name?
+    show_language: true
+    # Let the user override the default light/dark mode of your theme?
+    show_day_night: true
+    # Let the user search from the nav bar?
+    show_search: true
+    # Attempt to automatically highlight the active menu link? Can be disabled for complex sites.
+    highlight_active_link: true
+
+# Site footer
+
+footer:
+  copyright:
+    notice: 'Jérémie Deray © {year}. This work is licensed under '
+    license:
+      enable: true
+      allow_derivatives: false
+      share_alike: true
+      allow_commercial: false
+      logo: false
+  # For multilingual sites, show a language chooser in the footer?
+  show_translations: false
+
+i_am_a_sponsor: true
+
+# Localization
+
+locale:
+  date_format: 'Jan _2, 2006'
+  time_format: '3:04 PM'
+  address_format: en-us
+
+# Site features
+
+features:
+  syntax_highlighter:
+    enable: true
+    extra_languages:
+      - latex
+      - bash
+      - python
+      - c++
+      - c
+      - terminal
+      - yaml
+      - xml
+    # theme: github-light
+    theme_light: github-light
+    theme_dark: github-dark
+  math:
+    enable: true
+  privacy_pack:
+    enable: true
+  repository:
+    url: 'https://github.com/artivis/artivis.github.io'
+    content_dir: content
+    branch: main
+  avatar:
+    gravatar: false
+    shape: circle
+  comment:
+    provider: ''
+    disqus:
+      shortname: ''
+      show_count: true
+    commento:
+      url: ''
+  search:
+    provider: wowchemy
+    algolia:
+      app_id: ''
+      api_key: ''
+      index_name: ''
+      show_logo: false
+  map:
+    provider: ''
+    api_key: ''
+    zoom: 15
+
+# Extensions
+
+extensions:
+  cms:
+    branch: main
+    local_backend: false
+  academicons:
+    enable: true
+
+# Security
+
+security:
+  # Allow frame for embedding speaker notes in slides
+  allow_frame: true

@@ -1,0 +1,189 @@
+// Font size for the top navigation bar items
+.dropdown-menu,
+nav#navbar-main li.nav-item {
+  font-size: 18px;
+}
+
+html {
+	scroll-behavior: smooth;
+}
+
+// Override default site-footer margin to reduce it.
+// https://github.com/wowchemy/wowchemy-hugo-themes/blob/3c3e1ed96b8a43fcbb1fdf4c16c4e25599d0f746/modules/wowchemy/assets/scss/wowchemy/layouts/_footer.scss#L3
+footer.site-footer {
+  margin: 1.5rem 0 0;
+}
+
+// Override default value
+// https://github.com/wowchemy/wowchemy-hugo-themes/blob/fda9f39d872ec066b4f11a9c68b85aac2163bf75/wowchemy/assets/scss/wowchemy/elements/_media.scss#L83
+svg {
+  fill: none;
+}
+
+ul.nav-icons {
+  list-style-type: none;
+  font-size: 18px;
+  padding: 0.5rem 0 0.5rem 0;
+  margin: 0;
+  color: rgba($sta-menu-text, .45);
+}
+
+// Publication card in publication section
+.dark .card-simple {
+  // background: #292a2d;
+  background: #393b40;
+  // background: #1d1e21;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  border: 3px solid rgb(68, 71, 90);
+}
+
+// Button goto top of the page
+
+.btn-top {
+  background: #2f3539;
+  position: absolute;
+  right: 10%;
+  display: block;
+  width: 48px;
+  height: 48px;
+  margin: 0;
+  padding: 0 1.2em;
+  border: 1px solid rgb(68, 71, 90);
+  border-radius: 2px;
+  font-weight: bold;
+  text-transform: capitalize;
+  line-height: 44px;
+}
+
+.arrow {
+  position: relative;
+  width: 18px;
+  height: 18px;
+  margin-left: -4px;
+  cursor: pointer;
+}
+
+.up:hover polyline,
+.up:focus polyline {
+  stroke-width: 15;
+}
+
+.up:active polyline {
+  stroke-width: 15;
+  transition: all 100ms ease-in-out;
+}
+
+// Override the defaults for the landing page.
+// Since there is a single 'landing' widget we remove padding
+// and relative-center the only item
+.home-section.wg-landing {
+  padding: 0rem 0rem 0rem;
+
+  position: relative;
+  top: 25%;
+}
+
+// Used only for the main page (landing)
+.landing-div {
+  text-align: center;
+}
+// Overrite h1 color for 'landing-div'
+.landing-div h1 {
+  color: rgba($sta-menu-title, .45);
+}
+.dark .landing-div h1 {
+  color: rgba($sta-dark-menu-title, .45);
+}
+
+// Blinking $HOME logo
+.logo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  font-weight: bold;
+  font-display: auto;
+  font-family: monospace, monospace;
+  color: rgba($sta-menu-text, 1);
+  &.active,
+  &:hover,
+  &:focus {
+    color: rgba($sta-menu-text, .65);
+  }
+
+  img {
+    height: 44px;
+  }
+
+  &__mark {
+    margin-right: 5px;
+  }
+
+  &__text {
+    font-size: 1rem;
+  }
+
+  &__cursor {
+    display: inline-block;
+    width: 10px;
+    height: 1rem;
+    background: $sta-primary;
+    margin-left: 5px;
+    border-radius: 1px;
+    animation: cursor 1s infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &__cursor {
+        animation: none;
+    }
+  }
+}
+
+.dark .logo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  font-weight: bold;
+  font-display: auto;
+  font-family: monospace, monospace;
+  color: rgba($sta-dark-menu-text, .65);
+  &.active,
+  &:hover,
+  &:focus {
+    color: rgba($sta-dark-menu-text, .85);
+  }
+
+  img {
+    height: 44px;
+  }
+
+  &__mark {
+    margin-right: 5px;
+  }
+
+  &__text {
+    font-size: 1rem;
+  }
+
+  &__cursor {
+    display: inline-block;
+    width: 10px;
+    height: 1rem;
+    background: $sta-dark-link;
+    margin-left: 5px;
+    border-radius: 1px;
+    animation: cursor 1s infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &__cursor {
+        animation: none;
+    }
+  }
+}
+
+@keyframes cursor {
+  0% { opacity: 0; }
+  50% { opacity: 1; }
+  100% { opacity: 0; }
+}

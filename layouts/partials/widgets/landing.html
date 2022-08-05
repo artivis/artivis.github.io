@@ -1,0 +1,43 @@
+{{ $st := .page }}
+
+{{ $author := "" }}
+{{ if .author }}
+  {{ $author = .author }}
+{{ else }}
+  {{ $author = $st.Params.author }}
+{{end}}
+
+{{ $person_page_path := (printf "/authors/%s" $author) }}
+{{ $person_page := site.GetPage $person_page_path }}
+{{ if not $person_page }}
+  {{ errorf "Could not find an author page at `%s`. Please check the value of `author` in your About widget and create an associated author page if one does not already exist. See https://sourcethemes.com/academic/docs/page-builder/#about " $person_page_path }}
+{{end}}
+{{ $person := $person_page.Params }}
+
+<div class="landing-div">
+  <!-- <div style="vertical-align: middle;"> -->
+
+    {{ if .Site.Params.portrait.path }}
+       <img src="{{ .Site.Params.portrait.path }}" class="circle" alt="{{ .Site.Params.portrait.alt }}" />
+    {{ end }}
+
+    {{ with $st.Title }}
+      <h1 style="color:menu_title;">{{ . }}</h1>
+      <!-- <h1 style="color:rgba(255,255,255,0.6);">{{ . }}</h1> -->
+    {{ end }}
+    <br>
+    {{- with $st.Params.subtitle }}
+      <p>{{ . }}</p>
+    {{- end }}
+    {{- with site.Params.nickname }}
+      <p>({{ . }})</p>
+    {{- end }}
+
+    {{- with site.Params.social }}
+      <div>
+        {{ partial "social-icons.html" . }}
+      </div>
+    {{- end }}
+
+  <!-- </div> -->
+</div>
