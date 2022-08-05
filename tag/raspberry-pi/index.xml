@@ -567,11 +567,11 @@ the one closer to the center of the board, as shown in the image below.&lt;/p>
 from our machine using a USB cable.
 To do that we will have to edit two files.&lt;/p>
 &lt;p>First, edit the file &lt;code>/boot/config.txt&lt;/code> and append this line at the end:&lt;/p>
-&lt;pre tabindex="0">&lt;code class="language-terminal" data-lang="terminal">dtoverlay=dwc2
-&lt;/code>&lt;/pre>&lt;p>Second, we will edit the file &lt;code>/boot/cmdline.txt&lt;/code>.
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">dtoverlay=dwc2
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Second, we will edit the file &lt;code>/boot/cmdline.txt&lt;/code>.
 After &lt;code>rootwait&lt;/code>, we will add&lt;/p>
-&lt;pre tabindex="0">&lt;code class="language-terminal" data-lang="terminal">modules-load=dwc2,g_ether
-&lt;/code>&lt;/pre>&lt;blockquote>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">modules-load=dwc2,g_ether
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;blockquote>
 &lt;p>⚠️ pay attention to leave only one space between &lt;code>rootwait&lt;/code>
 and the new text otherwise it might not be parsed correctly.&lt;/p>
 &lt;/blockquote>
@@ -586,22 +586,23 @@ set &amp;lsquo;&lt;em>Method&lt;/em>:&amp;rsquo; to &amp;lsquo;&lt;em>Shared wit
 Refresh the connection (dis/connect), after what
 you should be able to SSH to the Pi Zero.&lt;/p>
 &lt;p>To SSH to the Pi Zero, open a terminal on your host and type:&lt;/p>
-&lt;pre tabindex="0">&lt;code class="language-terminal" data-lang="terminal">ssh pi@rasberrypi.local
-&lt;/code>&lt;/pre>&lt;p>You will be prompted for a password, use the
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">ssh pi@rasberrypi.local
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>You will be prompted for a password, use the
 &lt;a href="https://www.raspberrypi.org/documentation/linux/usage/users.md" target="_blank" rel="noopener">default one for user &amp;lsquo;pi&amp;rsquo;&lt;/a>.
 And do not forget to change it down the line!&lt;/p>
 &lt;p>We are now connected on our board, let&amp;rsquo;s try internet out.
 Since we are using the method &amp;lsquo;&lt;em>Shared with other computers&lt;/em>&amp;rsquo;
 we should be able to access internet:&lt;/p>
-&lt;pre tabindex="0">&lt;code class="language-terminal" data-lang="terminal">$ ping -c 3 www.google.com
-PING www.google.com (172.217.13.100) 56(84) bytes of data.
-64 bytes from yul02s04-in-f4.1e100.net (172.217.13.100): icmp_seq=1 ttl=57 time=10.7 ms
-64 bytes from yul02s04-in-f4.1e100.net (172.217.13.100): icmp_seq=2 ttl=57 time=9.60 ms
-64 bytes from yul02s04-in-f4.1e100.net (172.217.13.100): icmp_seq=3 ttl=57 time=10.4 ms
---- www.google.com ping statistics ---
-3 packets transmitted, 3 received, 0% packet loss, time 2001ms
-rtt min/avg/max/mdev = 9.609/10.276/10.783/0.499 ms
-&lt;/code>&lt;/pre>&lt;p>We are live!&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">$ ping -c 3 www.google.com
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">PING www.google.com (172.217.13.100) 56(84) bytes of data.
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">64 bytes from yul02s04-in-f4.1e100.net (172.217.13.100): icmp_seq=1 ttl=57 time=10.7 ms
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">64 bytes from yul02s04-in-f4.1e100.net (172.217.13.100): icmp_seq=2 ttl=57 time=9.60 ms
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">64 bytes from yul02s04-in-f4.1e100.net (172.217.13.100): icmp_seq=3 ttl=57 time=10.4 ms
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">--- www.google.com ping statistics ---
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">3 packets transmitted, 3 received, 0% packet loss, time 2001ms
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">rtt min/avg/max/mdev = 9.609/10.276/10.783/0.499 ms
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>We are live!&lt;/p>
 &lt;blockquote>
 &lt;p>&lt;strong>Note&lt;/strong>: On some distro, the &amp;lsquo;&lt;em>Shared with other computers&lt;/em>&amp;rsquo; is
 not available from the default settings.
@@ -616,8 +617,8 @@ on the MAC address for, e.g. assigning a static IP to our board directly
 in our router configurations.
 This set up it totally &lt;strong>optional&lt;/strong>.&lt;/p>
 &lt;p>In the &lt;code>boot&lt;/code> partition, edit the file &lt;code>cmdline.txt&lt;/code> and append at the end,&lt;/p>
-&lt;pre tabindex="0">&lt;code class="language-terminal" data-lang="terminal">g_ether.host_addr=aa:bb:cc:dd:ee:ff
-&lt;/code>&lt;/pre>&lt;p>where &lt;code>aa:bb:cc:dd:ee:ff&lt;/code> will be the static MAC address.
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">g_ether.host_addr=aa:bb:cc:dd:ee:ff
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>where &lt;code>aa:bb:cc:dd:ee:ff&lt;/code> will be the static MAC address.
 We can use for instance the last mac address assigned to the board.
 To retrieve it, run &lt;code>ifconfig&lt;/code> on the host machine and look for a
 connection along the lines &lt;code>enp0s29xxxxx&lt;/code>.&lt;/p>
@@ -625,8 +626,8 @@ connection along the lines &lt;code>enp0s29xxxxx&lt;/code>.&lt;/p>
 &lt;p>We can also choose to assign a static IP address to our board so that we don&amp;rsquo;t
 have to look for it every now and then.
 To set a static IP address, edit the file &lt;code>/etc/dhcpcd.conf&lt;/code> as follows,&lt;/p>
-&lt;pre tabindex="0">&lt;code class="language-terminal" data-lang="terminal">interface usb0
-static ip_address=10.42.0.42
-static routers=10.42.0.1
-&lt;/code>&lt;/pre>&lt;p>Where &lt;code>10.42.0.42&lt;/code> is your desired static IP address.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">interface usb0
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">static ip_address=10.42.0.42
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">static routers=10.42.0.1
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Where &lt;code>10.42.0.42&lt;/code> is your desired static IP address.&lt;/p>
 &lt;p>Reboot and have fun!&lt;/p></description></item></channel></rss>
