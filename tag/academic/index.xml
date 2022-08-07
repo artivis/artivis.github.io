@@ -7,12 +7,21 @@ But fortunately for us it is now easier than ever!&lt;/p>
 &lt;summary class="font-weight-bold">Table of Contents&lt;/summary>
 &lt;nav id="TableOfContents">
 &lt;ul>
+&lt;li>&lt;a href="#picking-a-website-template">Picking a website template&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#prepping-the-tools">Prepping the tools&lt;/a>
+&lt;ul>
 &lt;li>&lt;a href="#setting-up-the-lxc">Setting up the LXC&lt;/a>&lt;/li>
 &lt;li>&lt;a href="#installing-hugo">Installing Hugo&lt;/a>&lt;/li>
-&lt;li>&lt;a href="#first-view-of-our-website">First view of our website&lt;/a>&lt;/li>
 &lt;/ul>
+&lt;/li>
+&lt;li>&lt;a href="#first-view-of-our-website">First view of our website&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#making-the-website-your-own">Making the website your own&lt;/a>&lt;/li>
+&lt;li>&lt;a href="#deploying-the-website-to-github">Deploying the website to GitHub&lt;/a>
 &lt;ul>
 &lt;li>&lt;a href="#automatic-deployment">Automatic deployment&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>&lt;a href="#bonus-academic-publications">Bonus: Academic publications&lt;/a>&lt;/li>
 &lt;/ul>
 &lt;/nav>
 &lt;/details>
@@ -35,7 +44,7 @@ And if you only need a brief refresh,
 &lt;a href="https://sourcethemes.com/academic/docs/writing-markdown-latex/" target="_blank" rel="noopener">here&lt;/a> is the syntax supported by our website.
 Finally, you can find a &lt;code>LXD&lt;/code> tutorial &lt;a href="https://linuxcontainers.org/lxd/getting-started-cli/" target="_blank" rel="noopener">here&lt;/a>.&lt;/p>
 &lt;p>Now, let us set up the necessary stuff to get started, shall we?&lt;/p>
-&lt;h1 id="picking-a-website-template">Picking a website template&lt;/h1>
+&lt;h2 id="picking-a-website-template">Picking a website template&lt;/h2>
 &lt;p>To build our website, we will use the framework &lt;a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo&lt;/a>.
 It is very convenient for our use case because it comes with a ton of
 &lt;a href="https://themes.gohugo.io/" target="_blank" rel="noopener">predefined website themes&lt;/a>
@@ -56,12 +65,12 @@ Therefore we have to fetch its debian package and install it manually.&lt;/p>
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">git clone https://github.com/sourcethemes/academic-kickstart.git my_website
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="nb">cd&lt;/span> my_website
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">git submodule update --init --recursive
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h1 id="prepping-the-tools">Prepping the tools&lt;/h1>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="prepping-the-tools">Prepping the tools&lt;/h2>
 &lt;p>To avoid polluting our system, we will set up a Linux container in which we will
 install &lt;code>Hugo Extended&lt;/code>.
 The container is totally optional and you can do the installation directly on your machine.
 If you do not wish to use a container, skip directly to &lt;a href="#installing-hugo">Hugo installation&lt;/a>&lt;/p>
-&lt;h2 id="setting-up-the-lxc">Setting up the LXC&lt;/h2>
+&lt;h3 id="setting-up-the-lxc">Setting up the LXC&lt;/h3>
 &lt;p>Let us start a fresh and pull a new &lt;code>Ubuntu 18.04&lt;/code> instance,&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">lxc launch ubuntu:18.04 hugo
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>We will now mount a disk device to share the website source code between our machine and the container:&lt;/p>
@@ -75,7 +84,7 @@ To do so, issue the following command:&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">lxc config device add hugo proxy1313 proxy &lt;span class="nv">connect&lt;/span>&lt;span class="o">=&lt;/span>tcp:127.0.0.1:1313 &lt;span class="nv">listen&lt;/span>&lt;span class="o">=&lt;/span>tcp:0.0.0.0:1313
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>The container is all set up. We can log to it with:&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">lxc &lt;span class="nb">exec&lt;/span> hugo -- su --login ubuntu
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="installing-hugo">Installing Hugo&lt;/h2>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="installing-hugo">Installing Hugo&lt;/h3>
 &lt;p>We will download the &lt;code>Hugo&lt;/code> extended debian directly from it &lt;code>GitHub&lt;/code> repository.
 To do so, enter in the terminal:&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">wget https://github.com/gohugoio/hugo/releases/download/v0.70.0/hugo_extended_0.70.0_Linux-64bit.deb
@@ -91,7 +100,7 @@ In a terminal, enter:&lt;/p>
 &lt;p>The website it up and running! To visualize it,
 open your web browser at the address &lt;code>http://localhost:1313&lt;/code>.
 That was easy right?&lt;/p>
-&lt;h1 id="making-the-website-your-own">Making the website your own&lt;/h1>
+&lt;h2 id="making-the-website-your-own">Making the website your own&lt;/h2>
 &lt;p>We have a great template up and running, it is now time to make it our own.
 The &lt;code>Academic&lt;/code> theme comes with a ton of options and configurations allowing us
 to truly personalize it to our liking and use case.
@@ -102,7 +111,7 @@ and have fun!&lt;/p>
 &lt;p>Just a quick advice, as you edit your website, let &lt;code>Hugo&lt;/code> run.
 It is able to update the website live so that you see your changes take effect
 immediately in your web browser!&lt;/p>
-&lt;h1 id="deploying-the-website-to-github">Deploying the website to GitHub&lt;/h1>
+&lt;h2 id="deploying-the-website-to-github">Deploying the website to GitHub&lt;/h2>
 &lt;p>Once our website is ready to be made public,
 all there is to do is to push it to &lt;code>GitHub&lt;/code>.
 Well, almost.&lt;/p>
@@ -125,7 +134,7 @@ to &lt;code>GitHub&lt;/code>, it must be built. To build it locally, nothing eas
 It contains the generated website. It is this content that we must push to our repository.
 Furthermore, it must be pushed specifically to the &lt;code>master&lt;/code> branch.
 That&amp;rsquo;s a limitation of personal website on &lt;code>GitHub&lt;/code>.&lt;/p>
-&lt;h2 id="automatic-deployment">Automatic deployment&lt;/h2>
+&lt;h3 id="automatic-deployment">Automatic deployment&lt;/h3>
 &lt;p>So how could we automatize this build and deploy process?&lt;/p>
 &lt;p>We will add a small script so that every times
 we push some new content on the &lt;code>builder&lt;/code> branch,
@@ -194,7 +203,7 @@ to me as well. That could be the topic for a later post tho.&lt;/p>
 &lt;p>After a couple minutes your website is now available at the address:&lt;/p>
 &lt;p>&lt;code>https://&amp;lt;your-github-user-name&amp;gt;.github.io/&lt;/code>&lt;/p>
 &lt;p>Congrats on your new online visibility, our job here is done.&lt;/p>
-&lt;h1 id="bonus-academic-publications">Bonus: Academic publications&lt;/h1>
+&lt;h2 id="bonus-academic-publications">Bonus: Academic publications&lt;/h2>
 &lt;p>If you happen to have some academic publications that you would like to showcase
 on your website, we will install a Python tool called &lt;code>academic&lt;/code>
 that will help us to automatically generate pages from &lt;code>Bibtex&lt;/code>.&lt;/p>

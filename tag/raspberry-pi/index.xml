@@ -1,34 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Raspberry Pi | Home to artivis</title><link>https://artivis.github.io/tag/raspberry-pi/</link><atom:link href="https://artivis.github.io/tag/raspberry-pi/index.xml" rel="self" type="application/rss+xml"/><description>Raspberry Pi</description><generator>Wowchemy (https://wowchemy.com)</generator><language>en-us</language><lastBuildDate>Wed, 19 May 2021 00:00:00 +0000</lastBuildDate><image><url>https://artivis.github.io/media/icon_hud2d1771ce140e1d1fd4d0e59d51cebc4_11712_512x512_fill_lanczos_center_3.png</url><title>Raspberry Pi</title><link>https://artivis.github.io/tag/raspberry-pi/</link></image><item><title>Getting started with micro-ROS on the Pi Pico</title><link>https://artivis.github.io/post/2021/pi-pico-uros-getting-started/</link><pubDate>Wed, 19 May 2021 00:00:00 +0000</pubDate><guid>https://artivis.github.io/post/2021/pi-pico-uros-getting-started/</guid><description>&lt;p>In this post we will see how the Pi Pico can natively speak to a ROS2 graph using micro-ROS.
 We will set up a project in VSCode, compile and upload it to the microcontroller.
 We thus assume that you are somewhat familiar with &lt;a href="https://docs.ros.org/en/foxy/index.html" target="_blank" rel="noopener">ROS2 development&lt;/a> and &lt;a href="https://code.visualstudio.com" target="_blank" rel="noopener">VSCode&lt;/a>.&lt;/p>
-&lt;hr>
-&lt;h2 id="content">Content&lt;/h2>
-&lt;ul>
-&lt;li>&lt;a href="#content">Content&lt;/a>&lt;/li>
-&lt;li>&lt;a href="#what-is-this-all-about">What is this all about?&lt;/a>
-&lt;ul>
-&lt;li>&lt;a href="#the-raspberry-pi-pico">The Raspberry Pi Pico&lt;/a>&lt;/li>
-&lt;li>&lt;a href="#micro-ros">micro-ROS&lt;/a>&lt;/li>
-&lt;/ul>
-&lt;/li>
-&lt;li>&lt;a href="#getting-started">Getting started&lt;/a>
-&lt;ul>
-&lt;li>&lt;a href="#installing-dependencies">Installing dependencies&lt;/a>&lt;/li>
-&lt;li>&lt;a href="#fetching-the-sources">Fetching the sources&lt;/a>&lt;/li>
-&lt;li>&lt;a href="#setting-up-vscode">Setting up VSCode&lt;/a>&lt;/li>
-&lt;/ul>
-&lt;/li>
-&lt;li>&lt;a href="#running-the-example">Running the example&lt;/a>
-&lt;ul>
-&lt;li>&lt;a href="#wait-a-minute-what-does-it-do">Wait a minute. What does it do?&lt;/a>&lt;/li>
-&lt;li>&lt;a href="#uploading-to-the-pi-pico">Uploading to the Pi Pico&lt;/a>&lt;/li>
-&lt;li>&lt;a href="#installing-the-micro-ros-agent">Installing the micro-ros-agent&lt;/a>&lt;/li>
-&lt;li>&lt;a href="#actually-running-the-example">Actually running the example&lt;/a>&lt;/li>
-&lt;/ul>
-&lt;/li>
-&lt;li>&lt;a href="#whats-next">What&amp;rsquo;s next?&lt;/a>&lt;/li>
-&lt;/ul>
-&lt;hr>
 &lt;h2 id="what-is-this-all-about">What is this all about?&lt;/h2>
 &lt;h3 id="the-raspberry-pi-pico">The Raspberry Pi Pico&lt;/h3>
 &lt;p>The Raspberry Pi Pico, &lt;a href="https://www.raspberrypi.org/blog/raspberry-pi-silicon-pico-now-on-sale/" target="_blank" rel="noopener">announced in late January 2021&lt;/a>,
@@ -194,25 +166,6 @@ Be sure that if they become reality you&amp;rsquo;ll hear about them on this blo
 &lt;!-- uROS main links --></description></item><item><title>Publishing sonar readings with micro-ROS on the Raspberry Pi Pico</title><link>https://artivis.github.io/post/2021/pi-pico-uros-sonar/</link><pubDate>Fri, 12 Mar 2021 00:00:00 +0000</pubDate><guid>https://artivis.github.io/post/2021/pi-pico-uros-sonar/</guid><description>&lt;p>In this post we will see how to wire up an HC-SR04 range sensor to the Raspberry Pi Pico and publish its readings to the ROS 2 graph using micro-ROS.
 This builds upon the previous post &lt;a href="pi-pico-uros-getting-started.md">&amp;lsquo;Getting started with micro-ROS on the Pi Pico&amp;rsquo;&lt;/a>,
 as such I&amp;rsquo;d encourage you to read it first if you are not already familiar with the topic.&lt;/p>
-&lt;hr>
-&lt;h2 id="content">Content&lt;/h2>
-&lt;ul>
-&lt;li>&lt;a href="#content">Content&lt;/a>&lt;/li>
-&lt;li>&lt;a href="#a-sensor-you-said">A sensor you said?&lt;/a>
-&lt;ul>
-&lt;li>&lt;a href="#im-batsensor">&amp;ldquo;I&amp;rsquo;m Bat(sensor)&amp;rdquo;&lt;/a>&lt;/li>
-&lt;li>&lt;a href="#which-sonar-model-to-pick">Which sonar model to pick?&lt;/a>&lt;/li>
-&lt;/ul>
-&lt;/li>
-&lt;li>&lt;a href="#wiring-up-the-sonar-to-the-pi-pico">Wiring up the sonar to the Pi Pico&lt;/a>
-&lt;ul>
-&lt;li>&lt;a href="#micro-code-for-micro-ros">Micro code for micro-ROS&lt;/a>&lt;/li>
-&lt;li>&lt;a href="#bip-bip-bip">Bip bip bip&lt;/a>&lt;/li>
-&lt;/ul>
-&lt;/li>
-&lt;li>&lt;a href="#whats-next">What&amp;rsquo;s next?&lt;/a>&lt;/li>
-&lt;/ul>
-&lt;hr>
 &lt;h2 id="a-sensor-you-said">A sensor you said?&lt;/h2>
 &lt;p>In this tutorial, we will make use of one of the most common sensors in robotics, a sonar.
 These sensors are cheap, fairly simple to use and surprisingly precise under favorable circumstances.
@@ -398,15 +351,6 @@ Can you believe that it doesn&amp;rsquo;t have any sonar?!&lt;/p>
 &lt;p>Fortunately now I can easily add a pair of them and have my robot stop bumping into my lazy cat lying down on the floor,
 unwitting ninja, invisible to the laser scanner 😅.&lt;/p></description></item><item><title>Downloading Raspberry Pi Press issues</title><link>https://artivis.github.io/post/2020/rpipress/</link><pubDate>Thu, 09 Jul 2020 00:00:00 +0000</pubDate><guid>https://artivis.github.io/post/2020/rpipress/</guid><description>&lt;p>In this post we will discover the great magazines edited under the
 Raspberry Pi Press umbrella and discuss how to easily access them all.&lt;/p>
-&lt;hr>
-&lt;h2 id="content">Content&lt;/h2>
-&lt;ul>
-&lt;li>&lt;a href="#content">Content&lt;/a>&lt;/li>
-&lt;li>&lt;a href="#the-raspberry-pi-press-magazines">The Raspberry Pi Press magazines&lt;/a>&lt;/li>
-&lt;li>&lt;a href="#bookshelf">Bookshelf&lt;/a>&lt;/li>
-&lt;li>&lt;a href="#rpipress-downloader">rpipress-downloader&lt;/a>&lt;/li>
-&lt;/ul>
-&lt;hr>
 &lt;h2 id="the-raspberry-pi-press-magazines">The Raspberry Pi Press magazines&lt;/h2>
 &lt;p>The &lt;a href="https://store.rpipress.cc/" target="_blank" rel="noopener">Raspberry Pi Press&lt;/a> is a part of the Raspberry Pi Foundation
 and the publisher of a great deal of magazines and books.
@@ -514,19 +458,6 @@ for further information.&lt;/p>
 over USB from a Ubuntu-based host.
 Moreover we will make sure the the Pi Zero has access to internet through the host
 so that we can install/update some software.&lt;/p>
-&lt;h2 id="content">Content&lt;/h2>
-&lt;ul>
-&lt;li>&lt;a href="#content">Content&lt;/a>&lt;/li>
-&lt;li>&lt;a href="#install-raspbian">Install Raspbian&lt;/a>&lt;/li>
-&lt;li>&lt;a href="#ssh-over-usb">SSH over USB&lt;/a>
-&lt;ul>
-&lt;li>&lt;a href="#set-usb-gadget-mode">Set USB Gadget mode&lt;/a>&lt;/li>
-&lt;li>&lt;a href="#set-the-connection-to-shared-with-other-computers">Set the connection to Shared with other computers&lt;/a>&lt;/li>
-&lt;li>&lt;a href="#set-a-static-mac-address">Set a static MAC address&lt;/a>&lt;/li>
-&lt;li>&lt;a href="#set-a-static-ip-address">Set a static IP address&lt;/a>&lt;/li>
-&lt;/ul>
-&lt;/li>
-&lt;/ul>
 &lt;h2 id="install-raspbian">Install Raspbian&lt;/h2>
 &lt;p>There exists plenty of tutorials on the topic of installing Raspbian
 (see the the &lt;a href="https://www.raspberrypi.org/documentation/installation/installing-images/" target="_blank" rel="noopener">official documentation&lt;/a>)

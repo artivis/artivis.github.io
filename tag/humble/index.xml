@@ -13,33 +13,6 @@ you haven&amp;rsquo;t made that jump yet.
 So in this post we will see how to set it up in an &lt;a href="https://linuxcontainers.org/lxd/introduction/" target="_blank" rel="noopener">LXD&lt;/a> container so that we can start &lt;del>playing&lt;/del> working on our good old machine.&lt;/p>
 &lt;p>We&amp;rsquo;ve covered how to get started with LXD in numerous previous posts;
 so here we will only go over the commands to get started as quickly and conveniently as possible.&lt;/p>
-&lt;hr>
-&lt;h2 id="content">Content&lt;/h2>
-&lt;ul>
-&lt;li>&lt;a href="#content">Content&lt;/a>&lt;/li>
-&lt;li>&lt;a href="#setting-up-lxd">Setting up LXD&lt;/a>
-&lt;ul>
-&lt;li>&lt;a href="#launching-a-first-container">Launching a first container&lt;/a>&lt;/li>
-&lt;/ul>
-&lt;/li>
-&lt;li>&lt;a href="#an-humble-profile">An Humble profile&lt;/a>
-&lt;ul>
-&lt;li>&lt;a href="#launching-a-ros-2-humble-container">Launching a ROS 2 Humble container&lt;/a>&lt;/li>
-&lt;li>&lt;a href="#one-liniiiiing">One-liniiiiing&lt;/a>&lt;/li>
-&lt;/ul>
-&lt;/li>
-&lt;li>&lt;a href="#develop-like-a-pro">Develop like a pro&lt;/a>
-&lt;ul>
-&lt;li>&lt;a href="#using-vs-code-with-lxd">Using VS Code with LXD&lt;/a>&lt;/li>
-&lt;/ul>
-&lt;/li>
-&lt;li>&lt;a href="#conclusion">Conclusion&lt;/a>
-&lt;ul>
-&lt;li>&lt;a href="#bonus">Bonus&lt;/a>&lt;/li>
-&lt;/ul>
-&lt;/li>
-&lt;/ul>
-&lt;hr>
 &lt;h2 id="setting-up-lxd">Setting up LXD&lt;/h2>
 &lt;p>&lt;a href="https://linuxcontainers.org/lxd/introduction/" target="_blank" rel="noopener">LXD&lt;/a> is a manager for &lt;a href="https://linuxcontainers.org/lxc/introduction/" target="_blank" rel="noopener">LXC&lt;/a>.&lt;/p>
 &lt;p>With this out of the way,
@@ -279,7 +252,7 @@ a VM, or a remote machine.&lt;/p>
 head to Code and search for &amp;ldquo;remote ssh&amp;rdquo; in the Extensions panel or type in your terminal,&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">code --install-extension ms-vscode-remote.remote-ssh
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Then, open Code&amp;rsquo;s Command Palette (&lt;code>Ctrl+Shift+P&lt;/code>),
-search for &lt;code>Remote-SSH: Connect to Host... &lt;/code> and enter your SSH connection details:
+search for &lt;code>Remote-SSH: Connect to Host...&lt;/code> and enter your SSH connection details:
 &lt;code>ubuntu@&amp;lt;container_ip&amp;gt;&lt;/code>.
 From there you are able to browse and work on your fresh ROS 2 Humble workspace
 using &lt;strong>File &amp;gt; Open&amp;hellip;&lt;/strong> or &lt;strong>File &amp;gt; Open Workspace&amp;hellip;&lt;/strong> just as you would locally!&lt;/p>

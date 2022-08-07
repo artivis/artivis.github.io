@@ -2,19 +2,6 @@
 over USB from a Ubuntu-based host.
 Moreover we will make sure the the Pi Zero has access to internet through the host
 so that we can install/update some software.&lt;/p>
-&lt;h2 id="content">Content&lt;/h2>
-&lt;ul>
-&lt;li>&lt;a href="#content">Content&lt;/a>&lt;/li>
-&lt;li>&lt;a href="#install-raspbian">Install Raspbian&lt;/a>&lt;/li>
-&lt;li>&lt;a href="#ssh-over-usb">SSH over USB&lt;/a>
-&lt;ul>
-&lt;li>&lt;a href="#set-usb-gadget-mode">Set USB Gadget mode&lt;/a>&lt;/li>
-&lt;li>&lt;a href="#set-the-connection-to-shared-with-other-computers">Set the connection to Shared with other computers&lt;/a>&lt;/li>
-&lt;li>&lt;a href="#set-a-static-mac-address">Set a static MAC address&lt;/a>&lt;/li>
-&lt;li>&lt;a href="#set-a-static-ip-address">Set a static IP address&lt;/a>&lt;/li>
-&lt;/ul>
-&lt;/li>
-&lt;/ul>
 &lt;h2 id="install-raspbian">Install Raspbian&lt;/h2>
 &lt;p>There exists plenty of tutorials on the topic of installing Raspbian
 (see the the &lt;a href="https://www.raspberrypi.org/documentation/installation/installing-images/" target="_blank" rel="noopener">official documentation&lt;/a>)

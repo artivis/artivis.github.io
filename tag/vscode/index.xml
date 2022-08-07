@@ -1,34 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>VSCode | Home to artivis</title><link>https://artivis.github.io/tag/vscode/</link><atom:link href="https://artivis.github.io/tag/vscode/index.xml" rel="self" type="application/rss+xml"/><description>VSCode</description><generator>Wowchemy (https://wowchemy.com)</generator><language>en-us</language><lastBuildDate>Wed, 19 May 2021 00:00:00 +0000</lastBuildDate><image><url>https://artivis.github.io/media/icon_hud2d1771ce140e1d1fd4d0e59d51cebc4_11712_512x512_fill_lanczos_center_3.png</url><title>VSCode</title><link>https://artivis.github.io/tag/vscode/</link></image><item><title>Getting started with micro-ROS on the Pi Pico</title><link>https://artivis.github.io/post/2021/pi-pico-uros-getting-started/</link><pubDate>Wed, 19 May 2021 00:00:00 +0000</pubDate><guid>https://artivis.github.io/post/2021/pi-pico-uros-getting-started/</guid><description>&lt;p>In this post we will see how the Pi Pico can natively speak to a ROS2 graph using micro-ROS.
 We will set up a project in VSCode, compile and upload it to the microcontroller.
 We thus assume that you are somewhat familiar with &lt;a href="https://docs.ros.org/en/foxy/index.html" target="_blank" rel="noopener">ROS2 development&lt;/a> and &lt;a href="https://code.visualstudio.com" target="_blank" rel="noopener">VSCode&lt;/a>.&lt;/p>
-&lt;hr>
-&lt;h2 id="content">Content&lt;/h2>
-&lt;ul>
-&lt;li>&lt;a href="#content">Content&lt;/a>&lt;/li>
-&lt;li>&lt;a href="#what-is-this-all-about">What is this all about?&lt;/a>
-&lt;ul>
-&lt;li>&lt;a href="#the-raspberry-pi-pico">The Raspberry Pi Pico&lt;/a>&lt;/li>
-&lt;li>&lt;a href="#micro-ros">micro-ROS&lt;/a>&lt;/li>
-&lt;/ul>
-&lt;/li>
-&lt;li>&lt;a href="#getting-started">Getting started&lt;/a>
-&lt;ul>
-&lt;li>&lt;a href="#installing-dependencies">Installing dependencies&lt;/a>&lt;/li>
-&lt;li>&lt;a href="#fetching-the-sources">Fetching the sources&lt;/a>&lt;/li>
-&lt;li>&lt;a href="#setting-up-vscode">Setting up VSCode&lt;/a>&lt;/li>
-&lt;/ul>
-&lt;/li>
-&lt;li>&lt;a href="#running-the-example">Running the example&lt;/a>
-&lt;ul>
-&lt;li>&lt;a href="#wait-a-minute-what-does-it-do">Wait a minute. What does it do?&lt;/a>&lt;/li>
-&lt;li>&lt;a href="#uploading-to-the-pi-pico">Uploading to the Pi Pico&lt;/a>&lt;/li>
-&lt;li>&lt;a href="#installing-the-micro-ros-agent">Installing the micro-ros-agent&lt;/a>&lt;/li>
-&lt;li>&lt;a href="#actually-running-the-example">Actually running the example&lt;/a>&lt;/li>
-&lt;/ul>
-&lt;/li>
-&lt;li>&lt;a href="#whats-next">What&amp;rsquo;s next?&lt;/a>&lt;/li>
-&lt;/ul>
-&lt;hr>
 &lt;h2 id="what-is-this-all-about">What is this all about?&lt;/h2>
 &lt;h3 id="the-raspberry-pi-pico">The Raspberry Pi Pico&lt;/h3>
 &lt;p>The Raspberry Pi Pico, &lt;a href="https://www.raspberrypi.org/blog/raspberry-pi-silicon-pico-now-on-sale/" target="_blank" rel="noopener">announced in late January 2021&lt;/a>,
