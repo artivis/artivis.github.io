@@ -8,6 +8,62 @@ html {
 	scroll-behavior: smooth;
 }
 
+// Override TOC link colors in dark mode
+.dark #TableOfContents a.active {
+  color: $sta-dark-link;
+}
+.dark #TableOfContents a:hover {
+  color: $sta-dark-link;
+}
+
+// TOC has a 'Contents' top link which properties
+// are set here to match those of the toc.
+.top-toc a:link,
+.top-toc a:visited {
+  color: rgba(0, 0, 0, 0.65);
+  font-size: 120%;
+}
+.top-toc a:hover,
+.top-toc a:active {
+  color: $sta-primary;
+  text-decoration: none;
+}
+
+.dark .top-toc a:link,
+.dark .top-toc a:visited {
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 120%;
+}
+.dark .top-toc a:hover,
+.dark .top-toc a:active {
+  color: $sta-dark-link;
+  text-decoration: none;
+}
+
+// Increase top margin for the edit button and place it on the right
+.edit-page {
+  margin-top: 2rem;
+  text-align: right;
+}
+
+// Increase top margin for the socials box
+.share-box {
+  margin-top: 2rem;
+}
+
+// Increase top margin for the tags box
+.article-tags {
+  margin-top: 0rem;
+  text-align: center;
+}
+
+// Increase top margin for the tags box
+.comments {
+  padding-top: 0rem;
+  margin-top: 2rem;
+  text-align: center;
+}
+
 // Override default site-footer margin to reduce it.
 // https://github.com/wowchemy/wowchemy-hugo-themes/blob/3c3e1ed96b8a43fcbb1fdf4c16c4e25599d0f746/modules/wowchemy/assets/scss/wowchemy/layouts/_footer.scss#L3
 footer.site-footer {

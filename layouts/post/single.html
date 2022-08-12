@@ -3,7 +3,7 @@
 <div class="container-fluid docs">
     <div class="row flex-xl-nowrap">
       <div class="d-none d-xl-block col-xl-2 docs-toc">
-        <a href="#">Contents</a>
+        <div class="top-toc"><a href="#">Contents</a></div>
         {{ .TableOfContents }}
       </div>
       <main class="col-12 col-md-0 col-xl-10 py-md-3 pl-md-5 docs-content" role="main">
@@ -14,12 +14,9 @@
               <div class="article-style">
                 {{ .Content }}
                 <ul class="nav toc-top">
-                    <li><a href="#" id="back_to_top" class="docs-toc-title">{{ partial "button_top" . }}</a></li>
-                  </ul>
+                  <li><a href="#" id="back_to_top" class="docs-toc-title">{{ partial "button_top" . }}</a></li>
+                </ul>
               </div>
-              <!-- <ul class="nav toc-top">
-                <li><a href="#" id="back_to_top" class="docs-toc-title">{{ partial "button_top" . }}</a></li>
-              </ul> -->
               {{ partial "page_footer" . }}
             </div>
         </article>
