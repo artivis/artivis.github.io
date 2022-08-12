@@ -9638,6 +9638,48 @@ nav#navbar-main li.nav-item {
 html {
   scroll-behavior: smooth; }
 
+.dark #TableOfContents a.active {
+  color: #27df16; }
+
+.dark #TableOfContents a:hover {
+  color: #27df16; }
+
+.top-toc a:link,
+.top-toc a:visited {
+  color: rgba(0, 0, 0, 0.65);
+  font-size: 120%; }
+
+.top-toc a:hover,
+.top-toc a:active {
+  color: #1565c0;
+  text-decoration: none; }
+
+.dark .top-toc a:link,
+.dark .top-toc a:visited {
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 120%; }
+
+.dark .top-toc a:hover,
+.dark .top-toc a:active {
+  color: #27df16;
+  text-decoration: none; }
+
+.edit-page {
+  margin-top: 2rem;
+  text-align: right; }
+
+.share-box {
+  margin-top: 2rem; }
+
+.article-tags {
+  margin-top: 0rem;
+  text-align: center; }
+
+.comments {
+  padding-top: 0rem;
+  margin-top: 2rem;
+  text-align: center; }
+
 footer.site-footer {
   margin: 1.5rem 0 0; }
 
