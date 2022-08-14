@@ -123,7 +123,7 @@ features:
     enable: true
   repository:
     url: 'https://github.com/artivis/artivis.github.io'
-    content_dir: content
+    content_dir:
     branch: main
   avatar:
     gravatar: false
