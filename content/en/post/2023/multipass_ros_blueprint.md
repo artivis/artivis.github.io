@@ -41,7 +41,7 @@ multipass   1.11.0
 multipassd  1.11.0
 ```
 
-## Spawning a first VM
+### Spawning a first VM
 
 With Multipass installed, we can now launch our first VM.
 And while the installation procedure differs depending on the host OS, the following should run wherever you are.
@@ -94,7 +94,7 @@ multipass start humble-vm
 
 While we could keep on going, through the installation hassle of ROS 2 Humble, I promised you a one-liner to set up a fresh ROS development environment, didn’t I?
 
-## One-liner to ROS development environment
+### One-liner to ROS development environment
 
 Multipass in itself is already pretty handy as it is.
 Three command lines and we find ourselves in a fresh Ubuntu VM.
@@ -176,7 +176,7 @@ Similarly to what we’ve just did, you can launch a ROS Noetic VM with a single
 
 Before letting you explore your new development workflow, I’d like to share a couple tips that smooth daily driving a VM.
 
-## Mounting a local folder
+### Mounting a local folder
 
 We may want to mount a local folder inside our VM.
 To do so, nothing simpler,
@@ -191,7 +191,7 @@ We can also do that directly at launch,
 multipass launch ros2-humble --name humble-vm --mount /some/local/path:/some/instance/path
 ```
 
-## Adding an SSH key
+### Adding an SSH key
 
 The first tip is to add our SSH key to the VM so that we can SSH to it.
 To do so, we will copy our public key to the VM,
@@ -238,7 +238,7 @@ ubuntu@humble-vm:~$
 
 Note that enabling SSH is the basis for the next tips.
 
-## Running graphical applications
+### Running graphical applications
 
 Since both Linux and macOS run X by default, in order to launch a graphical application from the VM, all we need to do is to establish an X forwarding SSH session,
 
@@ -260,7 +260,7 @@ should start (Ignition) Gazebo and display the following assistant,
 For the reader on Windows, you will need to install an X server and export the `DISPLAY` environment variable.
 All of this is detailed in the [online documentation][multipass-doc-2].
 
-## VSCode remote-ssh
+### VSCode remote-ssh
 
 If your IDE of choice is [VSCode][vscode], you’re in luck.
 Indeed, among the many plugins it offers, VSCode has a ‘remote-ssh’ plugin that allows us to, as its name suggests, [do some remote development][vscode-remote-dev].
