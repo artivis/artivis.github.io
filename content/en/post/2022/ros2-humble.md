@@ -9,7 +9,7 @@ tags: [tutorial, ROS 2, Humble, LXC, LXD]
 
 [ROS 2 Humble Hawksbill is out!][ros2-humble-announ]
 
-![ROS 2 Humble Hawksbill logo](https://aws1.discourse-cdn.com/business7/uploads/ros/original/2X/e/e2b80a2e45b12a397dbfebddb3abe92a1b4ce921.png )
+![ROS 2 Humble Hawksbill logo](/img/post/2022/HumbleHawksbill.png)
 
 Congratulations to [Open Robotics][or] and through them to the entire ROS 2 community.
 This is really quite an event as it marks an important milestone: it is the first 5 year LTS release for ROS 2.
