@@ -1,8 +1,183 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>tutorial | Home to artivis</title><link>https://artivis.github.io/tag/tutorial/</link><atom:link href="https://artivis.github.io/tag/tutorial/index.xml" rel="self" type="application/rss+xml"/><description>tutorial</description><generator>Wowchemy (https://wowchemy.com)</generator><language>en</language><lastBuildDate>Mon, 23 May 2022 00:00:00 +0000</lastBuildDate><image><url>https://artivis.github.io/media/icon_hud2d1771ce140e1d1fd4d0e59d51cebc4_11712_512x512_fill_lanczos_center_3.png</url><title>tutorial</title><link>https://artivis.github.io/tag/tutorial/</link></image><item><title>Setting up ROS 2 Humble with LXD</title><link>https://artivis.github.io/post/2022/ros2-humble/</link><pubDate>Mon, 23 May 2022 00:00:00 +0000</pubDate><guid>https://artivis.github.io/post/2022/ros2-humble/</guid><description>&lt;p>&lt;a href="https://discourse.ros.org/t/ros-2-humble-hawksbill-released" target="_blank" rel="noopener">ROS 2 Humble Hawksbill is out!&lt;/a>&lt;/p>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>tutorial | Home to artivis</title><link>https://artivis.github.io/tag/tutorial/</link><atom:link href="https://artivis.github.io/tag/tutorial/index.xml" rel="self" type="application/rss+xml"/><description>tutorial</description><generator>Wowchemy (https://wowchemy.com)</generator><language>en</language><lastBuildDate>Thu, 06 Apr 2023 00:00:00 +0000</lastBuildDate><image><url>https://artivis.github.io/media/icon_hud2d1771ce140e1d1fd4d0e59d51cebc4_11712_512x512_fill_lanczos_center_3.png</url><title>tutorial</title><link>https://artivis.github.io/tag/tutorial/</link></image><item><title>ROS, wherever you are</title><link>https://artivis.github.io/post/2023/multipass_ros_blueprint/</link><pubDate>Thu, 06 Apr 2023 00:00:00 +0000</pubDate><guid>https://artivis.github.io/post/2023/multipass_ros_blueprint/</guid><description>&lt;p>Historically &lt;a href="https://www.ros.org/" target="_blank" rel="noopener">ROS&lt;/a> has been developed on top of &lt;a href="https://ubuntu.com/" target="_blank" rel="noopener">Ubuntu&lt;/a>, relying on the distribution as a stable base providing tools (like &lt;a href="https://gcc.gnu.org/" target="_blank" rel="noopener">GCC&lt;/a>, &lt;a href="https://cmake.org/" target="_blank" rel="noopener">CMake&lt;/a>, &lt;a href="https://www.python.org/" target="_blank" rel="noopener">Python&lt;/a> to name a few) and libraries (such as &lt;a href="https://www.boost.org/" target="_blank" rel="noopener">Boost&lt;/a>, &lt;a href="https://eigen.tuxfamily.org/index.php?title=Main_Page" target="_blank" rel="noopener">Eigen&lt;/a>, &lt;a href="https://pointclouds.org/" target="_blank" rel="noopener">PCL&lt;/a>) and following its release cycle (a distribution per year, an LTS every two years).
+This synergy has worked great for more than 15 years and saw the project and the community behind it vastly grow.&lt;/p>
 &lt;p>
 &lt;figure >
 &lt;div class="d-flex justify-content-center">
-&lt;div class="w-100" >&lt;img src="https://aws1.discourse-cdn.com/business7/uploads/ros/original/2X/e/e2b80a2e45b12a397dbfebddb3abe92a1b4ce921.png" alt="ROS 2 Humble Hawksbill logo" loading="lazy" data-zoomable />&lt;/div>
+&lt;div class="w-100" >&lt;img src="https://artivis.github.io/img/post/2023/ros-ubuntu.png" alt="The Bookshelf app" loading="lazy" data-zoomable />&lt;/div>
+&lt;/div>&lt;/figure>
+&lt;/p>
+&lt;p>However, being tied to a specific Linux distribution raises all kinds of difficulties.
+Developing for several ROS distributions can be challenging since they each are tied to an Ubuntu distribution.
+This challenge increases for ROS newcomers that might not even be familiar with Linux.
+Similarly, developing ROS on Windows or macOS is anything but a pleasant experience.&lt;/p>
+&lt;p>In this blog post, we will see how one can set up a ROS development environment whatever one’s operating system is.
+Indeed, using &lt;a href="https://multipass.run/" target="_blank" rel="noopener">Multipass&lt;/a>, an Ubuntu virtual machines&amp;rsquo; manager, it has never been easier to quickly spawn a full-fledged VM rocking Ubuntu.
+Not only that, we made it so that spawning a VM with ROS pre-installed only takes a single command line. Shall we?&lt;/p>
+&lt;h2 id="multipass">Multipass&lt;/h2>
+&lt;p>The first step of our journey is the installation of &lt;a href="https://multipass.run/" target="_blank" rel="noopener">Multipass&lt;/a>.
+While we summarize hereafter the installation instructions on &lt;a href="https://multipass.run/docs/installing-on-linux" target="_blank" rel="noopener">Linux&lt;/a>, you can find the equivalent instructions for &lt;a href="https://multipass.run/docs/installing-on-windows" target="_blank" rel="noopener">Windows&lt;/a> and &lt;a href="https://multipass.run/docs/installing-on-macos" target="_blank" rel="noopener">macOS&lt;/a> on the documentation.&lt;/p>
+&lt;p>On Linux, Multipass ships as a &lt;a href="https://snapcraft.io/multipass" target="_blank" rel="noopener">Snap package&lt;/a> allowing it to be installed on dozens of Linux distributions.
+To install it, hit the following in a terminal,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">sudo snap install multipass
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>And that’s just about it, we’re done. Let us verify that,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ multipass version
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">multipass 1.11.0
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">multipassd 1.11.0
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="spawning-a-first-vm">Spawning a first VM&lt;/h2>
+&lt;p>With Multipass installed, we can now launch our first VM.
+And while the installation procedure differs depending on the host OS, the following should run wherever you are.&lt;/p>
+&lt;p>As a practical case, we will place ourselves in the scenario of developing for &lt;a href="https://docs.ros.org/en/humble/index.html" target="_blank" rel="noopener">ROS 2 Humble&lt;/a>, therefore using Ubuntu 22.04.
+To do so, we will enter,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">multipass launch 22.04 --name humble-vm
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>After hitting enter, the command will spin a little while the VM is being provisioned.
+A few moments later, a message such as &lt;code>Launched: humble-vm&lt;/code> will appear.
+Our Ubuntu VM is ready, let&amp;rsquo;s make use of it.&lt;/p>
+&lt;p>To connect to our fresh VM, again it is pretty straightforward.
+In a terminal enter,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ multipass shell humble-vm
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">ubuntu@humble-vm:~$
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>And boom here we are!&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">ubuntu@humble-vm:~$ lsb_release -a
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">No LSB modules are available.
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Distributor ID: Ubuntu
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Description: Ubuntu 22.04.2 LTS
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Release: 22.04
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Codename: jammy
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>We are indeed rocking an Ubuntu 22.04 VM after just three command lines.
+From there we can follow the &lt;a href="https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debians.html" target="_blank" rel="noopener">ROS 2 Humble installation guide&lt;/a> as usual and start developing for ROS 2.&lt;/p>
+&lt;p>This being said, mind that by default Multipass VMs are pretty constrained.
+They only use a single core, a single gig of memory and five gigs of disk space.
+This will be very limiting for a proper ROS 2 development environment.
+Of course, we can change all of that either when initially launching the VM as &lt;a href="https://multipass.run/docs/create-an-instance#heading--create-an-instance-with-custom-cpu-number-disk-and-ram" target="_blank" rel="noopener">shown in the documentation&lt;/a> or even after the facts by running the following commands,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">multipass stop humble-vm
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">multipass &lt;span class="nb">set&lt;/span> local.humble-vm.cpus&lt;span class="o">=&lt;/span>&lt;span class="m">4&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">multipass &lt;span class="nb">set&lt;/span> local.humble-vm.disk&lt;span class="o">=&lt;/span>50G
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">multipass &lt;span class="nb">set&lt;/span> local.humble-vm.memory&lt;span class="o">=&lt;/span>8G
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">multipass start humble-vm
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>While we could keep on going, through the installation hassle of ROS 2 Humble, I promised you a one-liner to set up a fresh ROS development environment, didn’t I?&lt;/p>
+&lt;h2 id="one-liner-to-ros-development-environment">One-liner to ROS development environment&lt;/h2>
+&lt;p>Multipass in itself is already pretty handy as it is.
+Three command lines and we find ourselves in a fresh Ubuntu VM.
+But let&amp;rsquo;s take it a notch further, shall we?
+How about three command lines and we find ourselves in a fresh ROS development environment?&lt;/p>
+&lt;p>To do so, we developed a &lt;a href="https://multipass.run/docs/linux-tutorial#heading--launch-from-a-blueprint-to-run-docker-containers" target="_blank" rel="noopener">Multipass blueprint&lt;/a> for ROS 2 Humble.
+A blueprint is a configuration file detailing a set of parameters and instructions that drive the setup of a customized environment.
+All Multipass environments can be listed as follows,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ multipass find
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Image Aliases Version Description
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">…
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">core22 &lt;span class="m">20230119&lt;/span> Ubuntu Core &lt;span class="m">22&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">…
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">22.04 jammy,lts &lt;span class="m">20230302&lt;/span> Ubuntu 22.04 LTS
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">…
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">docker 0.4 A Docker environment with Portainer and related tools
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">…
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">ros-noetic 0.1 A development and testing environment &lt;span class="k">for&lt;/span> ROS Noetic.
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">ros2-humble 0.1 A development and testing environment &lt;span class="k">for&lt;/span> ROS &lt;span class="m">2&lt;/span> Humble.
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Among other things, we will find a &lt;a href="https://ubuntu.com/core" target="_blank" rel="noopener">Core22 image&lt;/a>, the 22.04 image we used above, but also a Docker-ready environment and what’s of interest to us now, a ROS Noetic and a ROS 2 Humble environments.
+Let us see what this is about.&lt;/p>
+&lt;p>First, let’s cleanup a bit.
+We will stop, delete and purge our previous VM,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">multipass stop humble-vm
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">multipass delete --purge humble-vm
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>From a clean sheet, we will now launch our ROS 2 Humble VM making use of the predefined custom environment,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">multipass launch ros2-humble --name humble-vm
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Again this will take a little while.
+A little more than previously since this time, not only are we spawning an Ubuntu VM but also installing ROS 2 Humble automatically.&lt;/p>
+&lt;blockquote>
+&lt;p>You may see the following message,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">launch failed: The following errors occurred:
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">timed out waiting &lt;span class="k">for&lt;/span> initialization to &lt;span class="nb">complete&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>It simply indicates that a Multipass internal timeout expired.
+The VM does actually continue its setup in the background and you will be able to use it.
+To get rid of this message, set a larger timer, e.g. &lt;code>--timeout 600&lt;/code>&lt;/p>
+&lt;/blockquote>
+&lt;p>Once completed, we can connect to the VM as previously mentioned,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ multipass shell humble-vm
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">ubuntu@humble-vm:~$
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>What’s neat is that, not only is ROS 2 installed, the ROS 2 environment is also preconfigured.
+Upon connecting to the VM, we can issue e.g.,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">ubuntu@humble-vm:~$ &lt;span class="nb">echo&lt;/span> &lt;span class="nv">$ROS_DISTRO&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">humble
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>ROS 2 Humble is installed, together with common ROS 2 tools, the ROS 2 environment is sourced, rosdep is initialized and updated, colcon’s autocompletion is enabled etc.
+The VM is by default set to use 2 cores, 4 gigs of memory and 40 gigs of disk space.
+Ready to go!&lt;/p>
+&lt;p>In case you didn’t switch yet to ROS 2, we’ve seen in the list of available customized environments a ROS Noetic one.
+Similarly to what we’ve just did, you can launch a ROS Noetic VM with a single command line and be ready to develop in no time.&lt;/p>
+&lt;h2 id="pro-tips">Pro tips&lt;/h2>
+&lt;p>Before letting you explore your new development workflow, I’d like to share a couple tips that smooth daily driving a VM.&lt;/p>
+&lt;h2 id="mounting-a-local-folder">Mounting a local folder&lt;/h2>
+&lt;p>We may want to mount a local folder inside our VM.
+To do so, nothing simpler,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">multipass mount /some/local/path humble-vm:/some/remote/path
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>We can also do that directly at launch,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">multipass launch ros2-humble --name humble-vm --mount /some/local/path:/some/instance/path
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="adding-an-ssh-key">Adding an SSH key&lt;/h2>
+&lt;p>The first tip is to add our SSH key to the VM so that we can SSH to it.
+To do so, we will copy our public key to the VM,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">multipass &lt;span class="nb">exec&lt;/span> humble-vm -- bash -c &lt;span class="s2">&amp;#34;echo `cat ~/.ssh/&amp;lt;key&amp;gt;.pub` &amp;gt;&amp;gt; ~/.ssh/authorized_keys&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Note that we could also retrieve the key from GitHub,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">multipass &lt;span class="nb">exec&lt;/span> humble-vm -- bash -c “curl https://github.com/&amp;lt;username&amp;gt;.keys &lt;span class="p">|&lt;/span> tee -a ~/.ssh/authorized_keys”
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>To remote connect, let’s first find out the VM’s IP address,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ multipass info humble-vm
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Name: humble-vm
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">State: Running
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">IPv4: 10.87.167.28
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Release: Ubuntu 22.04.2 LTS
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Image hash: 345fbbb6ec82 &lt;span class="o">(&lt;/span>Ubuntu 22.04 LTS&lt;span class="o">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">CPU&lt;span class="o">(&lt;/span>s&lt;span class="o">)&lt;/span>: &lt;span class="m">2&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Load: 0.00 0.06 0.09
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Disk usage: 6.5GiB out of 38.6GiB
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Memory usage: 243.4MiB out of 3.8GiB
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Mounts: --
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>With that, let us connect,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ ssh ubuntu@10.87.167.28
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">ubuntu@humble-vm:~$
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>We could also make this a one liner,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ ssh ubuntu@&lt;span class="k">$(&lt;/span>multipass list --format csv &lt;span class="p">|&lt;/span> awk -F, &lt;span class="s1">&amp;#39;$1==&amp;#34;humble-vm&amp;#34;{print $3}&amp;#39;&lt;/span>&lt;span class="k">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">ubuntu@humble-vm:~$
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Note that enabling SSH is the basis for the next tips.&lt;/p>
+&lt;h2 id="running-graphical-applications">Running graphical applications&lt;/h2>
+&lt;p>Since both Linux and macOS run X by default, in order to launch a graphical application from the VM, all we need to do is to establish an X forwarding SSH session,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">ssh -X ubuntu@10.87.167.28
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Let&amp;rsquo;s try that.
+Running the command&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">ubuntu@humble-vm:~$ ign gazebo
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>should start (Ignition) Gazebo and display the following assistant,&lt;/p>
+&lt;p>
+&lt;figure >
+&lt;div class="d-flex justify-content-center">
+&lt;div class="w-100" >&lt;img src="https://artivis.github.io/img/post/2023/ign_assist.png" alt="Gazebo assistant" loading="lazy" data-zoomable />&lt;/div>
+&lt;/div>&lt;/figure>
+&lt;/p>
+&lt;p>For the reader on Windows, you will need to install an X server and export the &lt;code>DISPLAY&lt;/code> environment variable.
+All of this is detailed in the &lt;a href="https://multipass.run/docs/set-up-a-graphical-interface#heading--x11-on-windows" target="_blank" rel="noopener">online documentation&lt;/a>.&lt;/p>
+&lt;h2 id="vscode-remote-ssh">VSCode remote-ssh&lt;/h2>
+&lt;p>If your IDE of choice is &lt;a href="https://snapcraft.io/code" target="_blank" rel="noopener">VSCode&lt;/a>, you’re in luck.
+Indeed, among the many plugins it offers, VSCode has a ‘remote-ssh’ plugin that allows us to, as its name suggests, &lt;a href="https://code.visualstudio.com/docs/remote/ssh" target="_blank" rel="noopener">do some remote development&lt;/a>.
+We can then code from the comfort of our IDE directly into the virtual environment.&lt;/p>
+&lt;p>First make sure you have installed the plugin, either directly from VSCode’s extension tab,&lt;/p>
+&lt;p>
+&lt;figure >
+&lt;div class="d-flex justify-content-center">
+&lt;div class="w-100" >&lt;img src="https://artivis.github.io/img/post/2023/vscode-remote.png" alt="VSCode Remote-SSH" loading="lazy" data-zoomable />&lt;/div>
+&lt;/div>&lt;/figure>
+&lt;/p>
+&lt;p>or using the following command in a terminal,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">code --install-extension ms-vscode-remote.vscode-remote-extensionpack
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>We can now launch VSCode and open a remote connection as &lt;a href="https://code.visualstudio.com/docs/remote/ssh#_connect-to-a-remote-host" target="_blank" rel="noopener">described in the documentation&lt;/a> or again directly from the terminal,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">code --folder-uri vscode-remote://ssh-remote+ubuntu@10.87.167.28/home/ubuntu
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>We should see a VSCode window opening and pointing to the VM’s &lt;code>$HOME&lt;/code>,&lt;/p>
+&lt;h2 id="conclusion">Conclusion&lt;/h2>
+&lt;p>We have seen in this blog that no matter the operating system your machine is running on, you can easily install &lt;a href="https://multipass.run/" target="_blank" rel="noopener">Multipass&lt;/a> and use it to launch, not only an &lt;a href="https://ubuntu.com/" target="_blank" rel="noopener">Ubuntu&lt;/a> virtual machine but a &lt;a href="https://www.ros.org/" target="_blank" rel="noopener">ROS&lt;/a>-ready virtual machine.
+This kind of development workflow offers a great deal of flexibility enabling you to work on several ROS distributions at once.
+It also allows for isolated and reproducible workflow, which in the age of complex software development is very valuable.&lt;/p>
+&lt;p>In the case you are running Linux, you may also be interested in containers rather than full blown virtual machines.
+Have a look at my previous post that details how you can set up a ROS 2 development container using &lt;a href="https://linuxcontainers.org/lxd/introduction/" target="_blank" rel="noopener">LXD&lt;/a>: &lt;a href="https://artivis.github.io/post/2022/ros2-humble">“Setting up ROS 2 Humble with LXD”&lt;/a>.&lt;/p></description></item><item><title>Setting up ROS 2 Humble with LXD</title><link>https://artivis.github.io/post/2022/ros2-humble/</link><pubDate>Mon, 23 May 2022 00:00:00 +0000</pubDate><guid>https://artivis.github.io/post/2022/ros2-humble/</guid><description>&lt;p>&lt;a href="https://discourse.ros.org/t/ros-2-humble-hawksbill-released" target="_blank" rel="noopener">ROS 2 Humble Hawksbill is out!&lt;/a>&lt;/p>
+&lt;p>
+&lt;figure >
+&lt;div class="d-flex justify-content-center">
+&lt;div class="w-100" >&lt;img src="https://artivis.github.io/img/post/2022/HumbleHawksbill.png" alt="ROS 2 Humble Hawksbill logo" loading="lazy" data-zoomable />&lt;/div>
 &lt;/div>&lt;/figure>
 &lt;/p>
 &lt;p>Congratulations to &lt;a href="https://www.openrobotics.org/" target="_blank" rel="noopener">Open Robotics&lt;/a> and through them to the entire ROS 2 community.
