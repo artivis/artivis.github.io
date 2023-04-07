@@ -50,7 +50,8 @@ marketing:
     description: 'artivis personal website.'
     twitter: ''
   analytics:
-    google_analytics: 'UA-169921319-1'
+    # google_analytics: 'UA-169921319-1'
+    google_tag_manager: 'G-3HDCJG0J2J'
     baidu_tongji: ''
   verification:
     google: ''
