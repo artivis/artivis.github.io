@@ -65,7 +65,7 @@ $ multipass shell humble-vm
 ubuntu@humble-vm:~$
 ```
 
-And boom here we are!
+And boom, here we are!
 
 ```bash
 ubuntu@humble-vm:~$ lsb_release -a
@@ -193,7 +193,7 @@ multipass launch ros2-humble --name humble-vm --mount /some/local/path:/some/ins
 
 ### Adding an SSH key
 
-The first tip is to add our SSH key to the VM so that we can SSH to it.
+The second tip is to add our SSH key to the VM so that we can SSH to it.
 To do so, we will copy our public key to the VM,
 
 ```bash
