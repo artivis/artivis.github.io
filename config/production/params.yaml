@@ -135,6 +135,11 @@ features:
       show_count: true
     commento:
       url: ''
+    giscus:
+      repo: 'https://github.com/artivis/artivis.github.io'
+      repo_id: '1'
+      category: '1'
+      category_id: '1'
   search:
     provider: wowchemy
     algolia:
