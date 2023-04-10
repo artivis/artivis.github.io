@@ -36,7 +36,7 @@ Our Ubuntu VM is ready, let&amp;rsquo;s make use of it.&lt;/p>
 In a terminal enter,&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ multipass shell humble-vm
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">ubuntu@humble-vm:~$
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>And boom here we are!&lt;/p>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>And boom, here we are!&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">ubuntu@humble-vm:~$ lsb_release -a
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">No LSB modules are available.
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">Distributor ID: Ubuntu
@@ -113,7 +113,7 @@ To do so, nothing simpler,&lt;/p>
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>We can also do that directly at launch,&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">multipass launch ros2-humble --name humble-vm --mount /some/local/path:/some/instance/path
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="adding-an-ssh-key">Adding an SSH key&lt;/h3>
-&lt;p>The first tip is to add our SSH key to the VM so that we can SSH to it.
+&lt;p>The second tip is to add our SSH key to the VM so that we can SSH to it.
 To do so, we will copy our public key to the VM,&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">multipass &lt;span class="nb">exec&lt;/span> humble-vm -- bash -c &lt;span class="s2">&amp;#34;echo `cat ~/.ssh/&amp;lt;key&amp;gt;.pub` &amp;gt;&amp;gt; ~/.ssh/authorized_keys&amp;#34;&lt;/span>
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Note that we could also retrieve the key from GitHub,&lt;/p>
