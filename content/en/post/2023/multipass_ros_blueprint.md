@@ -10,7 +10,7 @@ tags: [tutorial, ROS, ROS 2, multipass]
 Historically [ROS] has been developed on top of [Ubuntu], relying on the distribution as a stable base providing tools (like [GCC], [CMake], [Python] to name a few) and libraries (such as [Boost], [Eigen], [PCL]) and following its release cycle (a distribution per year, an LTS every two years).
 This synergy has worked great for more than 15 years and saw the project and the community behind it vastly grow.
 
-![The Bookshelf app](/img/post/2023/ros-ubuntu.png)
+![ROS LTS](/post/2023/ros-ubuntu.png)
 
 However, being tied to a specific Linux distribution raises all kinds of difficulties.
 Developing for several ROS distributions can be challenging since they each are tied to an Ubuntu distribution.
@@ -255,7 +255,7 @@ ubuntu@humble-vm:~$ ign gazebo
 
 should start (Ignition) Gazebo and display the following assistant,
 
-![Gazebo assistant](/img/post/2023/ign_assist.png)
+![Gazebo assistant](/post/2023/ign_assist.png)
 
 For the reader on Windows, you will need to install an X server and export the `DISPLAY` environment variable.
 All of this is detailed in the [online documentation][multipass-doc-2].
@@ -268,7 +268,7 @@ We can then code from the comfort of our IDE directly into the virtual environme
 
 First make sure you have installed the plugin, either directly from VSCode’s extension tab,
 
-![VSCode Remote-SSH](/img/post/2023/vscode-remote.png)
+![VSCode Remote-SSH](/post/2023/vscode-remote.png)
 
 or using the following command in a terminal,
 

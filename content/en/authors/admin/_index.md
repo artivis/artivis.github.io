@@ -2,15 +2,19 @@
 # Display name
 title: Jérémie Deray
 
-# Username (this should match the folder name)
-authors:
-  - admin
+# Full name (for SEO)
+first_name: Jeremie
+last_name: Deray
+
+# Status emoji
+status:
+  icon: ☕️
 
 # Is this the primary user of the site?
 superuser: true
 
 # Role/position
-role: Software Engineer
+role: Senior Software Engineer
 
 # Organizations/Affiliations
 organizations:
@@ -18,7 +22,7 @@ organizations:
   url: "https://canonical.com/"
 
 # Short bio (displayed in user profile at end of posts)
-bio: My research interests include distributed robotics, state estimation, SLAM and related software.
+bio: My research interests include robotics, state estimation, SLAM and related software.
 
 interests:
   - Simultaneous Localization and Mapping
@@ -65,16 +69,16 @@ social:
     link: cv/Jeremie_Deray_CV_EN.pdf
 
 # Enter email to display Gravatar (if Gravatar enabled in Config)
-email: ""
+# email: ""
 
 # Organizational groups that you belong to (for People widget)
 #   Set this to `[]` or comment out if you are not using People widget.
-user_groups:
-  - Researchers
-  - Visitors
+# user_groups:
+#   - Researchers
+#   - Visitors
 ---
 
-Jérémie Deray is a software engineer at
+Jérémie Deray is a senior software engineer at
 [Canonical](https://canonical.com/),
 the company publishing [Ubuntu&#160;<i class="fab fa-ubuntu"></i>](https://ubuntu.com/).
 As part of the robotics team he is working on both ROS and ROS 2 -

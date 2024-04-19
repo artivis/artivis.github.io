@@ -243,3 +243,18 @@ ul.nav-icons {
   50% { opacity: 1; }
   100% { opacity: 0; }
 }
+
+// change 'min-height' offset so that
+// the footer sticks to the very bottom of the page
+.page-wrapper {
+  // Min height = viewport height - navbar height
+  min-height: calc(100vh - 0px);
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  grid-template-columns: 100%;
+}
+@include media-breakpoint-down(md) {
+  .page-wrapper {
+    min-height: calc(100vh - 0px);
+  }
+}

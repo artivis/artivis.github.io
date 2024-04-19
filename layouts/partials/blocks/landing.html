@@ -1,0 +1,23 @@
+{{/* Initialise */}}
+{{ $page := .wcPage }}
+{{ $block := .wcBlock }}
+
+<div class="landing-div">
+
+    {{ with $block.content.title }}
+      <h1>{{ . }}</h1>
+    {{ end }}
+    <br>
+    {{- with $block.content.subtitle }}
+      <p>{{ . }}</p>
+    {{- end }}
+    {{- with site.Params.nickname }}
+      <p>({{ . }})</p>
+    {{- end }}
+    <br>
+    {{- with site.Params.social }}
+      <div>
+        {{ partial "components/social-icons.html" . }}
+      </div>
+    {{- end }}
+</div>

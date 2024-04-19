@@ -1,0 +1,15 @@
+---
+
+# Feedback widget
+
+- id: feedback_widget_title
+  translation: Retour
+
+- id: feedback_widget_question
+  translation: Est-ce que cette page a été utile?
+
+- id: feedback_widget_answer_positive
+  translation: 😍 Oui
+
+- id: feedback_widget_answer_negative
+  translation: 😕 Non

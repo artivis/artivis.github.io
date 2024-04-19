@@ -14,8 +14,9 @@
               <div class="article-style">
                 {{ .Content }}
                 <ul class="nav toc-top">
-                  <li><a href="#" id="back_to_top" class="docs-toc-title">{{ partial "button_top" . }}</a></li>
+                  <li><a href="#" id="back_to_top" class="docs-toc-title">{{ partial "components/button_top" . }}</a></li>
                 </ul>
+                {{ partial "components/feedback" . }}
               </div>
               {{ partial "page_footer" . }}
             </div>

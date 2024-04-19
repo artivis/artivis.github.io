@@ -88,8 +88,6 @@ footer:
       share_alike: true
       allow_commercial: false
       logo: false
-  # For multilingual sites, show a language chooser in the footer?
-  show_translations: false
 
 i_am_a_sponsor: true
 
@@ -123,7 +121,7 @@ features:
     enable: true
   repository:
     url: 'https://github.com/artivis/artivis.github.io'
-    content_dir:
+    content_dir: content
     branch: main
   avatar:
     gravatar: false
@@ -151,6 +149,10 @@ features:
     provider: ''
     api_key: ''
     zoom: 15
+  feedback:
+    responses:
+      positive: 'Glad to hear it!'
+      negative: 'Sorry to hear that. [Please let me know how it can improved](https://github.com/artivis/artivis.github.io/discussions/new/choose).'
 
 # Extensions
 
