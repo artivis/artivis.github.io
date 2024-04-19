@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>ROS 2 | Home to artivis</title><link>https://artivis.github.io/tag/ros-2/</link><atom:link href="https://artivis.github.io/tag/ros-2/index.xml" rel="self" type="application/rss+xml"/><description>ROS 2</description><generator>Wowchemy (https://wowchemy.com)</generator><language>en</language><lastBuildDate>Thu, 06 Apr 2023 00:00:00 +0000</lastBuildDate><image><url>https://artivis.github.io/media/icon_hud2d1771ce140e1d1fd4d0e59d51cebc4_11712_512x512_fill_lanczos_center_3.png</url><title>ROS 2</title><link>https://artivis.github.io/tag/ros-2/</link></image><item><title>ROS, wherever you are</title><link>https://artivis.github.io/post/2023/multipass_ros_blueprint/</link><pubDate>Thu, 06 Apr 2023 00:00:00 +0000</pubDate><guid>https://artivis.github.io/post/2023/multipass_ros_blueprint/</guid><description>&lt;p>Historically &lt;a href="https://www.ros.org/" target="_blank" rel="noopener">ROS&lt;/a> has been developed on top of &lt;a href="https://ubuntu.com/" target="_blank" rel="noopener">Ubuntu&lt;/a>, relying on the distribution as a stable base providing tools (like &lt;a href="https://gcc.gnu.org/" target="_blank" rel="noopener">GCC&lt;/a>, &lt;a href="https://cmake.org/" target="_blank" rel="noopener">CMake&lt;/a>, &lt;a href="https://www.python.org/" target="_blank" rel="noopener">Python&lt;/a> to name a few) and libraries (such as &lt;a href="https://www.boost.org/" target="_blank" rel="noopener">Boost&lt;/a>, &lt;a href="https://eigen.tuxfamily.org/index.php?title=Main_Page" target="_blank" rel="noopener">Eigen&lt;/a>, &lt;a href="https://pointclouds.org/" target="_blank" rel="noopener">PCL&lt;/a>) and following its release cycle (a distribution per year, an LTS every two years).
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>ROS 2 | Home to artivis</title><link>https://artivis.github.io/tag/ros-2/</link><atom:link href="https://artivis.github.io/tag/ros-2/index.xml" rel="self" type="application/rss+xml"/><description>ROS 2</description><generator>Hugo Blox Builder (https://hugoblox.com)</generator><language>en</language><lastBuildDate>Thu, 06 Apr 2023 00:00:00 +0000</lastBuildDate><image><url>https://artivis.github.io/media/icon_hud2d1771ce140e1d1fd4d0e59d51cebc4_11712_512x512_fill_lanczos_center_3.png</url><title>ROS 2</title><link>https://artivis.github.io/tag/ros-2/</link></image><item><title>ROS, wherever you are</title><link>https://artivis.github.io/post/2023/multipass_ros_blueprint/</link><pubDate>Thu, 06 Apr 2023 00:00:00 +0000</pubDate><guid>https://artivis.github.io/post/2023/multipass_ros_blueprint/</guid><description>&lt;p>Historically &lt;a href="https://www.ros.org/" target="_blank" rel="noopener">ROS&lt;/a> has been developed on top of &lt;a href="https://ubuntu.com/" target="_blank" rel="noopener">Ubuntu&lt;/a>, relying on the distribution as a stable base providing tools (like &lt;a href="https://gcc.gnu.org/" target="_blank" rel="noopener">GCC&lt;/a>, &lt;a href="https://cmake.org/" target="_blank" rel="noopener">CMake&lt;/a>, &lt;a href="https://www.python.org/" target="_blank" rel="noopener">Python&lt;/a> to name a few) and libraries (such as &lt;a href="https://www.boost.org/" target="_blank" rel="noopener">Boost&lt;/a>, &lt;a href="https://eigen.tuxfamily.org/index.php?title=Main_Page" target="_blank" rel="noopener">Eigen&lt;/a>, &lt;a href="https://pointclouds.org/" target="_blank" rel="noopener">PCL&lt;/a>) and following its release cycle (a distribution per year, an LTS every two years).
 This synergy has worked great for more than 15 years and saw the project and the community behind it vastly grow.&lt;/p>
 &lt;p>
 &lt;figure >
 &lt;div class="d-flex justify-content-center">
-&lt;div class="w-100" >&lt;img src="https://artivis.github.io/img/post/2023/ros-ubuntu.png" alt="The Bookshelf app" loading="lazy" data-zoomable />&lt;/div>
+&lt;div class="w-100" >&lt;img src="https://artivis.github.io/post/2023/ros-ubuntu.png" alt="ROS LTS" loading="lazy" data-zoomable />&lt;/div>
 &lt;/div>&lt;/figure>
 &lt;/p>
 &lt;p>However, being tied to a specific Linux distribution raises all kinds of difficulties.
@@ -147,7 +147,7 @@ Running the command&lt;/p>
 &lt;p>
 &lt;figure >
 &lt;div class="d-flex justify-content-center">
-&lt;div class="w-100" >&lt;img src="https://artivis.github.io/img/post/2023/ign_assist.png" alt="Gazebo assistant" loading="lazy" data-zoomable />&lt;/div>
+&lt;div class="w-100" >&lt;img src="https://artivis.github.io/post/2023/ign_assist.png" alt="Gazebo assistant" loading="lazy" data-zoomable />&lt;/div>
 &lt;/div>&lt;/figure>
 &lt;/p>
 &lt;p>For the reader on Windows, you will need to install an X server and export the &lt;code>DISPLAY&lt;/code> environment variable.
@@ -160,7 +160,7 @@ We can then code from the comfort of our IDE directly into the virtual environme
 &lt;p>
 &lt;figure >
 &lt;div class="d-flex justify-content-center">
-&lt;div class="w-100" >&lt;img src="https://artivis.github.io/img/post/2023/vscode-remote.png" alt="VSCode Remote-SSH" loading="lazy" data-zoomable />&lt;/div>
+&lt;div class="w-100" >&lt;img src="https://artivis.github.io/post/2023/vscode-remote.png" alt="VSCode Remote-SSH" loading="lazy" data-zoomable />&lt;/div>
 &lt;/div>&lt;/figure>
 &lt;/p>
 &lt;p>or using the following command in a terminal,&lt;/p>

@@ -1,9 +1,271 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>tutorial | Home to artivis</title><link>https://artivis.github.io/tag/tutorial/</link><atom:link href="https://artivis.github.io/tag/tutorial/index.xml" rel="self" type="application/rss+xml"/><description>tutorial</description><generator>Wowchemy (https://wowchemy.com)</generator><language>en</language><lastBuildDate>Thu, 06 Apr 2023 00:00:00 +0000</lastBuildDate><image><url>https://artivis.github.io/media/icon_hud2d1771ce140e1d1fd4d0e59d51cebc4_11712_512x512_fill_lanczos_center_3.png</url><title>tutorial</title><link>https://artivis.github.io/tag/tutorial/</link></image><item><title>ROS, wherever you are</title><link>https://artivis.github.io/post/2023/multipass_ros_blueprint/</link><pubDate>Thu, 06 Apr 2023 00:00:00 +0000</pubDate><guid>https://artivis.github.io/post/2023/multipass_ros_blueprint/</guid><description>&lt;p>Historically &lt;a href="https://www.ros.org/" target="_blank" rel="noopener">ROS&lt;/a> has been developed on top of &lt;a href="https://ubuntu.com/" target="_blank" rel="noopener">Ubuntu&lt;/a>, relying on the distribution as a stable base providing tools (like &lt;a href="https://gcc.gnu.org/" target="_blank" rel="noopener">GCC&lt;/a>, &lt;a href="https://cmake.org/" target="_blank" rel="noopener">CMake&lt;/a>, &lt;a href="https://www.python.org/" target="_blank" rel="noopener">Python&lt;/a> to name a few) and libraries (such as &lt;a href="https://www.boost.org/" target="_blank" rel="noopener">Boost&lt;/a>, &lt;a href="https://eigen.tuxfamily.org/index.php?title=Main_Page" target="_blank" rel="noopener">Eigen&lt;/a>, &lt;a href="https://pointclouds.org/" target="_blank" rel="noopener">PCL&lt;/a>) and following its release cycle (a distribution per year, an LTS every two years).
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Tutorial | Home to artivis</title><link>https://artivis.github.io/tag/tutorial/</link><atom:link href="https://artivis.github.io/tag/tutorial/index.xml" rel="self" type="application/rss+xml"/><description>Tutorial</description><generator>Hugo Blox Builder (https://hugoblox.com)</generator><language>en</language><lastBuildDate>Thu, 18 Apr 2024 00:00:00 +0000</lastBuildDate><image><url>https://artivis.github.io/media/icon_hud2d1771ce140e1d1fd4d0e59d51cebc4_11712_512x512_fill_lanczos_center_3.png</url><title>Tutorial</title><link>https://artivis.github.io/tag/tutorial/</link></image><item><title>How to isolate an LXC</title><link>https://artivis.github.io/post/2024/lxc-isolated/</link><pubDate>Thu, 18 Apr 2024 00:00:00 +0000</pubDate><guid>https://artivis.github.io/post/2024/lxc-isolated/</guid><description>&lt;p>In this post, we will see how to launch a Linux container that is isolated,
+not only from other containers,
+but also from the local network.
+The container will however have access to internet.&lt;/p>
+&lt;p>Such sandboxed environment can come handy for many use cases.
+For instance, I found myself in need to provide access to a development environment
+running on a beefy machine of mine to a remote colleague.&lt;/p>
+&lt;p>While there are many ways to do this,
+we will details here a setup that is fairly simple, straightforward and fully managed by LXD.
+Most importantly, we won&amp;rsquo;t have to deal with iptables.
+However, not that it may not be suitable for complex setup,
+nor does it scale well.&lt;/p>
+&lt;p>To follow along, we&amp;rsquo;ll assume that you have &lt;a href="https://documentation.ubuntu.com/lxd/to/latest/installing/" target="_blank" rel="noopener">LXD installed&lt;/a>,
+and some basic experience with it.
+Let us dive in.&lt;/p>
+&lt;h2 id="create-a-dedicated-network">Create a dedicated network&lt;/h2>
+&lt;p>LXC comes with powerful features when it comes to networking.
+They may even be a little overwhelming to networking beginners such as myself.
+Hence this post for futur reference.&lt;/p>
+&lt;p>First thing first, let us create a container using the default network,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">lxc launch ubuntu:22.04 c0
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Let us check that the container is up,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ lxc list
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">+------+---------+----------------------+----------------------------------------------+-----------+-----------+
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">|&lt;/span> NAME &lt;span class="p">|&lt;/span> STATE &lt;span class="p">|&lt;/span> IPV4 &lt;span class="p">|&lt;/span> IPV6 &lt;span class="p">|&lt;/span> TYPE &lt;span class="p">|&lt;/span> SNAPSHOTS &lt;span class="p">|&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">+------+---------+----------------------+----------------------------------------------+-----------+-----------+
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">|&lt;/span> c0 &lt;span class="p">|&lt;/span> RUNNING &lt;span class="p">|&lt;/span> 10.69.141.197 &lt;span class="o">(&lt;/span>eth0&lt;span class="o">)&lt;/span> &lt;span class="p">|&lt;/span> fd42:3bb:147e:3c99:216:3eff:fe4a:bd59 &lt;span class="o">(&lt;/span>eth0&lt;span class="o">)&lt;/span> &lt;span class="p">|&lt;/span> CONTAINER &lt;span class="p">|&lt;/span> &lt;span class="m">0&lt;/span> &lt;span class="p">|&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">+------+---------+----------------------+----------------------------------------------+-----------+-----------+
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Looking at the existing network,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ lxc network list
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">+--------+----------+---------+----------------+--------------------------+-------------+---------+---------+
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">|&lt;/span> NAME &lt;span class="p">|&lt;/span> TYPE &lt;span class="p">|&lt;/span> MANAGED &lt;span class="p">|&lt;/span> IPV4 &lt;span class="p">|&lt;/span> IPV6 &lt;span class="p">|&lt;/span> DESCRIPTION &lt;span class="p">|&lt;/span> USED BY &lt;span class="p">|&lt;/span> STATE &lt;span class="p">|&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">+--------+----------+---------+----------------+--------------------------+-------------+---------+---------+
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">|&lt;/span> ens3 &lt;span class="p">|&lt;/span> physical &lt;span class="p">|&lt;/span> NO &lt;span class="p">|&lt;/span> &lt;span class="p">|&lt;/span> &lt;span class="p">|&lt;/span> &lt;span class="p">|&lt;/span> &lt;span class="m">0&lt;/span> &lt;span class="p">|&lt;/span> &lt;span class="p">|&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">+--------+----------+---------+----------------+--------------------------+-------------+---------+---------+
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">|&lt;/span> lxdbr0 &lt;span class="p">|&lt;/span> bridge &lt;span class="p">|&lt;/span> YES &lt;span class="p">|&lt;/span> 10.69.141.1/24 &lt;span class="p">|&lt;/span> fd42:3bb:147e:3c99::1/64 &lt;span class="p">|&lt;/span> &lt;span class="p">|&lt;/span> &lt;span class="m">2&lt;/span> &lt;span class="p">|&lt;/span> CREATED &lt;span class="p">|&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">+--------+----------+---------+----------------+--------------------------+-------------+---------+---------+
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>we can see that the container ip address is in the ip range of the &lt;code>lxdbr0&lt;/code> network.&lt;/p>
+&lt;p>Alright, we&amp;rsquo;ll keep this container aside for now and we will now create an LXD network dedicated to isolation.&lt;/p>
+&lt;p>To do so, issue the following,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">lxc network create lxdbriso
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>This will create a new bridge called &lt;code>lxdbriso&lt;/code>.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ lxc network list
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">+----------+----------+---------+----------------+---------------------------+-------------+---------+---------+
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">|&lt;/span> NAME &lt;span class="p">|&lt;/span> TYPE &lt;span class="p">|&lt;/span> MANAGED &lt;span class="p">|&lt;/span> IPV4 &lt;span class="p">|&lt;/span> IPV6 &lt;span class="p">|&lt;/span> DESCRIPTION &lt;span class="p">|&lt;/span> USED BY &lt;span class="p">|&lt;/span> STATE &lt;span class="p">|&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">+----------+----------+---------+----------------+---------------------------+-------------+---------+---------+
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">|&lt;/span> ens3 &lt;span class="p">|&lt;/span> physical &lt;span class="p">|&lt;/span> NO &lt;span class="p">|&lt;/span> &lt;span class="p">|&lt;/span> &lt;span class="p">|&lt;/span> &lt;span class="p">|&lt;/span> &lt;span class="m">0&lt;/span> &lt;span class="p">|&lt;/span> &lt;span class="p">|&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">+----------+----------+---------+----------------+---------------------------+-------------+---------+---------+
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">|&lt;/span> lxdbr0 &lt;span class="p">|&lt;/span> bridge &lt;span class="p">|&lt;/span> YES &lt;span class="p">|&lt;/span> 10.69.141.1/24 &lt;span class="p">|&lt;/span> fd42:3bb:147e:3c99::1/64 &lt;span class="p">|&lt;/span> &lt;span class="p">|&lt;/span> &lt;span class="m">2&lt;/span> &lt;span class="p">|&lt;/span> CREATED &lt;span class="p">|&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">+----------+----------+---------+----------------+---------------------------+-------------+---------+---------+
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">|&lt;/span> lxdbriso &lt;span class="p">|&lt;/span> bridge &lt;span class="p">|&lt;/span> YES &lt;span class="p">|&lt;/span> 10.75.204.1/24 &lt;span class="p">|&lt;/span> fd42:4bb8:a4e4:9d16::1/64 &lt;span class="p">|&lt;/span> &lt;span class="p">|&lt;/span> &lt;span class="m">0&lt;/span> &lt;span class="p">|&lt;/span> CREATED &lt;span class="p">|&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">+----------+----------+---------+----------------+---------------------------+-------------+---------+---------+
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>We can note that &lt;code>lxdbriso&lt;/code> has a different range than &lt;code>lxdbr0&lt;/code>.
+It is indeed a different network.&lt;/p>
+&lt;h2 id="setting-up-some-containers">Setting up some containers&lt;/h2>
+&lt;p>At this point we can already launch a couple containers using the new network.
+This will help us make sure that our setup progresses properly.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">lxc launch ubuntu:22.04 c1 -n lxdbriso
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">lxc launch ubuntu:22.04 c2 -n lxdbriso
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>After launching the 2 containers we can list all containers again,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ lxc list
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">+------+---------+----------------------+-----------------------------------------------+-----------+-----------+
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">|&lt;/span> NAME &lt;span class="p">|&lt;/span> STATE &lt;span class="p">|&lt;/span> IPV4 &lt;span class="p">|&lt;/span> IPV6 &lt;span class="p">|&lt;/span> TYPE &lt;span class="p">|&lt;/span> SNAPSHOTS &lt;span class="p">|&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">+------+---------+----------------------+-----------------------------------------------+-----------+-----------+
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">|&lt;/span> c1 &lt;span class="p">|&lt;/span> RUNNING &lt;span class="p">|&lt;/span> 10.75.204.192 &lt;span class="o">(&lt;/span>eth0&lt;span class="o">)&lt;/span> &lt;span class="p">|&lt;/span> fd42:4bb8:a4e4:9d16:216:3eff:feac:1eea &lt;span class="o">(&lt;/span>eth0&lt;span class="o">)&lt;/span> &lt;span class="p">|&lt;/span> CONTAINER &lt;span class="p">|&lt;/span> &lt;span class="m">0&lt;/span> &lt;span class="p">|&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">+------+---------+----------------------+-----------------------------------------------+-----------+-----------+
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">|&lt;/span> c2 &lt;span class="p">|&lt;/span> RUNNING &lt;span class="p">|&lt;/span> 10.75.204.31 &lt;span class="o">(&lt;/span>eth0&lt;span class="o">)&lt;/span> &lt;span class="p">|&lt;/span> fd42:4bb8:a4e4:9d16:216:3eff:fe40:5823 &lt;span class="o">(&lt;/span>eth0&lt;span class="o">)&lt;/span> &lt;span class="p">|&lt;/span> CONTAINER &lt;span class="p">|&lt;/span> &lt;span class="m">0&lt;/span> &lt;span class="p">|&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">+------+---------+----------------------+-----------------------------------------------+-----------+-----------+
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="p">|&lt;/span> c0 &lt;span class="p">|&lt;/span> RUNNING &lt;span class="p">|&lt;/span> 10.69.141.197 &lt;span class="o">(&lt;/span>eth0&lt;span class="o">)&lt;/span> &lt;span class="p">|&lt;/span> fd42:3bb:147e:3c99:216:3eff:fe4a:bd59 &lt;span class="o">(&lt;/span>eth0&lt;span class="o">)&lt;/span> &lt;span class="p">|&lt;/span> CONTAINER &lt;span class="p">|&lt;/span> &lt;span class="m">0&lt;/span> &lt;span class="p">|&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">+------+---------+----------------------+-----------------------------------------------+-----------+-----------+
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>and verify that &lt;code>c1&lt;/code> &amp;amp; &lt;code>c2&lt;/code> are on the &lt;code>lxdbriso&lt;/code> network.&lt;/p>
+&lt;p>At this point, there is no isolation. You should thus be able to ping in any direction,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ lxc &lt;span class="nb">exec&lt;/span> c1 -- ping c2 -4 -c1
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">PING &lt;span class="o">(&lt;/span>10.75.204.31&lt;span class="o">)&lt;/span> 56&lt;span class="o">(&lt;/span>84&lt;span class="o">)&lt;/span> bytes of data.
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="m">64&lt;/span> bytes from c2.lxd &lt;span class="o">(&lt;/span>10.75.204.31&lt;span class="o">)&lt;/span>: &lt;span class="nv">icmp_seq&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="m">1&lt;/span> &lt;span class="nv">ttl&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="m">64&lt;/span> &lt;span class="nv">time&lt;/span>&lt;span class="o">=&lt;/span>0.040 ms
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">...
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">$ lxc &lt;span class="nb">exec&lt;/span> c1 -- ping 10.69.141.197 -4 -c1
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">PING 10.69.141.197 &lt;span class="o">(&lt;/span>10.69.141.197&lt;span class="o">)&lt;/span> 56&lt;span class="o">(&lt;/span>84&lt;span class="o">)&lt;/span> bytes of data.
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="m">64&lt;/span> bytes from 10.69.141.197: &lt;span class="nv">icmp_seq&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="m">1&lt;/span> &lt;span class="nv">ttl&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="m">63&lt;/span> &lt;span class="nv">time&lt;/span>&lt;span class="o">=&lt;/span>0.075 ms
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="intra-net-isolation">Intra-net isolation&lt;/h2>
+&lt;p>To isolate the two containers on the isolated network from each other,
+we can use the &lt;a href="https://documentation.ubuntu.com/lxd/en/latest/reference/devices_nic/#device-nic-bridged-device-conf:security.port_isolation" target="_blank" rel="noopener">&lt;code>port-isolation&lt;/code>&lt;/a> feature:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">lxc config device &lt;span class="nb">set&lt;/span> c1 eth0 security.port_isolation&lt;span class="o">=&lt;/span>&lt;span class="nb">true&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">lxc config device &lt;span class="nb">set&lt;/span> c2 eth0 security.port_isolation&lt;span class="o">=&lt;/span>&lt;span class="nb">true&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>We shouldn&amp;rsquo;t be able to ping from one to the other anymore,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ lxc &lt;span class="nb">exec&lt;/span> c1 -- ping c2 -4 -c1
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">PING &lt;span class="o">(&lt;/span>10.75.204.31&lt;span class="o">)&lt;/span> 56&lt;span class="o">(&lt;/span>84&lt;span class="o">)&lt;/span> bytes of data.
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">From c1.lxd &lt;span class="o">(&lt;/span>10.75.204.192&lt;span class="o">)&lt;/span> &lt;span class="nv">icmp_seq&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="m">1&lt;/span> Destination Host Unreachable
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">...
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>This worked well.&lt;/p>
+&lt;blockquote>
+&lt;p>It is important to note that while very handy,
+the &lt;code>port_isolation&lt;/code> feature solely
+&amp;ldquo;&lt;em>prevent the NIC from communicating with other NICs in the network that have port isolation enabled&lt;/em>&amp;rdquo;.
+Mind that a container may have several NICs,
+and that the feature would have to be enable for each new container since it works
+at a NIC level and not at a network level.&lt;/p>
+&lt;/blockquote>
+&lt;p>The intra-network isolation is in place.
+Let&amp;rsquo;s now look at inter-network isolation.&lt;/p>
+&lt;p>First, for good measure, let make sure we can still ping the container on the default network,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ lxc &lt;span class="nb">exec&lt;/span> c1 -- ping 10.69.141.197 -4 -c1
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">PING 10.69.141.197 &lt;span class="o">(&lt;/span>10.69.141.197&lt;span class="o">)&lt;/span> 56&lt;span class="o">(&lt;/span>84&lt;span class="o">)&lt;/span> bytes of data.
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="m">64&lt;/span> bytes from 10.69.141.197: &lt;span class="nv">icmp_seq&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="m">1&lt;/span> &lt;span class="nv">ttl&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="m">63&lt;/span> &lt;span class="nv">time&lt;/span>&lt;span class="o">=&lt;/span>0.076 ms
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">...
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Yup, still there.&lt;/p>
+&lt;h2 id="inter-net-isolation">Inter-net isolation&lt;/h2>
+&lt;p>To tackle the inter-network isolation we will use the &lt;a href="https://documentation.ubuntu.com/lxd/en/latest/howto/network_acls/" target="_blank" rel="noopener">Access Control List (ACL)&lt;/a> feature.&lt;/p>
+&lt;p>First we will set the default rule for all egress/ingress traffic,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">lxc network &lt;span class="nb">set&lt;/span> lxdbriso &lt;span class="se">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="se">&lt;/span> security.acls.default.egress.action&lt;span class="o">=&lt;/span>allow &lt;span class="se">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="se">&lt;/span> security.acls.default.ingress.action&lt;span class="o">=&lt;/span>allow
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>This essentially allow all traffic to/from our isolated network.
+I know what you thinking, but let us keep going.&lt;/p>
+&lt;p>Next, we will create an ACL set of rules to actually isolate the network.
+Create the ACL with,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">lxc network acl create external-only
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>We can now create the first rule,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">lxc network acl rule add external-only egress &lt;span class="se">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="se">&lt;/span> &lt;span class="nv">destination&lt;/span>&lt;span class="o">=&lt;/span>10.69.141.0/24 &lt;span class="se">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="se">&lt;/span> &lt;span class="nv">action&lt;/span>&lt;span class="o">=&lt;/span>reject
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>This rule specifies that all traffic at destination of &lt;code>lxdbr0&lt;/code> should be blocked.
+The second rule is very similar and will block all traffic going to our local network.&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">lxc network acl rule add external-only egress &lt;span class="se">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="se">&lt;/span> &lt;span class="nv">destination&lt;/span>&lt;span class="o">=&lt;/span>10.0.0.0/24 &lt;span class="se">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="se">&lt;/span> &lt;span class="nv">action&lt;/span>&lt;span class="o">=&lt;/span>reject
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Note that you should replace &lt;code>10.0.0.0&lt;/code> with your actual local network.
+And of course more rules can be added if you need it.&lt;/p>
+&lt;p>With the ACL defined, we shall now apply it to our network,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">lxc network &lt;span class="nb">set&lt;/span> lxdbriso security.acls&lt;span class="o">=&lt;/span>external-only
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Alright, let us try again to ping the container on the default network,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ lxc &lt;span class="nb">exec&lt;/span> c1 -- ping 10.69.141.197 -4 -c1
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">PING 10.69.141.197 &lt;span class="o">(&lt;/span>10.69.141.197&lt;span class="o">)&lt;/span> 56&lt;span class="o">(&lt;/span>84&lt;span class="o">)&lt;/span> bytes of data.
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">From 10.75.204.1 &lt;span class="nv">icmp_seq&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="m">1&lt;/span> Destination Port Unreachable
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">...
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>And the traffic is indeed blocked.
+What about the local network,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ lxc &lt;span class="nb">exec&lt;/span> c1 -- ping 10.0.0.145 -4 -c1
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">PING 10.0.0.145 &lt;span class="o">(&lt;/span>10.69.141.197&lt;span class="o">)&lt;/span> 56&lt;span class="o">(&lt;/span>84&lt;span class="o">)&lt;/span> bytes of data.
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">From 10.75.204.1 &lt;span class="nv">icmp_seq&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="m">1&lt;/span> Destination Port Unreachable
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">...
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Blocked as well. Note that here &lt;code>10.0.0.145&lt;/code> is the ip of my host on the local network.
+Replace it with you own.&lt;/p>
+&lt;p>At last, let&amp;rsquo;s check that that we can still ping the world,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ lxc &lt;span class="nb">exec&lt;/span> c1 -- ping www.wikipedia.com -4 -c1
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">PING ncredir-lb.wikimedia.org &lt;span class="o">(&lt;/span>185.15.58.226&lt;span class="o">)&lt;/span> 56&lt;span class="o">(&lt;/span>84&lt;span class="o">)&lt;/span> bytes of data.
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="m">64&lt;/span> bytes from ncredir-lb.drmrs.wikimedia.org &lt;span class="o">(&lt;/span>185.15.58.226&lt;span class="o">)&lt;/span>: &lt;span class="nv">icmp_seq&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="m">1&lt;/span> &lt;span class="nv">ttl&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="m">53&lt;/span> &lt;span class="nv">time&lt;/span>&lt;span class="o">=&lt;/span>75.8 ms
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">...
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Looks like we&amp;rsquo;re all set.&lt;/p>
+&lt;h2 id="isolate-an-existing-container">Isolate an existing container&lt;/h2>
+&lt;p>This is all nice and shiny but what if you have an existing container on the default
+network that you&amp;rsquo;d like to isolate?
+Well worry not we can do that.&lt;/p>
+&lt;h3 id="attach-the-isolated-network">Attach the isolated network&lt;/h3>
+&lt;p>First, we have have to attach the isolated network to the container we would like to isolate,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">lxc network attach lxdbriso c0 eth1
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Let&amp;rsquo;s check that the nic is properly attached,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ lxc &lt;span class="nb">exec&lt;/span> foo -- ip a
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">1: lo: &amp;lt;LOOPBACK,UP,LOWER_UP&amp;gt; mtu &lt;span class="m">65536&lt;/span> qdisc noqueue state UNKNOWN group default qlen &lt;span class="m">1000&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> inet 127.0.0.1/8 scope host lo
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> valid_lft forever preferred_lft forever
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> inet6 ::1/128 scope host
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> valid_lft forever preferred_lft forever
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">17: eth0@if18: &amp;lt;BROADCAST,MULTICAST,UP,LOWER_UP&amp;gt; mtu &lt;span class="m">1500&lt;/span> qdisc noqueue state UP group default qlen &lt;span class="m">1000&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> link/ether 00:16:3e:4a:bd:59 brd ff:ff:ff:ff:ff:ff link-netnsid &lt;span class="m">0&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> inet 10.69.141.197/24 metric &lt;span class="m">100&lt;/span> brd 10.69.141.255 scope global dynamic eth0
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> valid_lft 3409sec preferred_lft 3409sec
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> inet6 fd42:3bb:147e:3c99:216:3eff:fe4a:bd59/64 scope global mngtmpaddr noprefixroute
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> valid_lft forever preferred_lft forever
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> inet6 fe80::216:3eff:fe4a:bd59/64 scope link
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> valid_lft forever preferred_lft forever
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">19: eth1@if20: &amp;lt;BROADCAST,MULTICAST,UP,LOWER_UP&amp;gt; mtu &lt;span class="m">1500&lt;/span> qdisc noqueue state UP group default qlen &lt;span class="m">1000&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> link/ether 00:16:3e:57:5b:25 brd ff:ff:ff:ff:ff:ff link-netnsid &lt;span class="m">0&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> inet6 fd42:4bb8:a4e4:9d16:216:3eff:fe57:5b25/64 scope global dynamic mngtmpaddr
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> valid_lft forever preferred_lft forever
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> inet6 fe80::216:3eff:fe57:5b25/64 scope link
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> valid_lft forever preferred_lft foreve
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Indeed it appears but note that it doesn&amp;rsquo;t have an ipv4 address yet.&lt;/p>
+&lt;h3 id="detach-the-initial-network">Detach the initial network&lt;/h3>
+&lt;p>We should now detach the initial default network.
+The logic would press us to use something like:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">lxc network detach lxdbr0 c0 eth0
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>However we&amp;rsquo;re greeted with the following error message: &lt;code>Error: The specified device doesn't exist&lt;/code>.
+Nice.
+What happens here is that the &lt;code>eth0&lt;/code> device is inherited from the default lxd profile.
+For some reasons those are mystical beasts that requires a specific handling.
+That handling is as follows,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">lxc config device add c0 eth0 none
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>You might be tempted by a &amp;lsquo;what the&amp;rsquo; and I sympathise.
+The explanation is that to remove a NIC inherited from a profile,
+you actually have to mask it with an empty one.
+That sounds like something that should be fixed right.
+Anyhow, let us continue.&lt;/p>
+&lt;p>Our container is now attached to the isolated network.
+But it still doesn&amp;rsquo;t have an ipv4 address.
+To fix that will have to edit its network configuration.&lt;/p>
+&lt;p>Let us shell into the container,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ lxc &lt;span class="nb">exec&lt;/span> c0 -- sudo --login --user ubuntu
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">To run a &lt;span class="nb">command&lt;/span> as administrator &lt;span class="o">(&lt;/span>user &lt;span class="s2">&amp;#34;root&amp;#34;&lt;/span>&lt;span class="o">)&lt;/span>, use &lt;span class="s2">&amp;#34;sudo &amp;lt;command&amp;gt;&amp;#34;&lt;/span>.
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">See &lt;span class="s2">&amp;#34;man sudo_root&amp;#34;&lt;/span> &lt;span class="k">for&lt;/span> details.
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">ubuntu@c0:~$
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>and edit its netplan configuration file,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">vi /etc/netplan/50-cloud-init.yaml
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>where we will change the following,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-diff" data-lang="diff">&lt;span class="line">&lt;span class="cl">network:
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> version: 2
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl"> ethernets:
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="gd">- eth0:
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="gd">&lt;/span>&lt;span class="gi">+ eth1:
+&lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="gi">&lt;/span> dhcp4: true
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Save, exit and apply the new configuration,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">netplan apply
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>In retrospect, we probably could have attached the isolated network directly as &lt;code>eth0&lt;/code> with,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">lxc network attach lxdbriso c0 eth0
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>but where is the fun in that?&lt;/p>
+&lt;h3 id="is-it-isolated-yet">Is it isolated yet?&lt;/h3>
+&lt;p>At this point, we have to remember that the intra-net traffic is blocked on a per-NIC basis:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ lxc &lt;span class="nb">exec&lt;/span> c0 -- ping c2 -4 -c1
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">PING &lt;span class="o">(&lt;/span>10.75.204.31&lt;span class="o">)&lt;/span> 56&lt;span class="o">(&lt;/span>84&lt;span class="o">)&lt;/span> bytes of data.
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="m">64&lt;/span> bytes from c2.lxd &lt;span class="o">(&lt;/span>10.75.204.31&lt;span class="o">)&lt;/span>: &lt;span class="nv">icmp_seq&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="m">1&lt;/span> &lt;span class="nv">ttl&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="m">64&lt;/span> &lt;span class="nv">time&lt;/span>&lt;span class="o">=&lt;/span>0.047 ms
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">...
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>We shall thus set enable &lt;code>port_isolation&lt;/code> for &lt;code>c0&lt;/code>&amp;rsquo;s new NIC,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">lxc config device &lt;span class="nb">set&lt;/span> c0 eth1 security.port_isolation&lt;span class="o">=&lt;/span>&lt;span class="nb">true&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Let&amp;rsquo;s check that it works,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ lxc &lt;span class="nb">exec&lt;/span> c0 -- ping c2 -4 -c1
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">PING c2.lxd &lt;span class="o">(&lt;/span>10.75.204.31&lt;span class="o">)&lt;/span> 56&lt;span class="o">(&lt;/span>84&lt;span class="o">)&lt;/span> bytes of data.
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">From c0.lxd &lt;span class="o">(&lt;/span>10.75.204.226&lt;span class="o">)&lt;/span> &lt;span class="nv">icmp_seq&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="m">1&lt;/span> Destination Host Unreachable
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">...
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Let&amp;rsquo;s verify the inter-net traffic for good measure,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ lxc &lt;span class="nb">exec&lt;/span> c0 -- ping 10.0.0.145 -4 -c1
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">PING 10.0.0.145 &lt;span class="o">(&lt;/span>10.0.0.145&lt;span class="o">)&lt;/span> 56&lt;span class="o">(&lt;/span>84&lt;span class="o">)&lt;/span> bytes of data.
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">From 10.75.204.1 &lt;span class="nv">icmp_seq&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="m">1&lt;/span> Destination Port Unreachable
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">...
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>We can&amp;rsquo;t ping the local network. What about the greater internet,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ lxc &lt;span class="nb">exec&lt;/span> foo -- ping wikipedia.com -4 -c1
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">PING wikipedia.com &lt;span class="o">(&lt;/span>185.15.58.226&lt;span class="o">)&lt;/span> 56&lt;span class="o">(&lt;/span>84&lt;span class="o">)&lt;/span> bytes of data.
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="m">64&lt;/span> bytes from ncredir-lb.drmrs.wikimedia.org &lt;span class="o">(&lt;/span>185.15.58.226&lt;span class="o">)&lt;/span>: &lt;span class="nv">icmp_seq&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="m">1&lt;/span> &lt;span class="nv">ttl&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="m">53&lt;/span> &lt;span class="nv">time&lt;/span>&lt;span class="o">=&lt;/span>30.0 ms
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">...
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Yep that works.&lt;/p>
+&lt;h2 id="a-note-on-docker">A note on Docker&lt;/h2>
+&lt;p>If you are not using Docker alongside LXD on the same host,
+you may skip this note altogether.
+If you are, well you probably already now that there is a network-related issue in having both installed.
+Chance is, you&amp;rsquo;ve already seen the &lt;a href="https://documentation.ubuntu.com/lxd/en/latest/howto/network_bridge_firewalld/#prevent-connectivity-issues-with-lxd-and-docker" target="_blank" rel="noopener">related documentation&lt;/a>.&lt;/p>
+&lt;p>This only a reminder that if you went with the iptables solution,
+you should also allow the traffic for &lt;code>lxdbriso&lt;/code>.
+Don&amp;rsquo;t ask me why I feel the need to remind you about that.&lt;/p>
+&lt;h2 id="conclusion">Conclusion&lt;/h2>
+&lt;p>We&amp;rsquo;ve seen in this post how we can isolate a Linux Container so that it can only reach out to internet.
+As stated at the beginning of this post,
+there are plenty other ways to do that, from messing around with iptables
+to dedicated vlans on your fancy ethernet switch.
+I went down this road as it fairly simple and fully managed through LXD.&lt;/p>
+&lt;p>In introduction to this post I also told you what was my initial motivation for this setup.
+To provide access to a playground to a remote colleague.
+But I didn&amp;rsquo;t touch on that aspect did I?
+Well that wasn&amp;rsquo;t quite the point here but I&amp;rsquo;ll still leave you with a clue to explore:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">snap install netbird
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;blockquote>
+&lt;p>Disclaimer: this post was only made possible thanks to the LXD&amp;rsquo;s online documentation and forum. Most notably, it is an expanded version of &lt;a href="https://discuss.linuxcontainers.org/t/prevent-cross-talk/14745/8" target="_blank" rel="noopener">a comment&lt;/a> from &lt;a href="https://discuss.linuxcontainers.org/u/tomp/summary" target="_blank" rel="noopener">Thomas Parrott&lt;/a>. Credits where they&amp;rsquo;re due.&lt;/p>
+&lt;/blockquote></description></item><item><title>ROS, wherever you are</title><link>https://artivis.github.io/post/2023/multipass_ros_blueprint/</link><pubDate>Thu, 06 Apr 2023 00:00:00 +0000</pubDate><guid>https://artivis.github.io/post/2023/multipass_ros_blueprint/</guid><description>&lt;p>Historically &lt;a href="https://www.ros.org/" target="_blank" rel="noopener">ROS&lt;/a> has been developed on top of &lt;a href="https://ubuntu.com/" target="_blank" rel="noopener">Ubuntu&lt;/a>, relying on the distribution as a stable base providing tools (like &lt;a href="https://gcc.gnu.org/" target="_blank" rel="noopener">GCC&lt;/a>, &lt;a href="https://cmake.org/" target="_blank" rel="noopener">CMake&lt;/a>, &lt;a href="https://www.python.org/" target="_blank" rel="noopener">Python&lt;/a> to name a few) and libraries (such as &lt;a href="https://www.boost.org/" target="_blank" rel="noopener">Boost&lt;/a>, &lt;a href="https://eigen.tuxfamily.org/index.php?title=Main_Page" target="_blank" rel="noopener">Eigen&lt;/a>, &lt;a href="https://pointclouds.org/" target="_blank" rel="noopener">PCL&lt;/a>) and following its release cycle (a distribution per year, an LTS every two years).
 This synergy has worked great for more than 15 years and saw the project and the community behind it vastly grow.&lt;/p>
 &lt;p>
 &lt;figure >
 &lt;div class="d-flex justify-content-center">
-&lt;div class="w-100" >&lt;img src="https://artivis.github.io/img/post/2023/ros-ubuntu.png" alt="The Bookshelf app" loading="lazy" data-zoomable />&lt;/div>
+&lt;div class="w-100" >&lt;img src="https://artivis.github.io/post/2023/ros-ubuntu.png" alt="ROS LTS" loading="lazy" data-zoomable />&lt;/div>
 &lt;/div>&lt;/figure>
 &lt;/p>
 &lt;p>However, being tied to a specific Linux distribution raises all kinds of difficulties.
@@ -147,7 +409,7 @@ Running the command&lt;/p>
 &lt;p>
 &lt;figure >
 &lt;div class="d-flex justify-content-center">
-&lt;div class="w-100" >&lt;img src="https://artivis.github.io/img/post/2023/ign_assist.png" alt="Gazebo assistant" loading="lazy" data-zoomable />&lt;/div>
+&lt;div class="w-100" >&lt;img src="https://artivis.github.io/post/2023/ign_assist.png" alt="Gazebo assistant" loading="lazy" data-zoomable />&lt;/div>
 &lt;/div>&lt;/figure>
 &lt;/p>
 &lt;p>For the reader on Windows, you will need to install an X server and export the &lt;code>DISPLAY&lt;/code> environment variable.
@@ -160,7 +422,7 @@ We can then code from the comfort of our IDE directly into the virtual environme
 &lt;p>
 &lt;figure >
 &lt;div class="d-flex justify-content-center">
-&lt;div class="w-100" >&lt;img src="https://artivis.github.io/img/post/2023/vscode-remote.png" alt="VSCode Remote-SSH" loading="lazy" data-zoomable />&lt;/div>
+&lt;div class="w-100" >&lt;img src="https://artivis.github.io/post/2023/vscode-remote.png" alt="VSCode Remote-SSH" loading="lazy" data-zoomable />&lt;/div>
 &lt;/div>&lt;/figure>
 &lt;/p>
 &lt;p>or using the following command in a terminal,&lt;/p>
@@ -796,7 +1058,7 @@ a motor ready to spin in a snap (pun intended).&lt;/p>
 &lt;p>We&amp;rsquo;re not there yet, but I&amp;rsquo;m definitely going to follow this line of thought for my own Turtlebot 3.
 Can you believe that it doesn&amp;rsquo;t have any sonar?!&lt;/p>
 &lt;p>Fortunately now I can easily add a pair of them and have my robot stop bumping into my lazy cat lying down on the floor,
-unwitting ninja, invisible to the laser scanner 😅.&lt;/p></description></item><item><title>Downloading Raspberry Pi Press issues</title><link>https://artivis.github.io/post/2020/rpipress/</link><pubDate>Thu, 09 Jul 2020 00:00:00 +0000</pubDate><guid>https://artivis.github.io/post/2020/rpipress/</guid><description>&lt;p>In this post we will discover the great magazines edited under the
+unwitting ninja, invisible to the laser scanner &amp;#x1f605;.&lt;/p></description></item><item><title>Downloading Raspberry Pi Press issues</title><link>https://artivis.github.io/post/2020/rpipress/</link><pubDate>Thu, 09 Jul 2020 00:00:00 +0000</pubDate><guid>https://artivis.github.io/post/2020/rpipress/</guid><description>&lt;p>In this post we will discover the great magazines edited under the
 Raspberry Pi Press umbrella and discuss how to easily access them all.&lt;/p>
 &lt;h2 id="the-raspberry-pi-press-magazines">The Raspberry Pi Press magazines&lt;/h2>
 &lt;p>The &lt;a href="https://store.rpipress.cc/" target="_blank" rel="noopener">Raspberry Pi Press&lt;/a> is a part of the Raspberry Pi Foundation
@@ -1142,7 +1404,7 @@ is not. To differentiate them, add the following to your &lt;code>.bashrc&lt;/co
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>When used in a container,
 a shell prompt in the said container will now look something like:&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">&lt;span class="o">[&lt;/span>LXC&lt;span class="o">]&lt;/span> ubuntu@tmp-20-04:~$
-&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>No more confusion 👍&lt;/p></description></item><item><title>SSH the Raspberry Pi Zero over USB</title><link>https://artivis.github.io/post/2020/pi-zero/</link><pubDate>Mon, 01 Jun 2020 00:00:00 +0000</pubDate><guid>https://artivis.github.io/post/2020/pi-zero/</guid><description>&lt;p>In this post, we will see how to SSH a Raspberry Pi Zero
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>No more confusion &amp;#x1f44d;&lt;/p></description></item><item><title>SSH the Raspberry Pi Zero over USB</title><link>https://artivis.github.io/post/2020/pi-zero/</link><pubDate>Mon, 01 Jun 2020 00:00:00 +0000</pubDate><guid>https://artivis.github.io/post/2020/pi-zero/</guid><description>&lt;p>In this post, we will see how to SSH a Raspberry Pi Zero
 over USB from a Ubuntu-based host.
 Moreover we will make sure the the Pi Zero has access to internet through the host
 so that we can install/update some software.&lt;/p>
@@ -1189,9 +1451,9 @@ To do that we will have to edit two files.&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">dtoverlay=dwc2
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Second, we will edit the file &lt;code>/boot/cmdline.txt&lt;/code>.
 After &lt;code>rootwait&lt;/code>, we will add&lt;/p>
-&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-fallback" data-lang="fallback">&lt;span class="line">&lt;span class="cl">modules-load=dwc2,g_ether
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-gdscript3" data-lang="gdscript3">&lt;span class="line">&lt;span class="cl">&lt;span class="n">modules&lt;/span>&lt;span class="o">-&lt;/span>&lt;span class="nb">load&lt;/span>&lt;span class="o">=&lt;/span>&lt;span class="n">dwc2&lt;/span>&lt;span class="p">,&lt;/span>&lt;span class="n">g_ether&lt;/span>
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;blockquote>
-&lt;p>⚠️ pay attention to leave only one space between &lt;code>rootwait&lt;/code>
+&lt;p>&amp;#x26a0;&amp;#xfe0f; pay attention to leave only one space between &lt;code>rootwait&lt;/code>
 and the new text otherwise it might not be parsed correctly.&lt;/p>
 &lt;/blockquote>
 &lt;p>Note that there might already be some text after &lt;code>rootwait&lt;/code>
@@ -1583,7 +1845,8 @@ How does one set that up quickly when starting from scratch?
 Do &lt;strong>you&lt;/strong> Remember those HTML courses?
 &lt;strong>Yeah me neither.&lt;/strong>
 But fortunately for us it is now easier than ever!&lt;/p>
-&lt;!-- &lt;details class="toc-inpage d-print-none " open>
+&lt;!--
+&lt;details class="toc-inpage d-print-none " open>
 &lt;summary class="font-weight-bold">Table of Contents&lt;/summary>
 &lt;nav id="TableOfContents">
 &lt;ul>
