@@ -1,4 +1,87 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Posts | Home to artivis</title><link>https://artivis.github.io/post/</link><atom:link href="https://artivis.github.io/post/index.xml" rel="self" type="application/rss+xml"/><description>Posts</description><generator>Hugo Blox Builder (https://hugoblox.com)</generator><language>en</language><lastBuildDate>Thu, 18 Apr 2024 00:00:00 +0000</lastBuildDate><image><url>https://artivis.github.io/media/icon_hud2d1771ce140e1d1fd4d0e59d51cebc4_11712_512x512_fill_lanczos_center_3.png</url><title>Posts</title><link>https://artivis.github.io/post/</link></image><item><title>How to isolate an LXC</title><link>https://artivis.github.io/post/2024/lxc-isolated/</link><pubDate>Thu, 18 Apr 2024 00:00:00 +0000</pubDate><guid>https://artivis.github.io/post/2024/lxc-isolated/</guid><description>&lt;p>In this post, we will see how to launch a Linux container that is isolated,
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Posts | Home to artivis</title><link>https://artivis.github.io/post/</link><atom:link href="https://artivis.github.io/post/index.xml" rel="self" type="application/rss+xml"/><description>Posts</description><generator>Hugo Blox Builder (https://hugoblox.com)</generator><language>en</language><lastBuildDate>Fri, 31 May 2024 00:00:00 +0000</lastBuildDate><image><url>https://artivis.github.io/media/icon_hud2d1771ce140e1d1fd4d0e59d51cebc4_11712_512x512_fill_lanczos_center_3.png</url><title>Posts</title><link>https://artivis.github.io/post/</link></image><item><title>Setting up ROS 2 Jazzy with LXD</title><link>https://artivis.github.io/post/2024/ros2-jazzy/</link><pubDate>Fri, 31 May 2024 00:00:00 +0000</pubDate><guid>https://artivis.github.io/post/2024/ros2-jazzy/</guid><description>&lt;p>&lt;a href="https://discourse.ros.org/t/ros-2-jazzy-jalisco-released/37862" target="_blank" rel="noopener">ROS 2 Jazzy Jalisco is out!&lt;/a>&lt;/p>
+&lt;p>
+&lt;figure >
+&lt;div class="d-flex justify-content-center">
+&lt;div class="w-100" >&lt;img src="https://artivis.github.io/post/2024/JazzyJalisco.png" alt="ROS 2 Jazzy Jalisco logo" loading="lazy" data-zoomable />&lt;/div>
+&lt;/div>&lt;/figure>
+&lt;/p>
+&lt;p>ROS 2 Release Team did it again,
+shipping a brand new ROS 2 LTS distro.
+The latest release is named Jazzy Jalisco,
+a fine name given that the latest ROSCon (2023) was held in New Orleans!&lt;/p>
+&lt;p>It goes without saying that this is a collective effort that once again shows the solidity and the maturity of the ROS 2 community.&lt;/p>
+&lt;p>Being an LTS, ROS 2 Jazzy is based upon &lt;a href="https://releases.ubuntu.com/noble/" target="_blank" rel="noopener">Ubuntu 24.04&lt;/a>, a.k.a &amp;ldquo;Noble Numbat&amp;rdquo;, which is an LTS as well and was release just a month before Jazzy.&lt;/p>
+&lt;p>All of this great software being so recent, chances are,
+you haven&amp;rsquo;t upgraded yet.
+So in this post we will see how to set it up a virtual environment so that we can start working right away.&lt;/p>
+&lt;p>If you&amp;rsquo;re a long time reader,
+this post should remind you of my &lt;a href="https://artivis.github.io/post/2022/ros2-humble">&amp;ldquo;ROS 2 Humble post&amp;rdquo;&lt;/a>.
+Whether you&amp;rsquo;ve read it or not,
+I&amp;rsquo;d encourage you to do so since this Jazzy post is gonna be short and referring a lot to the Humble one.&lt;/p>
+&lt;h2 id="launching-a-jazzy-virtual-environment">Launching a Jazzy virtual environment&lt;/h2>
+&lt;p>We&amp;rsquo;ll see here how to quickly spawn a ROS 2 Jazzy virtual environment using &lt;a href="https://linuxcontainers.org/lxd/introduction/" target="_blank" rel="noopener">LXD&lt;/a>.&lt;/p>
+&lt;p>Since &lt;a href="https://linuxcontainers.org/lxd/introduction/" target="_blank" rel="noopener">LXD&lt;/a> installation and initial setup is covered in many previous posts (e.g. &lt;a href="https://artivis.github.io/post/2022/ros2-humble">here&lt;/a>),
+we will assume here that it is ready to use.&lt;/p>
+&lt;p>From there,
+we can immediately launch a Jazzy container using a ROS 2 &lt;a href="https://cloudinit.readthedocs.io/en/latest/index.html" target="_blank" rel="noopener">Cloud-init&lt;/a> configuration I&amp;rsquo;ve put together (which you can &lt;a href="https://gist.github.com/artivis/0357fe03a5ae459bee8c55823fbb0af8" target="_blank" rel="noopener">find on GitHub gist&lt;/a>):&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">lxc launch ubuntu:24.04 jazzy-lxc --config&lt;span class="o">=&lt;/span>user.user-data&lt;span class="o">=&lt;/span>&lt;span class="s2">&amp;#34;&lt;/span>&lt;span class="k">$(&lt;/span>curl -L https://gist.githubusercontent.com/artivis/0357fe03a5ae459bee8c55823fbb0af8/raw/ros2.cloudinit.yaml&lt;span class="k">)&lt;/span>&lt;span class="s2">&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>This Cloud-init configuration will:&lt;/p>
+&lt;ul>
+&lt;li>set up the ROS 2 ppa&lt;/li>
+&lt;li>install the &lt;code>ros-base&lt;/code> metapackage as well as Colcon and rosdep&lt;/li>
+&lt;li>initialise and update rosdep&lt;/li>
+&lt;li>source the ROS 2 workspace&lt;/li>
+&lt;/ul>
+&lt;p>Everything we need to get started!&lt;/p>
+&lt;blockquote>
+&lt;p>The Cloudinit config works for any ROS 2 distro.
+Simply pick the Ubuntu version at launch and the corresponding ROS 2 distro will be set up (E.g. &lt;code>launch 22.04&lt;/code> will spawn an Humble ready container)&lt;/p>
+&lt;/blockquote>
+&lt;p>As usual, we should wait for the container to be fully initialised:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ lxc &lt;span class="nb">exec&lt;/span> jazzy-lxc -- cloud-init status --wait
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">...............................................................................
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">status: &lt;span class="k">done&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Once done, we can now open a shell into the container as the default &lt;code>ubuntu&lt;/code> user,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ lxc &lt;span class="nb">exec&lt;/span> jazzy-lxc -- sudo --login --user ubuntu
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">ubuntu@jazzy-lxc:~$ &lt;span class="nb">echo&lt;/span> &lt;span class="nv">$ROS_DISTRO&lt;/span>
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">jazzy
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>We&amp;rsquo;re all set up.&lt;/p>
+&lt;h2 id="bonus-develop-like-a-pro">Bonus: Develop like a pro&lt;/h2>
+&lt;p>While the following has been already covered in previous posts,
+I think it is important enough that I should recall it here.
+We are about to setup VSCode so that we can develop directly and seamlessly inside our LXD container.&lt;/p>
+&lt;p>To do so, we shall first add our public SSH key to the authorised keys in the container.
+We can either copy the local key to the container:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">cp ~/.ssh/id_rsa.pub /tmp/authorized_keys
+&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">lxc file push /tmp/authorized_keys jazzy-lxc/home/ubuntu/.ssh/authorized_keys -p
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Or copy it from GitHub if you&amp;rsquo;ve set it up,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">ubuntu@jazzy-lxc:~$ curl https://github.com/&amp;lt;user&amp;gt;.keys &lt;span class="p">|&lt;/span> tee -a ~/.ssh/authorized_keys
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>With the key set up, we can then access our container through SSH:&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">ssh ubuntu@&amp;lt;container-ip&amp;gt;
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>SSH&amp;rsquo;ing to our container is pretty neat but it&amp;rsquo;s really a mean to an end.
+What we really are after is the &lt;a href="https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-ssh" target="_blank" rel="noopener">VS Code Remote - SSH extension&lt;/a>.
+This neat little feature allows us to open any file or folder in a container,
+a VM, or a remote machine.&lt;/p>
+&lt;p>To install the extension,
+head to Code and search for &amp;ldquo;remote ssh&amp;rdquo; in the Extensions panel or type in your terminal,&lt;/p>
+&lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">code --install-extension ms-vscode-remote.remote-ssh
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Then, open Code&amp;rsquo;s Command Palette (&lt;code>Ctrl+Shift+P&lt;/code>),
+search for &lt;code>Remote-SSH: Connect to Host...&lt;/code> and enter your SSH connection details:
+&lt;code>ubuntu@&amp;lt;container_ip&amp;gt;&lt;/code>.
+From there you are able to browse and work on your fresh ROS 2 Humble workspace
+using &lt;strong>File &amp;gt; Open&amp;hellip;&lt;/strong> or &lt;strong>File &amp;gt; Open Workspace&amp;hellip;&lt;/strong> just as you would locally!&lt;/p>
+&lt;h2 id="conclusion">Conclusion&lt;/h2>
+&lt;p>ROS 2 Jazzy Jalisco is an exciting new release and we don&amp;rsquo;t have to wait to upgrade our machine to Ubuntu 24.04 to get started with it.&lt;/p>
+&lt;p>If you want to know more about all the new shiny thingies that Jazzy brings,
+have a look at this &lt;a href="https://docs.ros.org/en/jazzy/Releases/Release-Jazzy-Jalisco.html" target="_blank" rel="noopener">release page&lt;/a> and/or jump directly into the &lt;a href="https://docs.ros.org/en/jazzy/" target="_blank" rel="noopener">documentation&lt;/a>.&lt;/p>
+&lt;p>I&amp;rsquo;d also strongly encourage you to revisit some older posts,
+especially the following two that cover some interesting aspects of day-to-day development with LXD:&lt;/p>
+&lt;ul>
+&lt;li>&lt;a href="https://artivis.github.io/post/2020/dotfiles">&amp;ldquo;Managing dotfiles&amp;rdquo;&lt;/a> - details how to manage our dotfiles and how that streamlines development in containers.&lt;/li>
+&lt;li>&lt;a href="https://artivis.github.io/post/2020/lxc">&amp;ldquo;ROS Noetic development workflow in LXC&amp;rdquo;&lt;/a> - is a previous iteration over this very post and also covers how to enable graphical applications in LXD.
+Something you may be interested in if you&amp;rsquo;d like to run things like Rviz!&lt;/li>
+&lt;/ul>
+&lt;p>Have fun !&lt;/p></description></item><item><title>How to isolate an LXC</title><link>https://artivis.github.io/post/2024/lxc-isolated/</link><pubDate>Thu, 18 Apr 2024 00:00:00 +0000</pubDate><guid>https://artivis.github.io/post/2024/lxc-isolated/</guid><description>&lt;p>In this post, we will see how to launch a Linux container that is isolated,
 not only from other containers,
 but also from the local network.
 The container will however have access to internet.&lt;/p>
