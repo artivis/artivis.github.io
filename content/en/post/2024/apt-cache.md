@@ -15,7 +15,7 @@ There are several ways we can address this and we are going to explore one here 
 That solution is to cache our packages in an apt proxy.
 
 In this post we're going to make use of [LXD],
-[cloud-init][cloud-init-doc] and adresse ROS 2 specifically but none of those are absolutely necessary and a similar setup can be replicated in a different scenario.
+[cloud-init][cloud-init-doc] and addresse ROS 2 specifically but none of those are absolutely necessary and a similar setup can be replicated in a different scenario.
 
 Let's get started.
 
@@ -90,7 +90,7 @@ lxc launch ubuntu:24.04 apt-proxy --config=user.user-data="$(curl -L https://gis
 ### Keeping an eye
 
 Before moving on, let's point out that we can keep an eye on the logs of the cacher as they are produced.
-This will be helpfull to make sure that everything goes as planed.
+This will be helpfull to make sure that everything goes as planned.
 To do so, enter the following in a terminal:
 
 ```bash
@@ -121,7 +121,7 @@ packages:
 
 Installing ROS 2, whether a minimal install or a full desktop one,
 will usually install a lot of packages.
-That the whole reason we're setting up a cache in the first place!
+That's the whole reason we're setting up a cache in the first place!
 
 So how can we point our new ROS 2 container to the proxy?
 The simplest solution is to install the [auto-apt-proxy] package.
@@ -226,7 +226,7 @@ logs that correspond to the update call.
 
 At last, for extra good measure,
 we can verify that our ROS 2 packages are indeed cached on our proxy server.
-Do to so, we can enter the following command in the `apt-proxy` container:
+To do so, we can enter the following command in the `apt-proxy` container:
 
 ```bash
 $ ls /var/cache/apt-cacher-ng/packages.ros.org/pool/main/*/
