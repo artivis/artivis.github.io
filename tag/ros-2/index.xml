@@ -4,7 +4,7 @@ we find ourselves downloading hundreds of packages which may take some times.&lt
 &lt;p>There are several ways we can address this and we are going to explore one here that has the advantages of being rather simple and generalise beyond LXD and ROS 2.
 That solution is to cache our packages in an apt proxy.&lt;/p>
 &lt;p>In this post we&amp;rsquo;re going to make use of &lt;a href="https://canonical.com/lxd" target="_blank" rel="noopener">LXD&lt;/a>,
-&lt;a href="https://cloudinit.readthedocs.io/en/latest/index.html" target="_blank" rel="noopener">cloud-init&lt;/a> and adresse ROS 2 specifically but none of those are absolutely necessary and a similar setup can be replicated in a different scenario.&lt;/p>
+&lt;a href="https://cloudinit.readthedocs.io/en/latest/index.html" target="_blank" rel="noopener">cloud-init&lt;/a> and addresse ROS 2 specifically but none of those are absolutely necessary and a similar setup can be replicated in a different scenario.&lt;/p>
 &lt;p>Let&amp;rsquo;s get started.&lt;/p>
 &lt;h2 id="creating-a-proxy">Creating a proxy&lt;/h2>
 &lt;p>First thing first,
@@ -42,7 +42,7 @@ To do so, create the file:&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">lxc launch ubuntu:24.04 apt-proxy --config&lt;span class="o">=&lt;/span>user.user-data&lt;span class="o">=&lt;/span>&lt;span class="s2">&amp;#34;&lt;/span>&lt;span class="k">$(&lt;/span>curl -L https://gist.githubusercontent.com/artivis/f1b201ae78fd182cc6c6dccd0abd0fa1/raw/apt-proxy.cloud-init.yaml&lt;span class="k">)&lt;/span>&lt;span class="s2">&amp;#34;&lt;/span>
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h3 id="keeping-an-eye">Keeping an eye&lt;/h3>
 &lt;p>Before moving on, let&amp;rsquo;s point out that we can keep an eye on the logs of the cacher as they are produced.
-This will be helpfull to make sure that everything goes as planed.
+This will be helpfull to make sure that everything goes as planned.
 To do so, enter the following in a terminal:&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">tail -f /var/log/apt-cacher-ng/apt-cacher.log
 &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;h2 id="creating-a-client">Creating a client&lt;/h2>
@@ -64,7 +64,7 @@ To do so, enter the following in a terminal:&lt;/p>
 &lt;/span>&lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">&lt;span class="w">&lt;/span>&lt;span class="nn">...&lt;/span>&lt;span class="w">
 &lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;p>Installing ROS 2, whether a minimal install or a full desktop one,
 will usually install a lot of packages.
-That the whole reason we&amp;rsquo;re setting up a cache in the first place!&lt;/p>
+That&amp;rsquo;s the whole reason we&amp;rsquo;re setting up a cache in the first place!&lt;/p>
 &lt;p>So how can we point our new ROS 2 container to the proxy?
 The simplest solution is to install the &lt;a href="https://github.com/terceiro/auto-apt-proxy" target="_blank" rel="noopener">auto-apt-proxy&lt;/a> package.
 This project is pretty much a bash script that &amp;ldquo;autodetect common [local] APT proxy setups&amp;rdquo;.&lt;/p>
@@ -141,7 +141,7 @@ It looks like it works!&lt;/p>
 logs that correspond to the update call.&lt;/p>
 &lt;p>At last, for extra good measure,
 we can verify that our ROS 2 packages are indeed cached on our proxy server.
-Do to so, we can enter the following command in the &lt;code>apt-proxy&lt;/code> container:&lt;/p>
+To do so, we can enter the following command in the &lt;code>apt-proxy&lt;/code> container:&lt;/p>
 &lt;div class="highlight">&lt;pre tabindex="0" class="chroma">&lt;code class="language-bash" data-lang="bash">&lt;span class="line">&lt;span class="cl">$ ls /var/cache/apt-cacher-ng/packages.ros.org/pool/main/*/
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">/var/cache/apt-cacher-ng/ros2/pool/main/p/:
 &lt;/span>&lt;/span>&lt;span class="line">&lt;span class="cl">python3-catkin-pkg-modules python3-colcon-cmake python3-colcon-installed-package-information python3-colcon-package-information python3-colcon-recursive-crawl python3-rosdistro-modules

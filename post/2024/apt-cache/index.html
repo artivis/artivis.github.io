@@ -9,7 +9,7 @@
 But when setting up such environment for ROS 2,
 we find ourselves downloading hundreds of packages which may take some times.</p><p>There are several ways we can address this and we are going to explore one here that has the advantages of being rather simple and generalise beyond LXD and ROS 2.
 That solution is to cache our packages in an apt proxy.</p><p>In this post we&rsquo;re going to make use of <a href=https://canonical.com/lxd target=_blank rel=noopener>LXD</a>,
-<a href=https://cloudinit.readthedocs.io/en/latest/index.html target=_blank rel=noopener>cloud-init</a> and adresse ROS 2 specifically but none of those are absolutely necessary and a similar setup can be replicated in a different scenario.</p><p>Let&rsquo;s get started.</p><h2 id=creating-a-proxy>Creating a proxy</h2><p>First thing first,
+<a href=https://cloudinit.readthedocs.io/en/latest/index.html target=_blank rel=noopener>cloud-init</a> and addresse ROS 2 specifically but none of those are absolutely necessary and a similar setup can be replicated in a different scenario.</p><p>Let&rsquo;s get started.</p><h2 id=creating-a-proxy>Creating a proxy</h2><p>First thing first,
 we shall set up a container that will act as the apt proxy and locally cache the debs.</p><p>So let&rsquo;s start by creating said container:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>lxc launch ubuntu:24.04 apt-proxy
 </span></span></code></pre></div><p>Once instantiated,
 we can then shell into the container and update/upgrade it for good measure:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>lxc shell apt-proxy
@@ -27,7 +27,7 @@ To do so, create the file:</p><div class=highlight><pre tabindex=0 class=chroma>
 </span></span></code></pre></div><p>with the following content:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-txt data-lang=txt><span class=line><span class=cl>Acquire::http { Proxy &#34;http://127.0.0.1:3142&#34;; };
 </span></span></code></pre></div><p>With this, the apt-proxy LXD container will use the caching as well.</p><p>I&rsquo;ve created a cloud-init config <a href=https://gist.github.com/artivis/f1b201ae78fd182cc6c6dccd0abd0fa1 target=_blank rel=noopener>available on GitHub</a> to easily launch this proxy container with the following one-liner:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>lxc launch ubuntu:24.04 apt-proxy --config<span class=o>=</span>user.user-data<span class=o>=</span><span class=s2>&#34;</span><span class=k>$(</span>curl -L https://gist.githubusercontent.com/artivis/f1b201ae78fd182cc6c6dccd0abd0fa1/raw/apt-proxy.cloud-init.yaml<span class=k>)</span><span class=s2>&#34;</span>
 </span></span></code></pre></div><h3 id=keeping-an-eye>Keeping an eye</h3><p>Before moving on, let&rsquo;s point out that we can keep an eye on the logs of the cacher as they are produced.
-This will be helpfull to make sure that everything goes as planed.
+This will be helpfull to make sure that everything goes as planned.
 To do so, enter the following in a terminal:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>tail -f /var/log/apt-cacher-ng/apt-cacher.log
 </span></span></code></pre></div><h2 id=creating-a-client>Creating a client</h2><p>Typically, a cloud-init configuration for ROS 2 is something along the lines of the following:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-yaml data-lang=yaml><span class=line><span class=cl><span class=c>#cloud-config</span><span class=w>
 </span></span></span><span class=line><span class=cl><span class=w>
@@ -46,7 +46,7 @@ To do so, enter the following in a terminal:</p><div class=highlight><pre tabind
 </span></span></span><span class=line><span class=cl><span class=w></span><span class=nn>...</span><span class=w>
 </span></span></span></code></pre></div><p>Installing ROS 2, whether a minimal install or a full desktop one,
 will usually install a lot of packages.
-That the whole reason we&rsquo;re setting up a cache in the first place!</p><p>So how can we point our new ROS 2 container to the proxy?
+That&rsquo;s the whole reason we&rsquo;re setting up a cache in the first place!</p><p>So how can we point our new ROS 2 container to the proxy?
 The simplest solution is to install the <a href=https://github.com/terceiro/auto-apt-proxy target=_blank rel=noopener>auto-apt-proxy</a> package.
 This project is pretty much a bash script that &ldquo;autodetect common [local] APT proxy setups&rdquo;.</p><p>To install it, we add the following to our cloud-init config:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-diff data-lang=diff><span class=line><span class=cl>#cloud-config
 </span></span><span class=line><span class=cl>
@@ -110,7 +110,7 @@ It looks like it works!</p><p>Another way to verify that is to shell inside the 
 </span></span></code></pre></div><p>where &lsquo;10.203.148.160&rsquo; should be the IP address of the <code>apt-proxy</code> container.</p><p>As before, we should see some new logs printed by the cacher,
 logs that correspond to the update call.</p><p>At last, for extra good measure,
 we can verify that our ROS 2 packages are indeed cached on our proxy server.
-Do to so, we can enter the following command in the <code>apt-proxy</code> container:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>$ ls /var/cache/apt-cacher-ng/packages.ros.org/pool/main/*/
+To do so, we can enter the following command in the <code>apt-proxy</code> container:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>$ ls /var/cache/apt-cacher-ng/packages.ros.org/pool/main/*/
 </span></span><span class=line><span class=cl>/var/cache/apt-cacher-ng/ros2/pool/main/p/:
 </span></span><span class=line><span class=cl>python3-catkin-pkg-modules  python3-colcon-cmake              python3-colcon-installed-package-information  python3-colcon-package-information  python3-colcon-recursive-crawl  python3-rosdistro-modules
 </span></span><span class=line><span class=cl>python3-colcon-alias        python3-colcon-common-extensions  python3-colcon-mixin                          python3-colcon-package-selection    python3-colcon-ros              python3-rospkg-modules
